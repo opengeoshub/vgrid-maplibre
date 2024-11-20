@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geohash Grid</title>
+  <link href="https://unpkg.com/maplibre-gl@2.3.0/dist/maplibre-gl.css" rel="stylesheet">
+  <style>
+    body, html {
+      margin: 0;
+      height: 100%;
+    }
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <!-- Load Maplibre GL JS -->
+  <script src="https://unpkg.com/maplibre-gl@2.3.0/dist/maplibre-gl.js"></script>
+
+  <!-- Load Geohash.js -->
+  <script src="./GeohashGrid.js"></script>
+
+  <script>
+    window.onload = function () {
+      const map = new maplibregl.Map({
+        container: "map",
+        style: "https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json",
+        center: [0, 0],
+        zoom: 0,
+        maxZoom: 23,
+      });
+
+      map.on("load", () => {
+        updateGeohashGrid(map);
+        map.on("moveend", () => updateGeohashGrid(map));
+        map.on("zoomend", () => updateGeohashGrid(map));
+      });
+    };
+  </script>
+</body>
+</html>

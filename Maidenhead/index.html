@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maidenhead Locator Grid Demo</title>
+  <title>Maidenhead Grid</title>
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" />
   <style>
     body {
@@ -19,7 +19,7 @@
 <body>
   <div id="map"></div>
   
-  <script src="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
   <script type="module">
     import MaidenheadGrid from './MaidenheadGrid.js';
 
@@ -29,7 +29,7 @@
       // style: 'https://demotiles.maplibre.org/style.json', // MapLibre style URL
       style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
       center: [0, 0], // Initial map center [lng, lat]
-      zoom: 2, // Initial zoom level
+      zoom: 0, // Initial zoom level
     });
 
     // Add the Maidenhead Locator Grid when the map loads
