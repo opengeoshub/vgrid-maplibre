@@ -15,7 +15,7 @@ class MaidenheadGrid {
       // Add a GeoJSON source for the grid
       this.map.addSource(this.sourceId, {
         type: 'geojson',
-        data: this._generateGrid(),
+        data: this.generateGrid(),
       });
   
       // Add a line layer for the grid
@@ -45,18 +45,18 @@ class MaidenheadGrid {
       });
   
       // Redraw the grid on map movements
-      this.map.on(this.options.redraw, () => this._updateGrid());
+      this.map.on(this.options.redraw, () => this.updateGrid());
     }
   
-    _updateGrid() {
-      const newGrid = this._generateGrid();
+    updateGrid() {
+      const newGrid = this.generateGrid();
       const source = this.map.getSource(this.sourceId);
       if (source) {
         source.setData(newGrid);
       }
     }
   
-    _generateGrid() {
+    generateGrid() {
       const bounds = this.map.getBounds();
       const zoom = Math.floor(this.map.getZoom());
   
@@ -87,7 +87,7 @@ class MaidenheadGrid {
           });
   
           // Add label point
-          const label = this._getLocator(lon + unit, lat + unit / 2, zoom);
+          const label = this.getLocator(lon + unit, lat + unit / 2, zoom);
           features.push({
             type: 'Feature',
             geometry: {
@@ -105,7 +105,7 @@ class MaidenheadGrid {
       };
     }
   
-    _getLocator(lon, lat, zoom) {
+    getLocator(lon, lat, zoom) {
       const d1 = 'ABCDEFGHIJKLMNOPQR'.split('');
       const d2 = 'ABCDEFGHIJKLMNOPQRSTUVWX'.split('');
       const ydiv = [10, 1, 1 / 24, 1 / 240, 1 / 240 / 24];

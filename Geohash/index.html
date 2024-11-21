@@ -4,43 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Geohash Grid</title>
-  <link href="https://unpkg.com/maplibre-gl@2.3.0/dist/maplibre-gl.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
   <style>
-    body, html {
+    body {
       margin: 0;
-      height: 100%;
+      padding: 0;
     }
     #map {
       width: 100%;
-      height: 100%;
+      height: 100vh;
     }
   </style>
 </head>
+
 <body>
   <div id="map"></div>
 
-  <!-- Load Maplibre GL JS -->
-  <script src="https://unpkg.com/maplibre-gl@2.3.0/dist/maplibre-gl.js"></script>
-
-  <!-- Load Geohash.js -->
-  <script src="./GeohashGrid.js"></script>
-
-  <script>
-    window.onload = function () {
-      const map = new maplibregl.Map({
-        container: "map",
-        style: "https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json",
-        center: [0, 0],
-        zoom: 0,
-        maxZoom: 23,
-      });
-
-      map.on("load", () => {
-        updateGeohashGrid(map);
-        map.on("moveend", () => updateGeohashGrid(map));
-        map.on("zoomend", () => updateGeohashGrid(map));
-      });
-    };
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script type="module">
+    import GeohashGrid from './GeohashGrid.js';
+    const map = new maplibregl.Map({
+      container: 'map', 
+      // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
+      style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+      // style: 'https://demotiles.maplibre.org/style.json',
+      // style: './colorful.json',
+      center: [106.706502, 10.775307], 
+      zoom: 0
+    });
+    map.on('load', () => {
+      try {
+        const geohashGrid = new GeohashGrid(map, {
+          color: 'rgba(255, 0, 0)', // Grid color
+          redraw: 'move', // Redraw grid on map movement
+        });
+        console.log('Geohash Grid added successfully.');
+      } catch (error) {
+        console.error('Failed to add Geohash Grid:', error);
+      }
+    });
   </script>
 </body>
+
 </html>
