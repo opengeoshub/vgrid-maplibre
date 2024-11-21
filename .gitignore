@@ -9,6 +9,7 @@
 /coverage
 
 /references
+/test
 
 # production
 /build

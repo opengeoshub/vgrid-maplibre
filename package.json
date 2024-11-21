@@ -1,8 +1,9 @@
 {
   "name": "vgridjs",
-  "version": "1.0.0",
+  "type": "module",  
+  "version": "1.0.2",
   "description": "Add DGGS into Maplibre GL JS Map",
-  "main": "index.js", 
+  "main": "index.js",
   "exports": {
     ".": "./index.js",
     "./Geohash/GeohashGrid": "./Geohash/GeohashGrid.js",
@@ -37,5 +38,8 @@
   "bugs": {
     "url": "https://github.com/thangqd/vgridjs/issues"
   },
-  "homepage": "https://github.com/thangqd/vgridjs#readme"
+  "homepage": "https://github.com/thangqd/vgridjs#readme",
+  "dependencies": {
+    "vgridjs": "^1.0.1"
+  }
 }

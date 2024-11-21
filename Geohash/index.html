@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
       margin: 0;
       padding: 0;
     }
+
     #map {
       width: 100%;
       height: 100vh;
@@ -23,17 +25,16 @@
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script type="module">
     // import GeohashGrid from './GeohashGrid.js';
-    // import GeohashGrid from 'https://raw.githubusercontent.com/thangqd/vgridJS/main/Geohash/GeohashGrid.js'
-    import GeohashGrid from 'https://unpkg.com/github:thangqd/vgridJS@main/Geohash/GeohashGrid.js'
-    
-    // import GeohashGrid from 'https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/Geohash/GeohashGrid.js'
+    // import GeohashGrid from 'https://unpkg.com/github:thangqd/vgridJS@main/Geohash/GeohashGrid.js'
+    import GeohashGrid from 'https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/Geohash/GeohashGrid.js'
+
     const map = new maplibregl.Map({
-      container: 'map', 
+      container: 'map',
       // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
-      style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
       // style: 'https://demotiles.maplibre.org/style.json',
-      // style: './colorful.json',
-      center: [106.706502, 10.775307], 
+      // style: '.references/colorful.json',
+      style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+      center: [106.706502, 10.775307],
       zoom: 0
     });
     map.on('load', () => {
