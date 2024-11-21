@@ -22,7 +22,11 @@
 
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script type="module">
-    import GeohashGrid from './GeohashGrid.js';
+    // import GeohashGrid from './GeohashGrid.js';
+    // import GeohashGrid from 'https://raw.githubusercontent.com/thangqd/vgridJS/main/Geohash/GeohashGrid.js'
+    import GeohashGrid from 'https://unpkg.com/github:thangqd/vgridJS@main/Geohash/GeohashGrid.js'
+    
+    // import GeohashGrid from 'https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/Geohash/GeohashGrid.js'
     const map = new maplibregl.Map({
       container: 'map', 
       // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',

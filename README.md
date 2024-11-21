@@ -1,6 +1,19 @@
 # VgridJS - DGGS Visualization on MapLibre GL JS
 
-## Maidenhead
+## OLC (OpenLocationCode/ Pluscode)
 
-## MGRS
- 
+## MGRS	
+
+## Geohash	
+
+## GEOREF	
+
+## S2	
+
+## H3
+
+## Vcode	
+
+## Maidenhead	
+
+## GARS

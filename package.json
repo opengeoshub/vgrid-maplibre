@@ -1,0 +1,41 @@
+{
+  "name": "vgridjs",
+  "version": "1.0.0",
+  "description": "Add DGGS into Maplibre GL JS Map",
+  "main": "index.js", 
+  "exports": {
+    ".": "./index.js",
+    "./Geohash/GeohashGrid": "./Geohash/GeohashGrid.js",
+    "./Maidenhead/MaidenheadGrid": "./Maidenhead/MaidenheadGrid.js",
+    "./MGRS/MGRSGrid": "./MGRS/MGRSGrid.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thangqd/vgridjs.git"
+  },
+  "keywords": [
+    "DGGS",
+    "OpenLocationCode",
+    "OLC",
+    "Pluscode",
+    "Plus",
+    "Codes",
+    "MGRS",
+    "Geohash",
+    "GEOREF",
+    "S2",
+    "H3",
+    "Vcode",
+    "Maidenhead",
+    "GARS"
+  ],
+  "author": "Thang Quach",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thangqd/vgridjs/issues"
+  },
+  "homepage": "https://github.com/thangqd/vgridjs#readme"
+}
