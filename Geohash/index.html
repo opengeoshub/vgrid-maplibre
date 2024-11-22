@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Geohash Grid</title>
-  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.css" />
   <style>
     body {
       margin: 0;
@@ -22,7 +22,10 @@
 <body>
   <div id="map"></div>
 
-  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <!-- <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script> -->
+  <script src="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.js"></script>
+
+  
   <script type="module">
     // import GeohashGrid from './GeohashGrid.js';
     // import GeohashGrid from 'https://unpkg.com/github:thangqd/vgridJS@main/Geohash/GeohashGrid.js'
@@ -43,6 +46,7 @@
           color: 'rgba(255, 0, 0)', // Grid color
           redraw: 'move', // Redraw grid on map movement
         });
+        // map.setProjection({"type": "globe"}); 
         console.log('Geohash Grid added successfully.');
       } catch (error) {
         console.error('Failed to add Geohash Grid:', error);

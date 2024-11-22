@@ -76,9 +76,9 @@ class GeohashGrid {
     const precision = this.getPrecision(zoom);
     const {latStep, lonStep} = this.getStepSize(precision);
     
-    console.log('zoom:', zoom)
+    // console.log('zoom:', zoom)
     // console.log('precison:', precision)
-    console.log('latStep:', latStep)
+    // console.log('latStep:', latStep)
     // console.log('lonStep:', lonStep)
 
 
