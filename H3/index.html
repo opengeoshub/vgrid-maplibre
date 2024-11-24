@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H3 Grid</title>
+    <!-- MapLibre GL CSS -->
+    <link href="./maplibre-gl.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <!-- H3Grid.js -->
+    <script src="https://unpkg.com/h3-js@4.1.0/dist/h3-js.umd.js"></script>
+
+    <script src="./maplibre-gl.js"></script>
+    <script src="./H3Grid.js"></script>
+    <script>
+        // import { geoToH3 } from 'h3-js';
+
+        // Initialize the map and grid
+        const config = {
+            lng: 106.706585,
+            lat:  10.775326,
+            zoom: 0
+        };
+        const map = new maplibregl.Map({
+            container: 'map', // The ID of the HTML element where MapLibre will render
+            center: [config.lng, config.lat],
+            zoom: config.zoom,
+            // style: 'https://demotiles.maplibre.org/style.json' // Default MapLibre style
+            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
+            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+        });
+
+        function addGeoJsonLayer() {
+            map.addSource('icosahedron', {
+                type: 'geojson',
+                // Fetch GeoJSON from the URL
+                data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/H3/icosahedron.json'
+            });
+
+            // Add the layer to display the GeoJSON features
+            map.addLayer({
+                id: 'icosahedron-layer',
+                type: 'line',  // or 'line' or 'circle' depending on your needs
+                source: 'icosahedron',  // The source we added above
+                paint: {
+                    'line-color': '#008000',  // Line color (if using 'line' layer)
+                    'line-width': 2 ,       // Line width
+                    'line-dasharray': [2, 4, 1, 4]  // Dash-dot pattern: [dash length, gap length, dash length, gap length]
+                }
+            });
+        }
+
+        // Initialize the map and add the GeoJSON layer
+        map.on('load', () => {
+            renderHexes(map); // Your existing hex rendering function
+            addGeoJsonLayer(); // Add the GeoJSON layer from the URL
+        });
+
+        map.on('click', (e) => {
+            const features = map.queryRenderedFeatures(e.point, {
+                layers: ['hex-layer-border']  // This should match the layer name where hexagons are rendered
+            });
+
+            if (features.length) {
+                const feature = features[0];  // You can select the first feature if there are multiple
+                console.log('Clicked Feature:', feature);
+
+                // Access the properties
+                alert('Hex ID: ' + feature.properties.cellId);
+                // Add more properties you want to inspect
+            }
+        });
+
+
+        // Function to render the hexagons when map is loaded or zoomed
+        // map.on('load', () => {
+        //         // map.setProjection({"type": "globe"}); 
+        //         renderHexes(map)
+        //     });
+        map.on('zoomend', () => renderHexes(map));
+        map.on('dragend', () => renderHexes(map));
+        map.on('resize', () => renderHexes(map));
+        
+    </script>
+</body>
+
+</html>
