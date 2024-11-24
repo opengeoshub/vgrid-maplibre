@@ -43,8 +43,8 @@ class GeohashGrid {
       source: this.sourceId,
       layout: {
         'text-field': ['get', 'label'],
-        'text-size': 14,
-        'text-font': ['Open Sans Bold'],
+        'text-size': 12,
+        // 'text-font': ['Open Sans Bold'],
       },
       paint: {
         'text-color': this.options.color,
