@@ -36,9 +36,11 @@
         // Initialize the map and grid
         const config = {
             lng: 106.706585,
-            lat:  10.775326,
+            lat: 10.775326,
             zoom: 0
         };
+        let currentPopup = null;
+
         const map = new maplibregl.Map({
             container: 'map', // The ID of the HTML element where MapLibre will render
             center: [config.lng, config.lat],
@@ -48,26 +50,28 @@
             // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
         });
 
-        function addGeoJsonLayer() {
+        function addIcosaLayer() {
             map.addSource('icosahedron', {
                 type: 'geojson',
                 // Fetch GeoJSON from the URL
-                data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/H3/icosahedron_polygon.geojson'
+                // data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/H3/icosahedron_polygon.geojson'
+                data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/H3/icosahedron.geojson'
+
             });
 
             // Add the layer to display the GeoJSON features
             map.addLayer({
                 id: 'icosahedron-layer',
-                // type: 'line',  // or 'line'
-                type: 'fill',  // or 'line' 
+                type: 'line',
+                // type: 'fill',  
                 source: 'icosahedron',  // The source we added above
                 paint: {
-                    // 'line-color': '#008000',  // Line color (if using 'line' layer)
-                    // 'line-width': 2 ,       // Line width
-                    // 'line-dasharray': [2, 4, 1, 4]  // Dash-dot pattern: [dash length, gap length, dash length, gap length]
-                    'fill-color': '#008000',         // Fill color
-                    'fill-opacity': 0.3,             // Transparency
-                    'fill-outline-color': '#000000'  // Border/Outline color
+                    'line-color': '#008000',  // Line color (if using 'line' layer)
+                    'line-width': 1,       // Line width
+                    'line-dasharray': [2, 4, 1, 4]  // Dash-dot pattern: [dash length, gap length, dash length, gap length]
+                    // 'fill-color': '#008000',         // Fill color
+                    // 'fill-opacity': 0.3,             // Transparency
+                    // 'fill-outline-color': '#000000'  // Border/Outline color
                 }
             });
         }
@@ -75,34 +79,81 @@
         // Initialize the map and add the GeoJSON layer
         map.on('load', () => {
             renderHexes(map); // Your existing hex rendering function
-            addGeoJsonLayer(); // Add the GeoJSON layer from the URL
+            addIcosaLayer(); // Add Icosahedron Layer
+            // map.setProjection({"type": "globe"});             
         });
 
+        // Function to render the hexagons when map is loaded or zoomed
+        map.on('zoomend', () => renderHexes(map));
+        map.on('dragend', () => renderHexes(map));
+        map.on('resize', () => renderHexes(map));
         map.on('click', (e) => {
             const features = map.queryRenderedFeatures(e.point, {
-                layers: ['hex-layer-border']  // This should match the layer name where hexagons are rendered
+                layers: ['hex-layer']  // This should match the layer name where hexagons are rendered
             });
 
             if (features.length) {
-                const feature = features[0];  // You can select the first feature if there are multiple
-                console.log('Clicked Feature:', feature);
+                const feature = features[0];  // Select the first feature if there are multiple
 
-                // Access the properties
-                alert('Hex ID: ' + feature.properties.cellId);
-                // Add more properties you want to inspect
+                // Create a popup with the feature properties
+                const popupContent = `
+            <strong>Hex ID:</strong> ${feature.properties.cellId} <br>
+            <strong>Precision:</strong> ${feature.properties.precision} <br>
+            <strong>Icosa Faces:</strong> ${feature.properties.icosa_faces} <br>
+            <strong>Average Edge Length (m):</strong> ${Math.round(feature.properties.avg_edge_len * 10) / 10} <br>
+        `;
+
+                // Create a popup and set its coordinates
+                const popup = new maplibregl.Popup()
+                    .setLngLat(e.lngLat)  // Position the popup at the clicked location
+                    .setHTML(popupContent) // Set the HTML content for the popup
+                    .addTo(map);  // Add the popup to the map
+
+                currentPopup = popup;
+
+                // Add a highlight layer if it doesn't exist yet
+                if (!map.getLayer('highlight-layer')) {
+                    map.addLayer({
+                        'id': 'highlight-layer',
+                        'type': 'fill',
+                        'source': {
+                            'type': 'geojson',
+                            'data': {
+                                'type': 'FeatureCollection',
+                                'features': []
+                            }
+                        },
+                        'paint': {
+                            'fill-color': '#FF0000', // Red color for highlight
+                            'fill-opacity': 0.2,  // Set transparency of the highlight
+                        }
+                    });
+                }
+
+                // Update the source of the highlight layer with the clicked feature's geometry
+                map.getSource('highlight-layer').setData({
+                    'type': 'FeatureCollection',
+                    'features': [feature]
+                });
+            }
+        });
+        map.on('contextmenu', () => {
+            // Remove the highlight layer by clearing its source data
+            if (map.getLayer('highlight-layer')) {
+                map.getSource('highlight-layer').setData({
+                    'type': 'FeatureCollection',
+                    'features': []  // Clear the data to remove the highlight
+                });
+            }
+
+            // Remove the current popup (if any) from the map
+            if (currentPopup) {
+                currentPopup.remove();
+                currentPopup = null; // Reset the currentPopup variable
             }
         });
 
 
-        // Function to render the hexagons when map is loaded or zoomed
-        // map.on('load', () => {
-        //         // map.setProjection({"type": "globe"}); 
-        //         renderHexes(map)
-        //     });
-        map.on('zoomend', () => renderHexes(map));
-        map.on('dragend', () => renderHexes(map));
-        map.on('resize', () => renderHexes(map));
-        
     </script>
 </body>
 

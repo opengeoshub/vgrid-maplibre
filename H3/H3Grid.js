@@ -24,9 +24,9 @@ function renderHexes(map) {
   const longitudeMin = -longitudeMax;
 
   const extraFillArea = 0.5;
-  const borderLayerName = 'hex-layer-border';
-  const hexSourceName = 'hex-source';
-  const labelLayerName = 'hex-layer-label';
+  const hexLayer = 'hex-layer';
+  const hexSource = 'hex-source';
+  const hexlabelLayer = 'hex-label';
 
   var currentZoom = map.getZoom();
   var h3res = getResolution(currentZoom);
@@ -79,18 +79,21 @@ function renderHexes(map) {
       boundary = boundary.map((e) => e[0] > 0 ? [e[0] - 360, e[1]] : e);
     }
 
-    const centroid = h3.cellToLatLng(cellId);
-
+    const icosa_faces = h3.getIcosahedronFaces(cellId);
+    const avg_edge_len = Math.round(h3.getHexagonEdgeLengthAvg(h3res, h3.UNITS.m)*10)/10 ;
+    const precision = h3.getResolution(cellId)
     features.push({
       "type": "Feature",
       "properties": {
         "color": h3.isPentagon(cellId) ? 'red' : 'blue',
         "cellId": cellId, // Include the cell ID as a property
-        "labelPosition": centroid // Store the centroid for labeling
+        "precision": precision,
+        "icosa_faces": icosa_faces,
+        "avg_edge_len": avg_edge_len
       },
       "geometry": {
-        "type": "Polygon",
-        "coordinates": [boundary]
+        "type": "Polygon", // Ensure this is a polygon
+        "coordinates": [boundary] // Set the boundary as the polygon's coordinates
       }
     });
   }
@@ -99,36 +102,46 @@ function renderHexes(map) {
     "type": "FeatureCollection",
     "features": features
   };
+
   // if (map.getZoom() == 0) {
   //   saveGeoJSONToFile(featureCollection, 'h3_filtered_cells_precision_0.geojson')
   // }
 
-  const hexSource = map.getSource(hexSourceName);
-  if (hexSource !== undefined) {
-    hexSource.setData(featureCollection);
+
+  const hexsource = map.getSource(hexSource);
+  if (hexsource !== undefined) {
+    hexsource.setData(featureCollection);
   } else {
     var hexGeoJson = {
       type: 'geojson',
       data: featureCollection,
     };
-    map.addSource(hexSourceName, hexGeoJson);
+    map.addSource(hexSource, hexGeoJson);
 
     // Add the polygon border layer
     map.addLayer({
-      'id': borderLayerName,
-      'source': hexSourceName,
-      'type': 'line',
+      'id': hexLayer,
+      'source': hexSource,
+      // 'type': 'line',
+      // 'layout': {},
+      // 'paint': {
+      //   'line-color': ['get', 'color'],
+      //   'line-width': 2
+      // }
+      'type': 'fill',
       'layout': {},
       'paint': {
-        'line-color': ['get', 'color'],
-        'line-width': 2
+        'fill-color':'transparent',         // Fill color
+        'fill-opacity': 1,             // Transparency
+        'fill-outline-color': ['get', 'color'],
       }
+
     });
-    
-    // Add the label layer
+
+    // Add the label layer (optional)
       // map.addLayer({
-      //   'id': labelLayerName,
-      //   'source': hexSourceName,
+      //   'id': hexlabelLayer,
+      //   'source': hexSource,
       //   'type': 'symbol',
       //   'layout': {
       //     'text-field': ['get', 'cellId'], // Use the cellId property as the label
@@ -138,14 +151,11 @@ function renderHexes(map) {
       //   },
       //   'paint': {
       //     'text-color': '#FF0000', // Black text
-      //     // 'text-halo-color': '#ffffff', // White halo for visibility
-      //     // 'text-halo-width': 1
       //   }
       // });
-       
+  
   }
 }
-
 
 function saveGeoJSONToFile(geoJSON, fileName) {
   const blob = new Blob([JSON.stringify(geoJSON, null, 2)], { type: 'application/json' });
@@ -156,7 +166,6 @@ function saveGeoJSONToFile(geoJSON, fileName) {
   link.click();
   document.body.removeChild(link);
 }
-
 
 // [
 //     "UNITS",
@@ -211,91 +220,3 @@ function saveGeoJSONToFile(geoJSON, fileName) {
 //     "degsToRads",
 //     "radsToDegs"
 // ]
-// function renderHexes(map) {
-//   const latitudeMax = 90;
-//   const latitudeMin = -latitudeMax;
-//   const longitudeMax = 180;
-//   const longitudeMin = -longitudeMax;
-
-//   const extraFillArea = 0.5;
-//   const blueColor = '#0080ff';
-//   const borderLayerName = 'hex-layer-border';
-//   const hexSourceName = 'hex-source';
-
-//   var currentZoom = map.getZoom();
-//   var h3res = getResolution(currentZoom);
-//   // console.log("Resolution: " + JSON.stringify(h3res));
-
-//   var res0Cells = h3.getRes0Cells();
-//   const excludeCells = [
-//     '800dfffffffffff', '8017fffffffffff', '8023fffffffffff', '8033fffffffffff',
-//     '8047fffffffffff', '805bfffffffffff', '8071fffffffffff', '807ffffffffffff',
-//     '809bfffffffffff', '80bbfffffffffff', '80dbfffffffffff', '80ebfffffffffff',
-//     '80edfffffffffff', '80f3fffffffffff', '8003fffffffffff', '8001fffffffffff',
-//     '8003fffffffffff', '8005fffffffffff'
-//   ];
-
-//   // Exclude the specified cells
-//   let hexagons = res0Cells.filter(cell => !excludeCells.includes(cell));
-//   // let hexagons = res0Cells
-
-//   let allChildCells = [];  // Initialize an array to store all child cells
-
-//   // Iterate over the hexagons array correctly
-//   for (let cell of hexagons) {
-//     // Get the child cells for each hexagon cell
-//     let child_cells = h3.cellToChildren(cell, h3res);
-//     allChildCells.push(...child_cells); // Flatten the array
-//   }
-//   hexagons = allChildCells;
-//   // console.log('allChildCells:', allChildCells);
-
-//   // Convert H3 indices to GeoJSON features
-//   let features = [];
-//   for (let hex of hexagons) {
-//     let boundary = h3.cellToBoundary(hex, true);
-//     let color = h3.isPentagon(hex) ? 'red' : 'blue';
-
-//     features.push({
-//       "type": "Feature",
-//       "properties": { 'color': color },
-//       "geometry": {
-//         "type": "Polygon",
-//         "coordinates": [boundary]
-//       }
-//     });
-//   }
-
-//   // console.log(`currentZoom: ${currentZoom}, resolution: ${h3res}, hexagons: ${features.length}`);
-
-//   var featureCollection = {
-//     "type": "FeatureCollection",
-//     "features": features
-//   };
-
-//   // if (h3res ==0)
-//   // {
-//   //   saveGeoJSONToFile(featureCollection, 'h3_filtered_cells_precision_0.geojson') 
-//   // }
-//   const hexSource = map.getSource(hexSourceName);
-//   if (hexSource !== undefined) {
-//     hexSource.setData(featureCollection);
-//   } else {
-//     var hexGeoJson = {
-//       type: 'geojson',
-//       data: featureCollection,
-//     };
-//     map.addSource(hexSourceName, hexGeoJson);
-//     map.addLayer({
-//       'id': borderLayerName,
-//       'source': hexSourceName,
-//       'type': 'line',
-//       'layout': {},
-//       'paint': {
-//         'line-color': ['get', 'color'],
-//         'line-width': 2
-//       }
-//     });
-//   }
-// }
-
