@@ -58,12 +58,16 @@
             // Add the layer to display the GeoJSON features
             map.addLayer({
                 id: 'icosahedron-layer',
-                type: 'line',  // or 'line' or 'circle' depending on your needs
+                // type: 'line',  // or 'line'
+                type: 'fill',  // or 'line' 
                 source: 'icosahedron',  // The source we added above
                 paint: {
-                    'line-color': '#008000',  // Line color (if using 'line' layer)
-                    'line-width': 2 ,       // Line width
-                    'line-dasharray': [2, 4, 1, 4]  // Dash-dot pattern: [dash length, gap length, dash length, gap length]
+                    // 'line-color': '#008000',  // Line color (if using 'line' layer)
+                    // 'line-width': 2 ,       // Line width
+                    // 'line-dasharray': [2, 4, 1, 4]  // Dash-dot pattern: [dash length, gap length, dash length, gap length]
+                    'fill-color': '#008000',         // Fill color
+                    'fill-opacity': 0.3,             // Transparency
+                    'fill-outline-color': '#000000'  // Border/Outline color
                 }
             });
         }
