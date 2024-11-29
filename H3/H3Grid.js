@@ -78,10 +78,27 @@ function renderHexes(map) {
     if (boundary.find((e) => e[0] < -128) !== undefined) {
       boundary = boundary.map((e) => e[0] > 0 ? [e[0] - 360, e[1]] : e);
     }
+    const precision = h3.getResolution(cellId);
+    const edge_unit = precision > 7 ? h3.UNITS.m : h3.UNITS.km;
+    const area_unit = precision > 7 ? h3.UNITS.m2 : h3.UNITS.km2;
+
 
     const icosa_faces = h3.getIcosahedronFaces(cellId);
-    const avg_edge_len = Math.round(h3.getHexagonEdgeLengthAvg(h3res, h3.UNITS.m)*10)/10 ;
-    const precision = h3.getResolution(cellId)
+    const edge = h3.originToDirectedEdges(cellId)[0]
+
+    const edge_len = h3.edgeLength(edge,edge_unit);
+    let  avg_edge_len = h3.getHexagonEdgeLengthAvg(h3res, edge_unit);
+    avg_edge_len = parseFloat(avg_edge_len.toFixed(1)).toLocaleString();
+
+    let  area = h3.cellArea(cellId, area_unit);
+    area = parseFloat(area.toFixed(1)).toLocaleString();
+
+    let  avg_area = h3.getHexagonAreaAvg(h3res, area_unit);
+    avg_area = parseFloat(avg_area.toFixed(1)).toLocaleString();
+
+    let  num_hex = h3.getNumCells(h3res);
+    num_hex = num_hex.toLocaleString();
+
     features.push({
       "type": "Feature",
       "properties": {
@@ -89,7 +106,13 @@ function renderHexes(map) {
         "cellId": cellId, // Include the cell ID as a property
         "precision": precision,
         "icosa_faces": icosa_faces,
-        "avg_edge_len": avg_edge_len
+        "area": area,
+        "avg_area": avg_area,
+        "area_unit": area_unit,
+        // "edge_len": edge_len,
+        "avg_edge_len": avg_edge_len,
+        "edge_unit": edge_unit,
+        "num_hex": num_hex
       },
       "geometry": {
         "type": "Polygon", // Ensure this is a polygon

@@ -97,11 +97,14 @@
 
                 // Create a popup with the feature properties
                 const popupContent = `
-            <strong>Hex ID:</strong> ${feature.properties.cellId} <br>
-            <strong>Precision:</strong> ${feature.properties.precision} <br>
-            <strong>Icosa Faces:</strong> ${feature.properties.icosa_faces} <br>
-            <strong>Average Edge Length (m):</strong> ${Math.round(feature.properties.avg_edge_len * 10) / 10} <br>
-        `;
+            <strong>Hex ID: </strong> ${feature.properties.cellId} <br>
+            <strong>Precision: </strong> ${feature.properties.precision} <br>
+            <strong>Icosa Faces: </strong> ${feature.properties.icosa_faces} <br>
+            <strong>Area (${feature.properties.area_unit}): </strong> ${feature.properties.area}  <br>
+            <strong>Avg Area (${feature.properties.area_unit}): </strong> ${feature.properties.avg_area} <br>
+            <strong>Avg Edge Length (${feature.properties.edge_unit}): </strong>${feature.properties.avg_edge_len} <br>
+            <strong>Total Cells: </strong> ${feature.properties.num_hex}<br>
+            `;
 
                 // Create a popup and set its coordinates
                 const popup = new maplibregl.Popup()
