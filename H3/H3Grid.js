@@ -81,7 +81,7 @@ class H3Grid {
     const hexlabelLayer = 'hex-label';
   
     var currentZoom = this.map.getZoom();
-    var h3res = getResolution(currentZoom);
+    var h3res = this.getResolution(currentZoom);
   
     const iw = window.innerWidth;
     const ih = window.innerHeight;

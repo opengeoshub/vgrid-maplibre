@@ -1,7 +1,7 @@
 {
   "name": "vgridjs",
   "type": "module",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Visualize DGGS in Maplibre GL JS Map",
   "main": "index.js",
   "exports": {
