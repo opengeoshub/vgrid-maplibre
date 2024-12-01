@@ -1,11 +1,11 @@
 class S2Grid {
   constructor(map, options = {}) {
     this.map = map;
+    this.level = 2;
     this.latitudeMax = 90;
     this.latitudeMin = -this.latitudeMax;
     this.longitudeMax = 180;
     this.longitudeMin = -this.longitudeMax;
-    this.map = map;
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
       redraw: options.redraw || 'move', // Default to redraw on move
@@ -34,11 +34,9 @@ class S2Grid {
         'fill-outline-color': this.options.color
       }
     });
-
-    // Redraw the grid on map movements
+  // Redraw the grid on map movements
     this.map.on(this.options.redraw, () => this.updateGrid());
   }
-
 
   updateGrid() {
     const newGrid = this.generateGrid();
@@ -48,33 +46,28 @@ class S2Grid {
     }
   }
 
-
   generateCell(lat, lng) {
     const latLng = S2.L.LatLng(lat, lng);
-    return S2.S2Cell.FromLatLng(latLng, this.level);
+    console.log(latLng)
+    s2_cell = S2.S2Cell.FromLatLng(latLng, this.level);
+    return s2_cell
   }
-
-  /**
-   * Generate a grid of S2 cells for a bounding box.
-   * @param {number} minLat Minimum latitude of the bounding box.
-   * @param {number} minLng Minimum longitude of the bounding box.
-   * @param {number} maxLat Maximum latitude of the bounding box.
-   * @param {number} maxLng Maximum longitude of the bounding box.
-   * @returns {Array} List of S2Cell objects covering the bounding box.
-   */
+  ;
   generateGrid(minLat, minLng, maxLat, maxLng) {
     const cells = [];
     const step = 1 / Math.pow(2, this.level); // Approximate step size based on level
-
+    console.log(step)
     for (let lat = minLat; lat <= maxLat; lat += step) {
       for (let lng = minLng; lng <= maxLng; lng += step) {
         const cell = this.generateCell(lat, lng);
+        console.log(cell)
         cells.push(cell);
       }
     }
     console.log(cells)
-    const geojson_features= cells.map((cell) => {
+    const geojson_features = cells.map((cell) => {
       const vertices = this.getCellVertices(cell);
+      console.log(vertices)
       return {
         type: 'Feature',
         geometry: {
