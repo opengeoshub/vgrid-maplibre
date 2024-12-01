@@ -29,10 +29,11 @@
     <script src="https://unpkg.com/h3-js@4.1.0/dist/h3-js.umd.js"></script>
 
     <script src="./maplibre-gl.js"></script>
-    <script type="module">
-        import H3Grid from 'https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/H3/H3Grid.js';
+    <!-- <script src="https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/H3/H3Grid.js"></script> -->
+    <!-- <script src="https://unpkg.com/h3grid@latest/H3Grid.js"></script> -->
 
-        // import { geoToH3 } from 'h3-js';
+    <script type="module">
+        import H3Grid from "https://unpkg.com/vgridjs@latest/H3/H3Grid.js";
 
         // Initialize the map and grid
         const config = {
@@ -76,24 +77,41 @@
             });
         }
 
-        // Initialize the map and add the GeoJSON layer
+        // // Initialize the map and add the GeoJSON layer
+        // map.on('load', () => {
+        //     //  renderHexes(map); // Your existing hex rendering function
+        //     const h3grid = new H3Grid(map, {
+        //         color: 'rgba(255, 0, 0, 0.5)', // Grid color
+        //         redraw: 'move', // Redraw grid on map movement
+        //     });
+        //     addIcosaLayer(); // Add Icosahedron Layer
+        //     // map.setProjection({"type": "globe"});             
+        // });
+
         map.on('load', () => {
-             renderHexes(map); // Your existing hex rendering function
-            // const h3grid = new H3Grid(map, { 
-            //         color: 'rgba(255, 0, 0, 0.5)', // Grid color
-            //         redraw: 'move', // Redraw grid on map movement
-            //     });
-            addIcosaLayer(); // Add Icosahedron Layer
-            // map.setProjection({"type": "globe"});             
+            try {
+                const h3_grid = new H3Grid(map, {
+                    color: 'rgba(255, 0, 0)', // Grid color
+                    redraw: 'move', // Redraw grid on map movement
+                });
+                addIcosaLayer(); 
+                // map.setProjection({"type": "globe"}); 
+                console.log('H3 Grid added successfully.');
+            } catch (error) {
+                console.error('Failed to add H3 Grid:', error);
+            }
         });
 
+
+
         // // Function to render the hexagons when map is loaded or zoomed
-        map.on('zoomend', () => renderHexes(map));
-        map.on('dragend', () => renderHexes(map));
-        map.on('resize', () => renderHexes(map));
+        // map.on('zoomend', () => renderHexes(map));
+        // map.on('dragend', () => renderHexes(map));
+        // map.on('resize', () => renderHexes(map));
+
         map.on('click', (e) => {
             const features = map.queryRenderedFeatures(e.point, {
-                layers: ['hex-layer']  // This should match the layer name where hexagons are rendered
+                layers: ['h3-grid-layer']  // This should match the layer name where hexagons are rendered
             });
 
             if (features.length) {
