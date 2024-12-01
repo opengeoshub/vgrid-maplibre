@@ -29,7 +29,9 @@
     <script src="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.js"></script>
     <script type="module">
         // import S2Grid from "https://unpkg.com/vgridjs@latest/S2/S2Grid.js";
-        import S2Grid from "https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/S2/S2Grid.js";
+        import S2Grid from "https://unpkg.com/vgridjs@1.0.11/S2/S2Grid.js";
+
+        // import S2Grid from "https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/S2/S2Grid.js";
 
         // Initialize the map and grid
         const config = {
@@ -50,7 +52,7 @@
 
         map.on('load', () => {
             try {
-                const S2_grid = new S2Grid(map, {
+                const s2_grid = new S2Grid(map, {
                     color: 'rgba(255, 0, 0)', // Grid color
                     redraw: 'move', // Redraw grid on map movement
                 });
