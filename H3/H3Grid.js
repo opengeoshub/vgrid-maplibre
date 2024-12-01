@@ -180,7 +180,3 @@ class H3Grid {
   }
 }
 export default H3Grid;
-
-// Usage example:
-// const h3Grid = new H3Grid(map);
-// h3Grid.renderHexes();

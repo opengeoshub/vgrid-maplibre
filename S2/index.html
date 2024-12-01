@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S2 Grid</title>
+    <!-- MapLibre GL CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Map container -->
+    <div id="map"></div>
+    <!-- S2Grid.js -->
+    <script src="./ss-geometry.js"></script>
+    <script src="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.js"></script>
+    <script type="module">
+        // import S2Grid from "https://unpkg.com/vgridjs@latest/S2/S2Grid.js";
+        import S2Grid from "https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/S2/S2Grid.js";
+
+        // Initialize the map and grid
+        const config = {
+            lng: 106.706585,
+            lat: 10.775326,
+            zoom: 0
+        };
+        let currentPopup = null;
+
+        const map = new maplibregl.Map({
+            container: 'map', // The ID of the HTML element where MapLibre will render
+            center: [config.lng, config.lat],
+            zoom: config.zoom,
+            // style: 'https://demotiles.maplibre.org/style.json' // Default MapLibre style
+            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
+            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+        });
+
+        map.on('load', () => {
+            try {
+                const S2_grid = new S2Grid(map, {
+                    color: 'rgba(255, 0, 0)', // Grid color
+                    redraw: 'move', // Redraw grid on map movement
+                });
+                addIcosaLayer();
+                // map.setProjection({"type": "globe"}); 
+                console.log('S2 Grid added successfully.');
+            } catch (error) {
+                console.error('Failed to add S2 Grid:', error);
+            }
+        });
+
+        // map.on('click', (e) => {
+        //     const features = map.queryRenderedFeatures(e.point, {
+        //         layers: ['S2-grid-layer']  // This should match the layer name where hexagons are rendered
+        //     });
+
+        //     if (features.length) {
+        //         const feature = features[0];  // Select the first feature if there are multiple
+
+        //         // Create a popup with the feature properties
+        //         const popupContent = `
+        //     <strong>Hex ID: </strong> ${feature.properties.cellId} <br>
+        //     <strong>Precision: </strong> ${feature.properties.precision} <br>
+        //     <strong>Icosa Faces: </strong> ${feature.properties.icosa_faces} <br>
+        //     <strong>Area (${feature.properties.area_unit}): </strong> ${feature.properties.area}  <br>
+        //     <strong>Avg Area (${feature.properties.area_unit}): </strong> ${feature.properties.avg_area} <br>
+        //     <strong>Avg Edge Length (${feature.properties.edge_unit}): </strong>${feature.properties.avg_edge_len} <br>
+        //     <strong>Total Cells: </strong> ${feature.properties.num_hex}<br>
+        //     `;
+
+        //         // Create a popup and set its coordinates
+        //         const popup = new maplibregl.Popup()
+        //             .setLngLat(e.lngLat)  // Position the popup at the clicked location
+        //             .setHTML(popupContent) // Set the HTML content for the popup
+        //             .addTo(map);  // Add the popup to the map
+
+        //         currentPopup = popup;
+
+        //         // Add a highlight layer if it doesn't exist yet
+        //         if (!map.getLayer('highlight-layer')) {
+        //             map.addLayer({
+        //                 'id': 'highlight-layer',
+        //                 'type': 'fill',
+        //                 'source': {
+        //                     'type': 'geojson',
+        //                     'data': {
+        //                         'type': 'FeatureCollection',
+        //                         'features': []
+        //                     }
+        //                 },
+        //                 'paint': {
+        //                     'fill-color': '#FF0000', // Red color for highlight
+        //                     'fill-opacity': 0.2,  // Set transparency of the highlight
+        //                 }
+        //             });
+        //         }
+
+        //         // Update the source of the highlight layer with the clicked feature's geometry
+        //         map.getSource('highlight-layer').setData({
+        //             'type': 'FeatureCollection',
+        //             'features': [feature]
+        //         });
+        //     }
+        // });
+        // map.on('contextmenu', () => {
+        //     // Remove the highlight layer by clearing its source data
+        //     if (map.getLayer('highlight-layer')) {
+        //         map.getSource('highlight-layer').setData({
+        //             'type': 'FeatureCollection',
+        //             'features': []  // Clear the data to remove the highlight
+        //         });
+        //     }
+
+        //     // Remove the current popup (if any) from the map
+        //     if (currentPopup) {
+        //         currentPopup.remove();
+        //         currentPopup = null; // Reset the currentPopup variable
+        //     }
+        // });
+
+
+    </script>
+</body>
+
+</html>
