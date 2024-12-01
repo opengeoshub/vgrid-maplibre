@@ -125,8 +125,6 @@ var faceXYZToUV = function(face,xyz) {
 };
 
 
-
-
 S2.XYZToFaceUV = function(xyz) {
   var face = largestAbsComponent(xyz);
 
@@ -219,10 +217,6 @@ var rotateAndFlipQuadrant = function(n, point, rx, ry)
 	}
 
 }
-
-
-
-
 
 // hilbert space-filling curve
 // based on http://blog.notdot.net/2009/11/Damn-Cool-Algorithms-Spatial-indexing-with-Quadtrees-and-Hilbert-Curves

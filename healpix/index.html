@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S2 Grid</title>
+    <title>Healpix Grid</title>
     <!-- MapLibre GL CSS -->
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.css" />
     <style>
@@ -24,12 +24,13 @@
 
     <!-- Map container -->
     <div id="map"></div>
-    <!-- S2Grid.js -->
-    <script src="./ss-geometry.js"></script>
+    <!-- HealpixGrid.js -->
+    <!-- <script src="./healpix.js"></script> -->
+    <script src="https://unpkg.com/@hscmap/healpix@latest/standalone/dist/healpix.js"></script>
     <script src="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.js"></script>
     <script type="module">
-        // import S2Grid from "https://unpkg.com/vgridjs@latest/S2/S2Grid.js";
-        import S2Grid from "https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/S2/S2Grid.js";
+        // import HealpixGrid from "https://unpkg.com/vgridjs@latest/Healpix/HealpixGrid.js";
+        // import HealpixGrid from "https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/Healpix/HealpixGrid.js";
 
         // Initialize the map and grid
         const config = {
@@ -50,20 +51,21 @@
 
         map.on('load', () => {
             try {
-                const S2_grid = new S2Grid(map, {
-                    color: 'rgba(255, 0, 0)', // Grid color
-                    redraw: 'move', // Redraw grid on map movement
-                });
+                console.log(healpix.order2nside(0));
+                // const Healpix_grid = new HealpixGrid(map, {
+                //     color: 'rgba(255, 0, 0)', // Grid color
+                //     redraw: 'move', // Redraw grid on map movement
+                // });
                 // map.setProjection({"type": "globe"}); 
-                console.log('S2 Grid added successfully.');
+                console.log('Healpix Grid added successfully.');
             } catch (error) {
-                console.error('Failed to add S2 Grid:', error);
+                console.error('Failed to add Healpix Grid:', error);
             }
         });
 
         // map.on('click', (e) => {
         //     const features = map.queryRenderedFeatures(e.point, {
-        //         layers: ['S2-grid-layer']  // This should match the layer name where hexagons are rendered
+        //         layers: ['Healpix-grid-layer']  // This should match the layer name where hexagons are rendered
         //     });
 
         //     if (features.length) {
