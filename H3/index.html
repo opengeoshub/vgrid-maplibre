@@ -29,8 +29,9 @@
     <script src="https://unpkg.com/h3-js@4.1.0/dist/h3-js.umd.js"></script>
 
     <script src="./maplibre-gl.js"></script>
-    <script src="./H3Grid.js"></script>
-    <script>
+    <script type="module">
+        import H3Grid from 'https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/H3/H3Grid.js';
+
         // import { geoToH3 } from 'h3-js';
 
         // Initialize the map and grid
@@ -54,7 +55,6 @@
             map.addSource('icosahedron', {
                 type: 'geojson',
                 // Fetch GeoJSON from the URL
-                // data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/H3/icosahedron_polygon.geojson'
                 data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/H3/icosahedron.geojson'
 
             });
@@ -78,12 +78,16 @@
 
         // Initialize the map and add the GeoJSON layer
         map.on('load', () => {
-            renderHexes(map); // Your existing hex rendering function
+             renderHexes(map); // Your existing hex rendering function
+            // const h3grid = new H3Grid(map, { 
+            //         color: 'rgba(255, 0, 0, 0.5)', // Grid color
+            //         redraw: 'move', // Redraw grid on map movement
+            //     });
             addIcosaLayer(); // Add Icosahedron Layer
             // map.setProjection({"type": "globe"});             
         });
 
-        // Function to render the hexagons when map is loaded or zoomed
+        // // Function to render the hexagons when map is loaded or zoomed
         map.on('zoomend', () => renderHexes(map));
         map.on('dragend', () => renderHexes(map));
         map.on('resize', () => renderHexes(map));
