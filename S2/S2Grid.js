@@ -73,7 +73,7 @@ class S2Grid {
       }
     }
 
-    return cells.map((cell) => {
+    geojson_feaures= cells.map((cell) => {
       const vertices = this.getCellVertices(cell);
       return {
         type: 'Feature',
@@ -86,6 +86,8 @@ class S2Grid {
         },
       };
     });
+    console.log(geojson_feaures)
+    return geojson_feaures
   }
 
   /**
