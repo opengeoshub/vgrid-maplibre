@@ -72,7 +72,7 @@ class S2Grid {
         cells.push(cell);
       }
     }
-
+    console.log(cells)
     const geojson_features= cells.map((cell) => {
       const vertices = this.getCellVertices(cell);
       return {
