@@ -1,8 +1,8 @@
 {
   "name": "vgridjs",
   "type": "module",
-  "version": "1.0.14",
-  "description": "Visualize DGGS in Maplibre GL JS Map",
+  "version": "1.0.15",
+  "description": "DGGS Visualization for MapLibre GL JS",
   "main": "index.js",
   "exports": {
     ".": "./index.js",
@@ -20,17 +20,18 @@
   },
   "keywords": [
     "DGGS",
+    "Rhealpix",
+    "Eaggr",
+    "ISEA4T",
     "OpenLocationCode",
     "OLC",
-    "Pluscode",
-    "Plus",
-    "Codes",
+    "Plus code",
     "MGRS",
     "Geohash",
     "GEOREF",
     "S2",
     "H3",
-    "Vcode",
+    "Tilecode",
     "Maidenhead",
     "GARS"
   ],
