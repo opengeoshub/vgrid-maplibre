@@ -10,7 +10,7 @@
 
 ## OLC (OpenLocationCode/ Pluscode) (In progress)	
 
-## Geohash (Done) (In progress)	
+## Geohash (Done)
  
 ## GEOREF (In progress)	
 
