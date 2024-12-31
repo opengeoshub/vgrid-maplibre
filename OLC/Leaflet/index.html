@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="Description" content="">
+  <title>Open Location Code Example</title>
+  <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script type="text/javascript" src="olc.js"></script>
+  <script type="text/javascript" src="index.js"></script>
+  <link href='index.css' rel='stylesheet' type='text/css'>
+</head>
+<body>
+  <div id="map-canvas" class="map_frame" style="height: 100%; width: 100%;"></div>
+
+  <script type="text/javascript">
+    var map;
+    var olcGrids = [];
+    var clickMarker = null;
+    var clickLatLng = null;
+
+    // Handle clicks on the map
+    function mapClickHandler(event) {
+      clickLatLng = event.latlng;
+      describeCode(8); // For example, generate OLC with 8-character length
+    }
+
+    // Draw the grid and display the current OLC code
+    function describeCode(codeLen) {
+      var olcCode = OpenLocationCode.encode(clickLatLng.lat, clickLatLng.lng, codeLen);
+      
+      // Create the popup content
+      var popupContent = 'OLC: ' + olcCode ;
+
+      // Create the Leaflet popup at the clicked location
+      var popup = L.popup()
+        .setLatLng(clickLatLng)  // Position the popup where the user clicked
+        .setContent(popupContent)  // Set the popup content
+        .openOn(map);  // Open the popup
+
+      // Draw the OLC area grid on the map
+      var codeArea = OpenLocationCode.decode(olcCode);
+      var bounds = [
+        [codeArea.latitudeLo, codeArea.longitudeLo],
+        [codeArea.latitudeHi, codeArea.longitudeHi]
+      ];
+
+      // Remove previous OLC grid if any
+      clearOlcGrids();
+
+      // Add the new OLC grid rectangle to the map
+      var rectangle = L.rectangle(bounds, {
+        color: "#e51c23",
+        weight: 2,
+        fillColor: "#e51c23",
+        fillOpacity: 0.3
+      }).addTo(map);
+      olcGrids.push(rectangle);
+    }
+
+    // Clear previous OLC grids
+    function clearOlcGrids() {
+      for (var i = 0; i < olcGrids.length; i++) {
+        olcGrids[i].remove();
+      }
+      olcGrids = [];
+    }
+
+    // Initialize map when page is loaded
+    window.onload = function() {
+      map = L.map('map-canvas').setView([47.365561, 8.52494], 1);
+
+      // Add OpenStreetMap tile layer
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      map.on('click', mapClickHandler);
+    };
+  </script>
+</body>
+</html>
