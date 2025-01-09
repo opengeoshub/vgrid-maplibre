@@ -9,3 +9,6 @@ export { default as MGRSGrid } from './MGRS/MGRSGrid';
 
 // H3 Grid Export
 export { default as H3Grid } from './H3/H3Grid';
+
+// S2 Grid Export
+export { default as S2Grid } from './S2/S2Grid';

@@ -1,7 +1,7 @@
 {
   "name": "vgridjs",
   "type": "module",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "DGGS Visualization for MapLibre GL JS",
   "main": "index.js",
   "exports": {
@@ -9,7 +9,9 @@
     "./Geohash/GeohashGrid": "./Geohash/GeohashGrid.js",
     "./Maidenhead/MaidenheadGrid": "./Maidenhead/MaidenheadGrid.js",
     "./MGRS/MGRSGrid": "./MGRS/MGRSGrid.js",
-    "./H3/H3Grid": "./H3/H3Grid.js"
+    "./H3/H3Grid": "./H3/H3Grid.js",
+    "./S2/S2Grid": "./S2/S2Grid.js"
+
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
