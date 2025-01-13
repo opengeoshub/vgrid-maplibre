@@ -1,139 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S2 Grid</title>
-    <!-- MapLibre GL CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.css" />
+    <title>S2 Cell Token Generator</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+            padding: 20px;
         }
-
-        #map {
-            width: 100%;
-            height: 100vh;
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
         }
     </style>
 </head>
-
 <body>
 
-    <!-- Map container -->
-    <div id="map"></div>
-    <!-- S2Grid.js -->
-    <script src="./s2geometry.js"></script>
-    <script src="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.js"></script>
-    <script type="module">
-        // import S2Grid from "https://unpkg.com/vgridjs@latest/S2/S2Grid.js";
-        import S2Grid from "https://unpkg.com/vgridjs@latest/S2/S2Grid.js";
+    <h1>Generate S2 Cell Token</h1>
+    <p>Enter latitude, longitude, and resolution to get the S2 Cell Token.</p>
 
-        // import S2Grid from "https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/S2/S2Grid.js";
+    <label for="latitude">Latitude:</label>
+    <input type="text" id="latitude" value="37.7749">
+    <br><br>
 
-        // Initialize the map and grid
-        const config = {
-            lng: 106.706585,
-            lat: 10.775326,
-            zoom: 0
-        };
-        let currentPopup = null;
+    <label for="longitude">Longitude:</label>
+    <input type="text" id="longitude" value="-122.4194">
+    <br><br>
 
-        const map = new maplibregl.Map({
-            container: 'map', // The ID of the HTML element where MapLibre will render
-            center: [config.lng, config.lat],
-            zoom: config.zoom,
-            // style: 'https://demotiles.maplibre.org/style.json' // Default MapLibre style
-            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
-            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
-        });
+    <label for="resolution">Resolution:</label>
+    <input type="number" id="resolution" value="11" min="0" max="30">
+    <br><br>
 
-        map.on('load', () => {
-            try {
-                const s2_grid = new S2Grid(map, {
-                    color: 'rgba(255, 0, 0)', // Grid color
-                    redraw: 'move', // Redraw grid on map movement
-                });
-                // map.setProjection({"type": "globe"}); 
-                console.log('S2 Grid added successfully.');
-            } catch (error) {
-                console.error('Failed to add S2 Grid:', error);
-            }
-        });
+    <button onclick="generateCellToken()">Generate Cell Token</button>
 
-        // map.on('click', (e) => {
-        //     const features = map.queryRenderedFeatures(e.point, {
-        //         layers: ['S2-grid-layer']  // This should match the layer name where hexagons are rendered
-        //     });
+    <div id="result">
+        <h3>S2 Cell Token:</h3>
+        <p id="cellToken">N/A</p>
+    </div>
 
-        //     if (features.length) {
-        //         const feature = features[0];  // Select the first feature if there are multiple
+    <script src=".\S2Grid.js"></script>
+    <script>
+        // This function will call the getS2CellToken method from S2Grid.js
+        async function generateCellToken() {
+    const lat = parseFloat(document.getElementById('latitude').value);
+    const lon = parseFloat(document.getElementById('longitude').value);
+    const res = parseInt(document.getElementById('resolution').value);
 
-        //         // Create a popup with the feature properties
-        //         const popupContent = `
-        //     <strong>Hex ID: </strong> ${feature.properties.cellId} <br>
-        //     <strong>Precision: </strong> ${feature.properties.precision} <br>
-        //     <strong>Icosa Faces: </strong> ${feature.properties.icosa_faces} <br>
-        //     <strong>Area (${feature.properties.area_unit}): </strong> ${feature.properties.area}  <br>
-        //     <strong>Avg Area (${feature.properties.area_unit}): </strong> ${feature.properties.avg_area} <br>
-        //     <strong>Avg Edge Length (${feature.properties.edge_unit}): </strong>${feature.properties.avg_edge_len} <br>
-        //     <strong>Total Cells: </strong> ${feature.properties.num_hex}<br>
-        //     `;
+    // Log the input values for debugging
+    console.log("Latitude:", lat, "Longitude:", lon, "Resolution:", res);
 
-        //         // Create a popup and set its coordinates
-        //         const popup = new maplibregl.Popup()
-        //             .setLngLat(e.lngLat)  // Position the popup at the clicked location
-        //             .setHTML(popupContent) // Set the HTML content for the popup
-        //             .addTo(map);  // Add the popup to the map
+    try {
+        // Call the function from S2Grid.js to get the cell token
+        const cellToken = await getS2CellToken(lat, lon, res);
 
-        //         currentPopup = popup;
+        // Check if the API response is correct
+        if (cellToken && cellToken.s2) {
+            // Extract the S2 cell token from the response
+            const s2Token = cellToken.s2;
 
-        //         // Add a highlight layer if it doesn't exist yet
-        //         if (!map.getLayer('highlight-layer')) {
-        //             map.addLayer({
-        //                 'id': 'highlight-layer',
-        //                 'type': 'fill',
-        //                 'source': {
-        //                     'type': 'geojson',
-        //                     'data': {
-        //                         'type': 'FeatureCollection',
-        //                         'features': []
-        //                     }
-        //                 },
-        //                 'paint': {
-        //                     'fill-color': '#FF0000', // Red color for highlight
-        //                     'fill-opacity': 0.2,  // Set transparency of the highlight
-        //                 }
-        //             });
-        //         }
+            // Log the result for debugging
+            console.log("S2 Cell Token:", s2Token);
 
-        //         // Update the source of the highlight layer with the clicked feature's geometry
-        //         map.getSource('highlight-layer').setData({
-        //             'type': 'FeatureCollection',
-        //             'features': [feature]
-        //         });
-        //     }
-        // });
-        // map.on('contextmenu', () => {
-        //     // Remove the highlight layer by clearing its source data
-        //     if (map.getLayer('highlight-layer')) {
-        //         map.getSource('highlight-layer').setData({
-        //             'type': 'FeatureCollection',
-        //             'features': []  // Clear the data to remove the highlight
-        //         });
-        //     }
-
-        //     // Remove the current popup (if any) from the map
-        //     if (currentPopup) {
-        //         currentPopup.remove();
-        //         currentPopup = null; // Reset the currentPopup variable
-        //     }
-        // });
-
+            // Update the result on the page
+            const resultElement = document.getElementById('cellToken');
+            resultElement.textContent = s2Token;
+        } else {
+            throw new Error('API response does not contain the expected field "s2".');
+        }
+    } catch (error) {
+        // Log the error if any
+        console.error('Error in generating token:', error);
+        const resultElement = document.getElementById('cellToken');
+        resultElement.textContent = 'Error generating token';
+    }
+}
 
     </script>
-</body>
 
+</body>
 </html>

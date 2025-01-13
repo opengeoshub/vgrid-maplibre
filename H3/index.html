@@ -80,7 +80,7 @@
                     redraw: 'move', // Redraw grid on map movement
                 });
                 addIcosaLayer();
-                map.setProjection({"type": "globe"}); 
+                // map.setProjection({"type": "globe"}); 
                 console.log('H3 Grid added successfully.');
             } catch (error) {
                 console.error('Failed to add H3 Grid:', error);
@@ -101,8 +101,7 @@
             <strong>Precision: </strong> ${feature.properties.precision} <br>
             <strong>Icosa Faces: </strong> ${feature.properties.icosa_faces} <br>
             <strong>Area (${feature.properties.area_unit}): </strong> ${feature.properties.area}  <br>
-            <strong>Avg Area (${feature.properties.area_unit}): </strong> ${feature.properties.avg_area} <br>
-            <strong>Avg Edge Length (${feature.properties.edge_unit}): </strong>${feature.properties.avg_edge_len} <br>
+            <strong>Edge Length (${feature.properties.edge_unit}): </strong>${feature.properties.edge_len} <br>
             <strong>Total Cells: </strong> ${feature.properties.num_hex}<br>
             `;
 
