@@ -137,7 +137,7 @@ class H3Grid {
     
         const icosa_faces = h3.getIcosahedronFaces(cellId);
     
-        const edge_len = h3.edgeLength(cellId,edge_unit);
+        // const edge_len = h3.edgeLength(cellId,edge_unit);
         let  avg_edge_len = h3.getHexagonEdgeLengthAvg(h3res, edge_unit);
         avg_edge_len = parseFloat(avg_edge_len.toFixed(1)).toLocaleString();
     
@@ -160,7 +160,7 @@ class H3Grid {
             "area": area,
             // "avg_area": avg_area,
             // "area_unit": area_unit,
-             "edge_len": edge_len,
+             "avg_edge_len": avg_edge_len,
             // "avg_edge_len": avg_edge_len,
             // "edge_unit": edge_unit,
             "num_hex": num_hex
