@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H3 Grid</title>
+    <title>A5 Grid</title>
     <!-- MapLibre GL CSS -->
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.css" />
     <style>
@@ -24,12 +24,11 @@
 
     <!-- Map container -->
     <div id="map"></div>
-    <!-- H3Grid.js -->
-    <script src="https://unpkg.com/h3-js@4.1.0/dist/h3-js.umd.js"></script>
+    <!-- A5Grid.js -->
+    <script src="https://unpkg.com/a5-js@0.0.3/dist/a5.umd.js"></script>
     <script src="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.js"></script>
     <script type="module">
-        import H3Grid from "https://unpkg.com/vgridjs@latest/H3/H3Grid.js";
-        // import H3Grid from "https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/H3/H3Grid.js";
+        import A5Grid from "https://unpkg.com/vgridjs@latest/A5/A5Grid.js";
 
         // Initialize the map and grid
         const config = {
@@ -43,77 +42,65 @@
             container: 'map', // The ID of the HTML element where MapLibre will render
             center: [config.lng, config.lat],
             zoom: config.zoom,
-            // style: 'https://demotiles.maplibre.org/style.json' // Default MapLibre style
             style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
-            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
         });
 
         function addIcosaLayer() {
             map.addSource('icosahedron', {
                 type: 'geojson',
-                // Fetch GeoJSON from the URL
-                data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/H3/icosahedron.geojson'
-
+                data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/A5/icosahedron.geojson'
             });
 
             // Add the layer to display the GeoJSON features
             map.addLayer({
                 id: 'icosahedron-layer',
                 type: 'line',
-                // type: 'fill',  
-                source: 'icosahedron',  // The source we added above
+                source: 'icosahedron',
                 paint: {
-                    'line-color': '#008000',  // Line color (if using 'line' layer)
-                    'line-width': 1,       // Line width
-                    'line-dasharray': [2, 4, 1, 4]  // Dash-dot pattern: [dash length, gap length, dash length, gap length]
-                    // 'fill-color': '#008000',         // Fill color
-                    // 'fill-opacity': 0.3,             // Transparency
-                    // 'fill-outline-color': '#000000'  // Border/Outline color
+                    'line-color': '#008000',
+                    'line-width': 1,
+                    'line-dasharray': [2, 4, 1, 4]
                 }
             });
         }
 
         map.on('load', () => {
             try {
-                const h3_grid = new H3Grid(map, {
+                const a5_grid = new A5Grid(map, {
                     color: 'rgba(255, 0, 0)', // Grid color
                     redraw: 'move', // Redraw grid on map movement
                 });
                 addIcosaLayer();
-                // map.setProjection({"type": "globe"}); 
-                console.log('H3 Grid added successfully.');
+                console.log('A5 Grid added successfully.');
             } catch (error) {
-                console.error('Failed to add H3 Grid:', error);
+                console.error('Failed to add A5 Grid:', error);
             }
         });
 
         map.on('click', (e) => {
             const features = map.queryRenderedFeatures(e.point, {
-                layers: ['h3-grid-layer']  // This should match the layer name where hexagons are rendered
+                layers: ['a5-grid-layer']
             });
 
             if (features.length) {
                 const feature = features[0];  // Select the first feature if there are multiple
 
-                // Create a popup with the feature properties
                 const popupContent = `
-            <strong>H3 ID: </strong> ${feature.properties.cellId} <br>
-            <strong>Resolution: </strong> ${feature.properties.resolution} <br>
-            <strong>Icosa Faces: </strong> ${feature.properties.icosa_faces} <br>
-            <strong>Area (${feature.properties.area_unit}): </strong> ${feature.properties.area}  <br>
-            <strong>Edge Length (${feature.properties.edge_unit}): </strong>${feature.properties.avg_edge_len} <br>
-            <strong>Total Cells: </strong> ${feature.properties.num_hex}<br>
-            `;
+                    <strong>A5 ID: </strong> ${feature.properties.cellId} <br>
+                    <strong>Resolution: </strong> ${feature.properties.resolution} <br>
+                    <strong>Icosa Faces: </strong> ${feature.properties.icosa_faces} <br>
+                    <strong>Area (${feature.properties.area_unit}): </strong> ${feature.properties.area}  <br>
+                    <strong>Edge Length (${feature.properties.edge_unit}): </strong>${feature.properties.avg_edge_len} <br>
+                    <strong>Total Cells: </strong> ${feature.properties.num_hex}<br>
+                `;
 
-                // Create a popup and set its coordinates
                 const popup = new maplibregl.Popup()
-                    .setLngLat(e.lngLat)  // Position the popup at the clicked location
-                    .setHTML(popupContent) // Set the HTML content for the popup
-                    .addTo(map);  // Add the popup to the map
+                    .setLngLat(e.lngLat)
+                    .setHTML(popupContent)
+                    .addTo(map);
 
                 currentPopup = popup;
 
-                // Add a highlight layer if it doesn't exist yet
                 if (!map.getLayer('highlight-layer')) {
                     map.addLayer({
                         'id': 'highlight-layer',
@@ -126,36 +113,32 @@
                             }
                         },
                         'paint': {
-                            'fill-color': '#FF0000', // Red color for highlight
-                            'fill-opacity': 0.2,  // Set transparency of the highlight
+                            'fill-color': '#FF0000',
+                            'fill-opacity': 0.2,
                         }
                     });
                 }
 
-                // Update the source of the highlight layer with the clicked feature's geometry
                 map.getSource('highlight-layer').setData({
                     'type': 'FeatureCollection',
                     'features': [feature]
                 });
             }
         });
+
         map.on('contextmenu', () => {
-            // Remove the highlight layer by clearing its source data
             if (map.getLayer('highlight-layer')) {
                 map.getSource('highlight-layer').setData({
                     'type': 'FeatureCollection',
-                    'features': []  // Clear the data to remove the highlight
+                    'features': []
                 });
             }
 
-            // Remove the current popup (if any) from the map
             if (currentPopup) {
                 currentPopup.remove();
-                currentPopup = null; // Reset the currentPopup variable
+                currentPopup = null;
             }
         });
-
-
     </script>
 </body>
 

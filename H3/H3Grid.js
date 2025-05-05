@@ -130,9 +130,9 @@ class H3Grid {
         if (boundary.find((e) => e[0] < -128) !== undefined) {
           boundary = boundary.map((e) => e[0] > 0 ? [e[0] - 360, e[1]] : e);
         }
-        const precision = h3.getResolution(cellId);
-        const edge_unit = precision > 7 ? h3.UNITS.m : h3.UNITS.km;
-        const area_unit = precision > 7 ? h3.UNITS.m2 : h3.UNITS.km2;
+        const resolution = h3.getResolution(cellId);
+        const edge_unit = resolution > 7 ? h3.UNITS.m : h3.UNITS.km;
+        const area_unit = resolution > 7 ? h3.UNITS.m2 : h3.UNITS.km2;
     
     
         const icosa_faces = h3.getIcosahedronFaces(cellId);
@@ -155,14 +155,14 @@ class H3Grid {
           "properties": {
             "color": h3.isPentagon(cellId) ? 'red' : 'blue',
             "cellId": cellId, // Include the cell ID as a property
-            "precision": precision,
+            "resolution": resolution,
             "icosa_faces": icosa_faces,
             "area": area,
             // "avg_area": avg_area,
-            // "area_unit": area_unit,
+            "area_unit": area_unit,
              "avg_edge_len": avg_edge_len,
             // "avg_edge_len": avg_edge_len,
-            // "edge_unit": edge_unit,
+            "edge_unit": edge_unit,
             "num_hex": num_hex
           },
           "geometry": {
