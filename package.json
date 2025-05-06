@@ -1,7 +1,7 @@
 {
   "name": "vgridjs",
   "type": "module",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "DGGS Visualization for MapLibre GL JS",
   "main": "index.js",
   "exports": {
@@ -10,8 +10,8 @@
     "./Maidenhead/MaidenheadGrid": "./Maidenhead/MaidenheadGrid.js",
     "./MGRS/MGRSGrid": "./MGRS/MGRSGrid.js",
     "./H3/H3Grid": "./H3/H3Grid.js",
-    "./S2/S2Grid": "./S2/S2Grid.js"
-
+    "./S2/S2Grid": "./S2/S2Grid.js",
+    "./A5/A5Grid": "./A5/A5Grid.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -44,6 +44,7 @@
   },
   "homepage": "https://github.com/thangqd/vgridjs#readme",
   "dependencies": {
+    "a5-js": "^0.0.3",
     "d3": "^7.9.0",
     "maplibre-gl": "^4.7.1",
     "s2-geometry": "^1.2.10"

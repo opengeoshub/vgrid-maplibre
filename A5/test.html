@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>A5 Dodecahedron Demo</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/a5-js/dist/a5.umd.js"></script>
+    <script>
+        function degToRad(deg) {
+            return deg * (Math.PI / 180);
+        }
+
+        function radToDeg(rad) {
+            return rad * (180 / Math.PI);
+        }
+
+        function toCartesian([theta, phi]) {
+            const x = Math.sin(phi) * Math.cos(theta);
+            const y = Math.sin(phi) * Math.sin(theta);
+            const z = Math.cos(phi);
+            return [x, y, z];
+        }
+
+        function fromLonLat([longitude, latitude]) {
+            // Convert to radians
+            const theta = degToRad(longitude);
+            // Convert latitude to colatitude (90° - lat)
+            const phi = degToRad(90 - latitude);
+            return [theta, phi];
+        }
+
+        // Initialize Three.js scene
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Add lights
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(1, 1, 1);
+        scene.add(directionalLight);
+
+        // Create dodecahedron group
+        const dodecahedron = new THREE.Group();
+        scene.add(dodecahedron);
+
+        // Add faces with shaded material
+        const material = new THREE.MeshPhongMaterial({
+            color: 0x00ff00,
+            specular: 0x111111,
+            shininess: 30,
+            side: THREE.DoubleSide
+        });
+        let currentResolution = 1;
+
+        function generateWireframe(resolution) {
+            let cells = [];
+            let baseCells = 1;
+            let stamp = 0n;
+            
+            if (resolution === 1) {
+                baseCells = 12;
+                stamp = 0b10n << 56n;
+            } else {
+                baseCells = 60;
+                stamp = 0b01n << 56n;
+            }
+
+            for (let i = 0; i < baseCells; i++) {
+                const segment = BigInt(i) << 58n;
+                const index = segment | stamp;
+                if (resolution < 3) {
+                    cells.push(A5.cellToBoundary(index));
+                } else {
+                    const children = A5.cellToChildren(index, resolution);
+                    cells = cells.concat(children.map(child => A5.cellToBoundary(child)));
+                }
+            }
+            return cells;
+        }
+
+        function createDodecahedron(resolution) {
+            // Clear existing meshes
+            while (dodecahedron.children.length > 0) {
+                dodecahedron.remove(dodecahedron.children[0]);
+            }
+
+            const wireframeCells = generateWireframe(resolution);
+            wireframeCells.forEach(cell => {
+                const points = cell.map(([lon, lat]) => {
+                    const [theta, phi] = fromLonLat([lon, lat]);
+                    const [x, y, z] = toCartesian([theta, phi]);
+                    return new THREE.Vector3(x, y, z);
+                });
+                
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(points.flatMap(p => [p.x, p.y, p.z]));
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                
+                // Create faces for the pentagon
+                const indices = [];
+                for (let i = 1; i < points.length - 1; i++) {
+                    indices.push(0, i, i + 1);
+                }
+                geometry.setIndex(indices);
+                geometry.computeVertexNormals();
+                
+                const mesh = new THREE.Mesh(geometry, material);
+                dodecahedron.add(mesh);
+            });
+        }
+
+        // Create initial dodecahedron
+        createDodecahedron(currentResolution);
+
+        // Position camera
+        camera.position.z = 3;
+
+        let lastResolutionChange = Date.now();
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Check if 5 seconds have passed
+            const now = Date.now();
+            if (now - lastResolutionChange >= 3000) {
+                currentResolution = (currentResolution % 4) + 1;
+                createDodecahedron(currentResolution);
+                lastResolutionChange = now;
+            }
+            
+            // Rotate the dodecahedron
+            dodecahedron.rotation.y += 0.003;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html> 

@@ -25,15 +25,18 @@
     <!-- Map container -->
     <div id="map"></div>
     <!-- A5Grid.js -->
-    <script src="https://unpkg.com/a5-js@0.0.3/dist/a5.umd.js"></script>
+    <script src="https://unpkg.com/a5-js/dist/a5.umd.js"></script>
     <script src="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.js"></script>
     <script type="module">
-        import A5Grid from "https://unpkg.com/vgridjs@latest/A5/A5Grid.js";
+        // import A5Grid from "https://unpkg.com/vgridjs@latest/A5/A5Grid.js";
+        import A5Grid from "./A5Grid.js";
 
         // Initialize the map and grid
         const config = {
-            lng: 106.706585,
-            lat: 10.775326,
+            // lng: 106.706585,
+            // lat: 10.775326,
+            lng: 0,
+            lat: 0,
             zoom: 0
         };
         let currentPopup = null;
@@ -45,100 +48,81 @@
             style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
         });
 
-        function addIcosaLayer() {
-            map.addSource('icosahedron', {
-                type: 'geojson',
-                data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/A5/icosahedron.geojson'
-            });
-
-            // Add the layer to display the GeoJSON features
-            map.addLayer({
-                id: 'icosahedron-layer',
-                type: 'line',
-                source: 'icosahedron',
-                paint: {
-                    'line-color': '#008000',
-                    'line-width': 1,
-                    'line-dasharray': [2, 4, 1, 4]
-                }
-            });
-        }
-
         map.on('load', () => {
             try {
+                map.setProjection({ "type": "globe" });
                 const a5_grid = new A5Grid(map, {
                     color: 'rgba(255, 0, 0)', // Grid color
+                    lineWidth: 10, 
                     redraw: 'move', // Redraw grid on map movement
                 });
-                addIcosaLayer();
                 console.log('A5 Grid added successfully.');
             } catch (error) {
                 console.error('Failed to add A5 Grid:', error);
             }
         });
 
-        map.on('click', (e) => {
-            const features = map.queryRenderedFeatures(e.point, {
-                layers: ['a5-grid-layer']
-            });
+        // map.on('click', (e) => {
+        //     const features = map.queryRenderedFeatures(e.point, {
+        //         layers: ['a5-grid-layer']
+        //     });
 
-            if (features.length) {
-                const feature = features[0];  // Select the first feature if there are multiple
+        //     if (features.length) {
+        //         const feature = features[0];  // Select the first feature if there are multiple
 
-                const popupContent = `
-                    <strong>A5 ID: </strong> ${feature.properties.cellId} <br>
-                    <strong>Resolution: </strong> ${feature.properties.resolution} <br>
-                    <strong>Icosa Faces: </strong> ${feature.properties.icosa_faces} <br>
-                    <strong>Area (${feature.properties.area_unit}): </strong> ${feature.properties.area}  <br>
-                    <strong>Edge Length (${feature.properties.edge_unit}): </strong>${feature.properties.avg_edge_len} <br>
-                    <strong>Total Cells: </strong> ${feature.properties.num_hex}<br>
-                `;
+        //         // const popupContent = `
+        //         //     <strong>A5 ID: </strong> ${feature.properties.cellId} <br>
+        //         //     <strong>Resolution: </strong> ${feature.properties.resolution} <br>
+        //         //     <strong>Area (${feature.properties.area_unit}): </strong> ${feature.properties.area}  <br>
+        //         //     <strong>Edge Length (${feature.properties.edge_unit}): </strong>${feature.properties.avg_edge_len} <br>
+        //         //     <strong>Total Cells: </strong> ${feature.properties.num_hex}<br>
+        //         // `;
 
-                const popup = new maplibregl.Popup()
-                    .setLngLat(e.lngLat)
-                    .setHTML(popupContent)
-                    .addTo(map);
+        //         // const popup = new maplibregl.Popup()
+        //         //     .setLngLat(e.lngLat)
+        //         //     .setHTML(popupContent)
+        //         //     .addTo(map);
 
-                currentPopup = popup;
+        //         // currentPopup = popup;
 
-                if (!map.getLayer('highlight-layer')) {
-                    map.addLayer({
-                        'id': 'highlight-layer',
-                        'type': 'fill',
-                        'source': {
-                            'type': 'geojson',
-                            'data': {
-                                'type': 'FeatureCollection',
-                                'features': []
-                            }
-                        },
-                        'paint': {
-                            'fill-color': '#FF0000',
-                            'fill-opacity': 0.2,
-                        }
-                    });
-                }
+        //         if (!map.getLayer('highlight-layer')) {
+        //             map.addLayer({
+        //                 'id': 'highlight-layer',
+        //                 'type': 'fill',
+        //                 'source': {
+        //                     'type': 'geojson',
+        //                     'data': {
+        //                         'type': 'FeatureCollection',
+        //                         'features': []
+        //                     }
+        //                 },
+        //                 'paint': {
+        //                     'fill-color': '#FF0000',
+        //                     'fill-opacity': 0.2,
+        //                 }
+        //             });
+        //         }
 
-                map.getSource('highlight-layer').setData({
-                    'type': 'FeatureCollection',
-                    'features': [feature]
-                });
-            }
-        });
+        //         map.getSource('highlight-layer').setData({
+        //             'type': 'FeatureCollection',
+        //             'features': [feature]
+        //         });
+        //     }
+        // });
 
-        map.on('contextmenu', () => {
-            if (map.getLayer('highlight-layer')) {
-                map.getSource('highlight-layer').setData({
-                    'type': 'FeatureCollection',
-                    'features': []
-                });
-            }
+        // map.on('contextmenu', () => {
+        //     if (map.getLayer('highlight-layer')) {
+        //         map.getSource('highlight-layer').setData({
+        //             'type': 'FeatureCollection',
+        //             'features': []
+        //         });
+        //     }
 
-            if (currentPopup) {
-                currentPopup.remove();
-                currentPopup = null;
-            }
-        });
+        //     if (currentPopup) {
+        //         currentPopup.remove();
+        //         currentPopup = null;
+        //     }
+        // });
     </script>
 </body>
 
