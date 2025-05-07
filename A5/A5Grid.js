@@ -1,3 +1,4 @@
+//  Reference: https://a5geo.org/
 class A5Grid {
   constructor(map, options = {}) {
     this.map = map;

@@ -40,7 +40,8 @@
     });
     map.on('load', () => {
       try {
-        const geohashGrid = new GeohashGrid(map, {
+          // map.setProjection({ "type": "globe" });
+          const geohashGrid = new GeohashGrid(map, {
           color: 'rgba(255, 0, 0)', // Grid color
           redraw: 'move', // Redraw grid on map movement
         });

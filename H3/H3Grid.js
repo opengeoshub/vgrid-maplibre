@@ -1,3 +1,4 @@
+// Reference: https://github.com/uber/h3-js
 class H3Grid {
     constructor(map, options = {}) {
       this.map = map;

@@ -1,3 +1,4 @@
+//  Reference: https://s2js.org/classes/s2js.s2.Polygon.html
 import {s1, s2, geojson} from 'https://esm.sh/s2js'
 
 class S2Grid {
