@@ -47,7 +47,8 @@
     "a5-js": "^0.0.3",
     "d3": "^7.9.0",
     "maplibre-gl": "^4.7.1",
-    "s2-geometry": "^1.2.10"
+    "s2-geometry": "^1.2.10",
+    "s2js": "^1.43.6"
   },
   "devDependencies": {
     "jest": "^29.7.0"

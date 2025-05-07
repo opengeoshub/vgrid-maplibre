@@ -1,43 +1,113 @@
-// S2Grid.js
+import {s1, s2, geojson} from 'https://esm.sh/s2js'
 
-// Function to get the S2 Cell Token from the API
-async function getS2CellToken(lat, lon, res) {
-  // Construct the API URL with query parameters
-  const url = `https://vgridapi2.sovereignsolutions.app/api/latlon2s2?latlonres=${lat},${lon},${res}`;
-
-  try {
-      // Make the API request using fetch
-      const response = await fetch(url);
-      
-      // If the response isn't successful, throw an error
-      if (!response.ok) {
-          throw new Error('Network response was not ok');
-      }
-
-      // Parse the JSON response
-      const data = await response.json();
-      
-      // Assuming the response contains a field 'cell_token' with the token value
-      const cellToken = data.cell_token;
-
-      console.log('S2 Cell Token:', cellToken);
-      return cellToken;
-  } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
-      return null;  // Return null in case of an error
+class S2Grid {
+  constructor(map, options = {}) {
+    this.map = map;
+    this.options = {
+      redraw: options.redraw || 'move',
+      color: options.color || 'rgba(0, 0, 255, 1)',
+    };
+    this.sourceId = 's2-grid';
+    this.gridLayerId = 's2-grid-layer';
+    this.initialize();
   }
+
+  initialize() {
+    this.map.addSource(this.sourceId, {
+      type: 'geojson',
+      data: this.generateGrid(),
+    });
+
+    this.map.addLayer({
+      id: this.gridLayerId,
+      source: this.sourceId,
+      type: 'fill',
+      layout: {},
+      paint: {
+        'fill-color': 'transparent',
+        'fill-opacity': 1,
+        'fill-outline-color': ['get', 'color']
+      }
+    });
+
+    this.map.on(this.options.redraw, () => this.updateGrid());
+  }
+
+  updateGrid() {
+    const newGrid = this.generateGrid();
+    const source = this.map.getSource(this.sourceId);
+    if (source) {
+      source.setData(newGrid);
+    }
+  }
+
+  getResolution(zoom) {
+    const resolution = Math.floor(zoom);
+    return resolution;
+  }
+
+  generateGrid() {
+    const bounds = this.map.getBounds();
+    const zoom = this.map.getZoom();
+    const resolution = this.getResolution(zoom);
+  
+    const polygon = {
+      type: 'Polygon',
+      coordinates: [[
+        [bounds.getWest(), bounds.getSouth()],
+        [bounds.getEast(), bounds.getSouth()],
+        [bounds.getEast(), bounds.getNorth()],
+        [bounds.getWest(), bounds.getNorth()],
+        [bounds.getWest(), bounds.getSouth()],
+      ]],
+    };
+  
+    const coverer = new geojson.RegionCoverer({
+      minLevel: resolution,
+      maxLevel: resolution,
+    });
+  
+    const cellIds = coverer.covering(polygon);
+  
+    const features = cellIds.map(cellId => {
+      const s2_cell = s2.Cell.fromCellID(cellId);
+      let coords = [];
+  
+      for (let i = 0; i <= 4; i++) {
+        const vertex = s2_cell.vertex(i % 4);
+        const latLng = s2.LatLng.fromPoint(vertex);
+        const lng = s1.angle.degrees(latLng.lng);
+        const lat = s1.angle.degrees(latLng.lat);
+        coords.push([lng, lat]);
+      }
+  
+      // Fix antimeridian crossing if needed
+      if (coords.find(([lng, _]) => lng < -130)) {
+        coords = coords.map(([lng, lat]) =>
+          lng > 0 ? [lng - 360, lat] : [lng, lat]
+        );
+      }
+  
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [coords],
+        },
+        properties: {
+          cellId: s2.cellid.toToken(cellId),
+          resolution,
+          color: this.options.color,
+        }
+      };
+    });
+  
+    return {
+      type: 'FeatureCollection',
+      features
+    };
+  }
+  
 }
 
-// Example usage of the function
-const lat = 10;
-const lon = 106;
-const resolution = 11;
-
-getS2CellToken(lat, lon, resolution).then(cellToken => {
-  if (cellToken) {
-      console.log("Retrieved S2 Cell Token:", cellToken);
-      // Use the cellToken for further processing, e.g., visualization
-  }
-});
-
-// Other functions for your grid processing logic can be added below
+export default S2Grid;

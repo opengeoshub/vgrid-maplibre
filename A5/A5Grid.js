@@ -3,7 +3,7 @@ class A5Grid {
     this.map = map;
     this.options = {
       redraw: options.redraw || 'move',
-      color: options.color || 'blue'
+      color: options.color || 'green'
     };
     this.sourceId = 'a5-grid';
     this.gridLayerId = 'a5-grid-layer';
@@ -22,9 +22,8 @@ class A5Grid {
       type: 'fill',
       layout: {},
       paint: {
-        // 'fill-color': 'transparent',
-        'fill-color':['get', 'color'],
-        'fill-opacity': 0.3,
+        'fill-color': 'transparent',
+        'fill-opacity': 1,
         'fill-outline-color': ['get', 'color']
       }
     });
@@ -40,9 +39,10 @@ class A5Grid {
     }
   }
 
-  getResolution(zoom) {  
-    return Math.floor(zoom+1);  
-  }
+  getResolution(zoom) {
+    const resolution = Math.floor(zoom);
+    return resolution > 1 ? resolution : 1;
+}
 
   generateGrid() {
     const center = this.map.getCenter(); // {lng, lat}
@@ -53,7 +53,6 @@ class A5Grid {
     // Pass centerArray as [longitude, latitude]
     const cellId = A5.lonLatToCell(centerArray, resolution);  
     const boundary = A5.cellToBoundary(cellId); // Array of [lng, lat] pairs
-
     // Create coordinates for the GeoJSON polygon [lng, lat]
     const coordinates = [boundary.map(([lon, lat]) => [lon, lat])]; // Ensure [lng, lat]
 

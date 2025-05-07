@@ -2,9 +2,9 @@
 
 ## H3 (Done)
 
-## S2 (In progress)	
+## S2 (Done)	
 
-## A5 (In progress)	
+## A5 (Almost done)	
 
 ## RHEALPIX	(In progress)	
 

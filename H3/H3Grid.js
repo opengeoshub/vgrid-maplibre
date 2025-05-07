@@ -127,7 +127,7 @@ class H3Grid {
         let boundary = h3.cellToBoundary(cellId, true);
     
         // Adjust boundary coordinates if they cross the anti-meridian
-        if (boundary.find((e) => e[0] < -128) !== undefined) {
+        if (boundary.find((e) => e[0] < -130) !== undefined) {
           boundary = boundary.map((e) => e[0] > 0 ? [e[0] - 360, e[1]] : e);
         }
         const resolution = h3.getResolution(cellId);

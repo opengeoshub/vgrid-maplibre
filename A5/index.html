@@ -50,10 +50,9 @@
 
         map.on('load', () => {
             try {
-                map.setProjection({ "type": "globe" });
+                // map.setProjection({ "type": "globe" });
                 const a5_grid = new A5Grid(map, {
                     color: 'rgba(255, 0, 0)', // Grid color
-                    lineWidth: 10, 
                     redraw: 'move', // Redraw grid on map movement
                 });
                 console.log('A5 Grid added successfully.');
@@ -62,67 +61,64 @@
             }
         });
 
-        // map.on('click', (e) => {
-        //     const features = map.queryRenderedFeatures(e.point, {
-        //         layers: ['a5-grid-layer']
-        //     });
+        map.on('click', (e) => {
+            const features = map.queryRenderedFeatures(e.point, {
+                layers: ['a5-grid-layer']
+            });
 
-        //     if (features.length) {
-        //         const feature = features[0];  // Select the first feature if there are multiple
+            if (features.length) {
+                const feature = features[0];  // Select the first feature if there are multiple
 
-        //         // const popupContent = `
-        //         //     <strong>A5 ID: </strong> ${feature.properties.cellId} <br>
-        //         //     <strong>Resolution: </strong> ${feature.properties.resolution} <br>
-        //         //     <strong>Area (${feature.properties.area_unit}): </strong> ${feature.properties.area}  <br>
-        //         //     <strong>Edge Length (${feature.properties.edge_unit}): </strong>${feature.properties.avg_edge_len} <br>
-        //         //     <strong>Total Cells: </strong> ${feature.properties.num_hex}<br>
-        //         // `;
+                const popupContent = `
+                    <strong>A5 ID: </strong> ${feature.properties.cellId} <br>
+                    <strong>Resolution: </strong> ${feature.properties.resolution} <br>
+                `;
 
-        //         // const popup = new maplibregl.Popup()
-        //         //     .setLngLat(e.lngLat)
-        //         //     .setHTML(popupContent)
-        //         //     .addTo(map);
+                const popup = new maplibregl.Popup()
+                    .setLngLat(e.lngLat)
+                    .setHTML(popupContent)
+                    .addTo(map);
 
-        //         // currentPopup = popup;
+                currentPopup = popup;
 
-        //         if (!map.getLayer('highlight-layer')) {
-        //             map.addLayer({
-        //                 'id': 'highlight-layer',
-        //                 'type': 'fill',
-        //                 'source': {
-        //                     'type': 'geojson',
-        //                     'data': {
-        //                         'type': 'FeatureCollection',
-        //                         'features': []
-        //                     }
-        //                 },
-        //                 'paint': {
-        //                     'fill-color': '#FF0000',
-        //                     'fill-opacity': 0.2,
-        //                 }
-        //             });
-        //         }
+                // if (!map.getLayer('highlight-layer')) {
+                //     map.addLayer({
+                //         'id': 'highlight-layer',
+                //         'type': 'fill',
+                //         'source': {
+                //             'type': 'geojson',
+                //             'data': {
+                //                 'type': 'FeatureCollection',
+                //                 'features': []
+                //             }
+                //         },
+                //         'paint': {
+                //             'fill-color': '#FF0000',
+                //             'fill-opacity': 0.2,
+                //         }
+                //     });
+                // }
 
-        //         map.getSource('highlight-layer').setData({
-        //             'type': 'FeatureCollection',
-        //             'features': [feature]
-        //         });
-        //     }
-        // });
+                // map.getSource('highlight-layer').setData({
+                //     'type': 'FeatureCollection',
+                //     'features': [feature]
+                // });
+            }
+        });
 
-        // map.on('contextmenu', () => {
-        //     if (map.getLayer('highlight-layer')) {
-        //         map.getSource('highlight-layer').setData({
-        //             'type': 'FeatureCollection',
-        //             'features': []
-        //         });
-        //     }
+        map.on('contextmenu', () => {
+            // if (map.getLayer('highlight-layer')) {
+            //     map.getSource('highlight-layer').setData({
+            //         'type': 'FeatureCollection',
+            //         'features': []
+            //     });
+            // }
 
-        //     if (currentPopup) {
-        //         currentPopup.remove();
-        //         currentPopup = null;
-        //     }
-        // });
+            if (currentPopup) {
+                currentPopup.remove();
+                currentPopup = null;
+            }
+        });
     </script>
 </body>
 
