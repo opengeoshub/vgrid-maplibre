@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H3 Grid</title>
+    <title>H3 DGGS</title>
     <!-- MapLibre GL CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.css" />
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
     <style>
         body {
             margin: 0;
@@ -25,11 +25,12 @@
     <!-- Map container -->
     <div id="map"></div>
     <!-- H3Grid.js -->
-    <script src="https://unpkg.com/h3-js@4.1.0/dist/h3-js.umd.js"></script>
-    <script src="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.js"></script>
+    <!-- <script src="https://unpkg.com/h3-js/dist/h3-js.umd.js"></script> -->
+    <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
     <script type="module">
-        import H3Grid from "https://unpkg.com/vgridjs@latest/H3/H3Grid.js";
+        // import H3Grid, {h3} from "https://unpkg.com/vgridjs/H3/H3Grid.js";
         // import H3Grid from "https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/H3/H3Grid.js";
+        import H3Grid from "./H3Grid.js";
 
         // Initialize the map and grid
         const config = {
@@ -75,12 +76,36 @@
 
         map.on('load', () => {
             try {
-                const h3_grid = new H3Grid(map, {
-                    color: 'rgba(255, 0, 0)', // Grid color
-                    redraw: 'move', // Redraw grid on map movement
+                const h3Grid = new H3Grid(map, {
+                    color: 'rgba(255, 0, 0, 1)',
+                    redraw: 'move',
                 });
                 addIcosaLayer();
-                // map.setProjection({"type": "globe"}); 
+                // Uncomment to display h3_id label
+                // map.on('sourcedata', (e) => {
+                //     if (
+                //         e.sourceId === 'h3-grid' &&
+                //         map.getSource('h3-grid') &&
+                //         !map.getLayer('h3-labels')
+                //     ) {
+                //         map.addLayer({
+                //             id: 'h3-labels',
+                //             type: 'symbol',
+                //             source: 'h3-grid',
+                //             layout: {
+                //                 'text-field': ['get', 'h3_id'],
+                //                 'text-size': 12,
+                //             },
+                //             paint: {
+                //                 'text-color': ['get', 'color'],
+                //                 'text-halo-color': 'white',        // halo color
+                //                 'text-halo-width': 2,            // halo width
+                //                 'text-halo-blur': 0.5              // optional: smooth halo edges
+                //             },
+                //         });
+                //     }
+                // });
+
                 console.log('H3 Grid added successfully.');
             } catch (error) {
                 console.error('Failed to add H3 Grid:', error);
@@ -97,14 +122,12 @@
 
                 // Create a popup with the feature properties
                 const popupContent = `
-            <strong>H3 ID: </strong> ${feature.properties.cellId} <br>
+            <strong>H3 ID: </strong> ${feature.properties.h3_id} <br>
             <strong>Resolution: </strong> ${feature.properties.resolution} <br>
             <strong>Icosa Faces: </strong> ${feature.properties.icosa_faces} <br>
             <strong>Area (${feature.properties.area_unit}): </strong> ${feature.properties.area}  <br>
-            <strong>Edge Length (${feature.properties.edge_unit}): </strong>${feature.properties.avg_edge_len} <br>
             <strong>Total Cells: </strong> ${feature.properties.num_hex}<br>
             `;
-
                 // Create a popup and set its coordinates
                 const popup = new maplibregl.Popup()
                     .setLngLat(e.lngLat)  // Position the popup at the clicked location
@@ -126,7 +149,7 @@
                             }
                         },
                         'paint': {
-                            'fill-color': '#FF0000', // Red color for highlight
+                            'fill-color': 'rgba(255, 0, 0)', // Red color for highlight
                             'fill-opacity': 0.2,  // Set transparency of the highlight
                         }
                     });
@@ -139,6 +162,7 @@
                 });
             }
         });
+
         map.on('contextmenu', () => {
             // Remove the highlight layer by clearing its source data
             if (map.getLayer('highlight-layer')) {
@@ -154,7 +178,6 @@
                 currentPopup = null; // Reset the currentPopup variable
             }
         });
-
 
     </script>
 </body>

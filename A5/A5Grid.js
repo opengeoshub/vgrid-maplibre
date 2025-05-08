@@ -1,13 +1,16 @@
 //  Reference: https://a5geo.org/
+import  * as A5 from 'https://unpkg.com/a5-js/dist/a5.es.js';
+
 class A5Grid {
   constructor(map, options = {}) {
     this.map = map;
     this.options = {
       redraw: options.redraw || 'move',
-      color: options.color || 'green'
+      color: options.color || 'rgba(255, 0, 0, 1)'
     };
     this.sourceId = 'a5-grid';
     this.gridLayerId = 'a5-grid-layer';
+    this.labelLayerId = 'a5-label-layer';
     this.initialize();
   }
 
@@ -28,7 +31,6 @@ class A5Grid {
         'fill-outline-color': ['get', 'color']
       }
     });
-
     this.map.on(this.options.redraw, () => this.updateGrid());
   }
 
@@ -66,7 +68,7 @@ class A5Grid {
                 coordinates: coordinates // GeoJSON format: [lng, lat]
             },
             properties: {
-                cellId: cellId.toString(), // Convert bigint to string if necessary
+                a5_id: A5.bigIntToHex(cellId), // Convert bigint to string if necessary
                 resolution,
                 color: this.options.color
             }
@@ -75,3 +77,4 @@ class A5Grid {
 }
 }
 export default A5Grid;
+export {A5};

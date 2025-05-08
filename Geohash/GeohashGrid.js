@@ -15,7 +15,7 @@ class GeohashGrid {
     };
     this.sourceId = 'geohash-grid';
     this.gridLayerId = 'geohash-grid-layer';
-    this.labelLayerId = 'geohash-label-layer';
+    // this.labelLayerId = 'geohash-label-layer';
     this.initialize();
   }
 
@@ -31,27 +31,10 @@ class GeohashGrid {
       type: "fill",
       source: this.sourceId,
       paint: {
-        "fill-color": "rgba(255, 0, 0, 0)",
+        "fill-color": "transparent",
         "fill-outline-color": this.options.color
       },
     });
-   
-    // Add a symbol layer for the labels
-    this.map.addLayer({
-      id: this.labelLayerId,
-      type: 'symbol',
-      source: this.sourceId,
-      layout: {
-        'text-field': ['get', 'label'],
-        'text-size': 12,
-        // 'text-font': ['Open Sans Bold'],
-      },
-      paint: {
-        'text-color': this.options.color,
-      },
-    });
-
-   
     // Redraw the grid on map movements
     this.map.on(this.options.redraw, () => this.updateGrid());
   }
@@ -67,38 +50,32 @@ class GeohashGrid {
   generateGrid() {
     const bounds = this.map.getBounds();
     const zoom = this.map.getZoom();
-
+  
     const minLat = bounds.getSouth();
     const minLon = bounds.getWest();
     const maxLat = bounds.getNorth();
     const maxLon = bounds.getEast();
-
-    const precision = this.getPrecision(zoom);
-    const {latStep, lonStep} = this.getStepSize(precision);
-    
+  
+    const resolution = this.getResolution(zoom);
+    const { latStep, lonStep } = this.getStepSize(resolution);
+  
     const geohashes = [];
     let currentLat = minLat;
-
-    // Loop through the latitude and longitude within the bounds, incrementing by 'unit' size
+  
     while (currentLat < maxLat) {
       let currentLon = minLon;
       while (currentLon < maxLon) {
-        const geohashCode = this.encode(currentLat, currentLon, precision);  // Encoding each grid point to geohash
+        const geohashCode = this.encode(currentLat, currentLon, resolution);
         geohashes.push(geohashCode);
         currentLon += lonStep;
       }
       currentLat += latStep;
     }
-
-    // console.log(geohashes)
-    // Create features from the geohashes, which will have both polygon and label point
+  
     const features = geohashes.map((hash) => {
       const [swLat, swLon, neLat, neLon] = this.decode_bbox(hash);
-      const centerLat = (swLat + neLat) / 2;
-      const centerLon = (swLon + neLon) / 2;
-
-      // Polygon feature for the grid cell
-      const polygonFeature = {
+  
+      return {
         type: "Feature",
         geometry: {
           type: "Polygon",
@@ -113,34 +90,21 @@ class GeohashGrid {
           ],
         },
         properties: {
-          geohash: hash,
+          geohash_id: hash,
+          resolution,
+          color: this.options.color
         },
       };
-
-      // Point feature for the label
-      const pointFeature = {
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [centerLon, centerLat],
-        },
-        properties: {
-          label: hash,
-        },
-      };
-
-      return [polygonFeature, pointFeature];
-    }).flat();
-
-    const geojson_features = {
+    });
+  
+    return {
       type: "FeatureCollection",
       features,
     };
-    // console.log(geojson_features)
-    return geojson_features
   }
+ 
 
-  getPrecision(zoom) {
+  getResolution(zoom) {
     if (zoom < 4) return 1;
     if (zoom >= 4 && zoom < 6) return 2;
     if (zoom >= 6 && zoom < 9) return 3;
@@ -152,9 +116,9 @@ class GeohashGrid {
     if (zoom >= 20) return 9;
   }
 
-  // function getStepSize(precision) {
-  getStepSize(precision) {
-    const precisionData = [
+  // function getStepSize(resolution) {
+  getStepSize(resolution) {
+    const resolutionData = [
       { latStep: 180 / 4, lonStep: 360 / 8 },
       { latStep: 180 / 32, lonStep: 360 / 32 },
       { latStep: 180 / 128, lonStep: 360 / 128 },
@@ -167,13 +131,13 @@ class GeohashGrid {
       { latStep: 180 / 2097152, lonStep: 360 / 2097152 },
       { latStep: 180 / 8388608, lonStep: 360 / 8388608 },
     ];
-    return precisionData[Math.min(precision, 9)];
+    return resolutionData[Math.min(resolution, 9)];
   }
 
   encode(latitude, longitude, numberOfChars) {
     if (numberOfChars === this.ENCODE_AUTO) {
       if (typeof (latitude) === 'number' || typeof (longitude) === 'number') {
-        throw new Error('string notation required for auto precision.');
+        throw new Error('string notation required for auto resolution.');
       }
       var decSigFigsLat = latitude.split('.')[1].length;
       var decSigFigsLong = longitude.split('.')[1].length;

@@ -1,4 +1,5 @@
-// Reference: https://github.com/uber/h3-js
+import * as h3 from 'https://unpkg.com/h3-js/dist/h3-js.es.js';
+
 class H3Grid {
     constructor(map, options = {}) {
       this.map = map;
@@ -9,7 +10,7 @@ class H3Grid {
       this.extraFillArea = 0.5;
       this.map = map;
       this.options = {
-        // color: options.color || 'rgba(255, 0, 0, 1)',
+        color: options.color || 'rgba(255, 0, 0, 1)',
         redraw: options.redraw || 'move', // Default to redraw on move
       };
       this.sourceId = 'h3-grid';
@@ -134,19 +135,11 @@ class H3Grid {
         const resolution = h3.getResolution(cellId);
         const edge_unit = resolution > 7 ? h3.UNITS.m : h3.UNITS.km;
         const area_unit = resolution > 7 ? h3.UNITS.m2 : h3.UNITS.km2;
-    
-    
+       
         const icosa_faces = h3.getIcosahedronFaces(cellId);
-    
-        // const edge_len = h3.edgeLength(cellId,edge_unit);
-        let  avg_edge_len = h3.getHexagonEdgeLengthAvg(h3res, edge_unit);
-        avg_edge_len = parseFloat(avg_edge_len.toFixed(1)).toLocaleString();
-    
+        
         let  area = h3.cellArea(cellId, area_unit);
         area = parseFloat(area.toFixed(1)).toLocaleString();
-    
-        let  avg_area = h3.getHexagonAreaAvg(h3res, area_unit);
-        avg_area = parseFloat(avg_area.toFixed(1)).toLocaleString();
     
         let  num_hex = h3.getNumCells(h3res);
         num_hex = num_hex.toLocaleString();
@@ -155,14 +148,11 @@ class H3Grid {
           "type": "Feature",
           "properties": {
             "color": h3.isPentagon(cellId) ? 'red' : 'blue',
-            "cellId": cellId, // Include the cell ID as a property
+            "h3_id": cellId, // Include the cell ID as a property
             "resolution": resolution,
             "icosa_faces": icosa_faces,
             "area": area,
-            // "avg_area": avg_area,
             "area_unit": area_unit,
-             "avg_edge_len": avg_edge_len,
-            // "avg_edge_len": avg_edge_len,
             "edge_unit": edge_unit,
             "num_hex": num_hex
           },

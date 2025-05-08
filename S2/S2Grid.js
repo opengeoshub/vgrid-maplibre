@@ -5,8 +5,8 @@ class S2Grid {
   constructor(map, options = {}) {
     this.map = map;
     this.options = {
+      color: options.color || 'rgba(255, 0, 0, 1)',
       redraw: options.redraw || 'move',
-      color: options.color || 'rgba(0, 0, 255, 1)',
     };
     this.sourceId = 's2-grid';
     this.gridLayerId = 's2-grid-layer';
@@ -96,7 +96,7 @@ class S2Grid {
           coordinates: [coords],
         },
         properties: {
-          cellId: s2.cellid.toToken(cellId),
+          s2_token: s2.cellid.toToken(cellId),
           resolution,
           color: this.options.color,
         }

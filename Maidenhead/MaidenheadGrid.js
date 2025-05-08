@@ -1,135 +1,368 @@
+// Reference: https://github.com/ha8tks/Leaflet.Maidenhead/blob/master/src/L.Maidenhead.js
+
 class MaidenheadGrid {
-    constructor(map, options = {}) {
-      this.map = map;
-      this.options = Object.assign({
-        color: 'rgba(255, 0, 0, 0.4)', // Line and label color
-        redraw: 'move', // Redraw on move or moveend
-      }, options);
-      this.sourceId = 'maidenhead-grid';
-      this.lineLayerId = 'maidenhead-grid-lines';
-      this.labelLayerId = 'maidenhead-grid-labels';
-      this.initialize();
-    }
-  
-    initialize() {
-      // Add a GeoJSON source for the grid
-      this.map.addSource(this.sourceId, {
-        type: 'geojson',
-        data: this.generateGrid(),
-      });
-  
-      // Add a line layer for the grid
-      this.map.addLayer({
-        id: this.lineLayerId,
-        type: 'line',
-        source: this.sourceId,
-        paint: {
-          'line-color': this.options.color,
-          'line-width': 1,
-        },
-      });
-  
-      // Add a symbol layer for the labels
-      this.map.addLayer({
-        id: this.labelLayerId,
-        type: 'symbol',
-        source: this.sourceId,
-        layout: {
-          'text-field': ['get', 'label'],
-          'text-size': 12,
-          'text-font': ['Open Sans Bold'],
-        },
-        paint: {
-          'text-color': this.options.color,
-        },
-      });
-  
-      // Redraw the grid on map movements
-      this.map.on(this.options.redraw, () => this.updateGrid());
-    }
-  
-    updateGrid() {
-      const newGrid = this.generateGrid();
-      const source = this.map.getSource(this.sourceId);
-      if (source) {
-        source.setData(newGrid);
+  constructor(map, options = {}) {
+    this.latitudeMax = 90;
+    this.latitudeMin = -this.latitudeMax;
+    this.longitudeMax = 180;
+    this.longitudeMin = -this.longitudeMax;
+    this.map = map;
+    this.options = {
+      color: options.color || 'rgba(255, 0, 0, 1)',
+      redraw: options.redraw || 'move', // Default to redraw on move
+    };
+    this.sourceId = 'maidenhead-grid';
+    this.gridLayerId = 'maidenhead-grid-layer';
+    this.initialize();
+  }
+
+  initialize() {
+    // Add a GeoJSON source for the grid
+    this.map.addSource(this.sourceId, {
+      type: 'geojson',
+      data: this.generateGrid(),
+    });
+
+    this.map.addLayer({
+      id: this.gridLayerId,
+      source: this.sourceId,
+      type: 'fill',
+      layout: {},
+      paint: {
+        'fill-color': 'transparent',
+        'fill-opacity': 1,
+        'fill-outline-color': ['get', 'color']
       }
-    }
-  
-    generateGrid() {
-      const bounds = this.map.getBounds();
-      const zoom = Math.floor(this.map.getZoom());
-  
-      const d3 = [20, 10, 10, 10, 10, 10, 1, 1, 1, 1, 1 / 24, 1 / 24, 1 / 24, 1 / 24, 1 / 24, 1 / 240, 1 / 240, 1 / 240, 1 / 240 / 24, 1 / 240 / 24];
-      const unit = d3[zoom] || 20; // Default to 20 if zoom is out of range
-  
-      const features = [];
-      for (let lon = Math.floor(bounds.getWest() / unit) * unit; lon < bounds.getEast(); lon += unit * 2) {
-        for (let lat = Math.floor(bounds.getSouth() / unit) * unit; lat < bounds.getNorth(); lat += unit) {
-          const bounds = [
-            [lon, lat],
-            [lon + unit * 2, lat + unit],
-          ];
-  
-          // Add rectangle geometry
-          features.push({
-            type: 'Feature',
-            geometry: {
-              type: 'Polygon',
-              coordinates: [[
-                [lon, lat],
-                [lon + unit * 2, lat],
-                [lon + unit * 2, lat + unit],
-                [lon, lat + unit],
-                [lon, lat],
-              ]],
-            },
-          });
-  
-          // Add label point
-          const label = this.getLocator(lon + unit, lat + unit / 2, zoom);
-          features.push({
-            type: 'Feature',
-            geometry: {
-              type: 'Point',
-              coordinates: [lon + unit, lat + unit / 2],
-            },
-            properties: { label },
-          });
-        }
-      }
-  
-      return {
-        type: 'FeatureCollection',
-        features,
-      };
-    }
-  
-    getLocator(lon, lat, zoom) {
-      const d1 = 'ABCDEFGHIJKLMNOPQR'.split('');
-      const d2 = 'ABCDEFGHIJKLMNOPQRSTUVWX'.split('');
-      const ydiv = [10, 1, 1 / 24, 1 / 240, 1 / 240 / 24];
-  
-      let locator = '';
-      let x = lon + 180;
-      let y = lat + 90;
-  
-      locator += d1[Math.floor(x / 20)] + d1[Math.floor(y / 10)];
-      const precision = Math.min(zoom, 4);
-  
-      for (let i = 0; i < precision; i++) {
-        const rlon = x % (ydiv[i] * 2);
-        const rlat = y % ydiv[i];
-        if (i % 2 === 0) {
-          locator += Math.floor(rlon / (ydiv[i + 1] * 2)) + Math.floor(rlat / ydiv[i + 1]);
-        } else {
-          locator += d2[Math.floor(rlon / (ydiv[i + 1] * 2))] + d2[Math.floor(rlat / ydiv[i + 1])];
-        }
-      }
-  
-      return locator;
+    });
+
+    // Redraw the grid on map movements
+    this.map.on(this.options.redraw, () => this.updateGrid());
+  }
+
+  updateGrid() {
+    const newGrid = this.generateGrid();
+    const source = this.map.getSource(this.sourceId);
+    if (source) {
+      source.setData(newGrid);
     }
   }
-  
-  export default MaidenheadGrid;
-  
+
+  getResolution(zoom) {
+    if (zoom <= 4) return 1;
+    if (zoom <= 7) return 2;
+    if (zoom <= 12) return 3;
+    return 4;
+  }
+
+  generateGrid() {
+    const zoom = Math.floor(this.map.getZoom());
+    const resolution = this.getResolution(zoom);
+
+    const bounds = this.map.getBounds();
+    let minLat = bounds.getSouth();
+    let minLon = bounds.getWest();
+    let maxLat = bounds.getNorth();
+    let maxLon = bounds.getEast();
+
+    let lonWidth, latWidth;
+
+    if (resolution === 1) {
+      lonWidth = 20.0; latWidth = 10.0;
+      minLat = -90;
+      minLon = -180;
+      maxLat = 90;
+      maxLon = 180;   
+    } else if (resolution === 2) {
+      lonWidth = 2.0; latWidth = 1.0;
+    } else if (resolution === 3) {
+      lonWidth = 0.083333; latWidth = 0.041666; // 5 minutes x 2.5 minutes
+    } else if (resolution === 4) {
+      lonWidth = 0.008333; latWidth = 0.0041671; //30 seconds x 15 seconds
+    } else {
+      throw new Error("Unsupported resolution");
+    }
+
+    const baseLat = -90;
+    const baseLon = -180;
+
+    const startX = Math.floor((minLon - baseLon) / lonWidth);
+    const endX = Math.floor((maxLon - baseLon) / lonWidth);
+    const startY = Math.floor((minLat - baseLat) / latWidth);
+    const endY = Math.floor((maxLat - baseLat) / latWidth);
+
+    const features = [];
+
+    for (let x = startX; x <= endX; x++) {
+      for (let y = startY; y <= endY; y++) {
+        const cellMinLon = baseLon + x * lonWidth;
+        const cellMaxLon = cellMinLon + lonWidth;
+        const cellMinLat = baseLat + y * latWidth;
+        const cellMaxLat = cellMinLat + latWidth;
+        // Ensure cell intersects with bounds
+        if (
+          cellMaxLon < minLon || cellMinLon > maxLon ||
+          cellMaxLat < minLat || cellMinLat > maxLat
+        ) continue;
+
+        const cellCenterLat = (cellMinLat + cellMaxLat) / 2;
+        const cellCenterLon = (cellMinLon + cellMaxLon) / 2;
+
+        const maidenhead_id = this.toMaiden(cellCenterLat, cellCenterLon, resolution);
+
+        const {
+          lat1: min_lat_maiden,
+          lon1: min_lon_maiden,
+          lat2: max_lat_maiden,
+          lon2: max_lon_maiden
+        } = this.maidenGrid(maidenhead_id);
+        
+        const coordinates = [[
+          [min_lon_maiden, min_lat_maiden],  // Bottom-left corner
+          [max_lon_maiden, min_lat_maiden], // Bottom-right corner
+          [max_lon_maiden, max_lat_maiden], // Top-right corner
+          [min_lon_maiden, max_lat_maiden], // Top-left corner
+          [min_lon_maiden, min_lat_maiden]  // Closing the polygon (same as the first point)
+        ]]
+
+        const polygon = {
+          type: "Polygon",
+          coordinates: coordinates,
+        };
+
+        features.push({
+          type: "Feature",
+          properties: {
+            maidenhead_id: maidenhead_id,
+            resolution: resolution,
+            color: this.options.color
+          },
+          geometry: polygon
+        });
+      }
+    }
+
+    return {
+      type: "FeatureCollection",
+      features: features
+    };
+  }
+
+  isValid(c, level) {
+    if (level === 0) {
+        if (c < 'A' || c > 'R') {
+            // throw new Error('Invalid maidenhead encoding');
+            return false;
+        }
+    }
+    if (level === 1 || level === 3) {
+        if (c < '0' || c > '9') {
+            // throw new Error('Invalid maidenhead encoding');
+            return false;
+        }
+    }
+    if (level === 2) {
+        if (c < 'A' || c > 'X') {
+            // throw new Error('Invalid maidenhead encoding');
+            return false;
+        }
+    }
+    return true;
+}
+
+  toMaiden(lat, lon, resolution) {
+    if (lon < -180) {
+      lon = -180
+    }
+    if (lon > 180) {
+      lon = 180
+    }
+    if (lat < -90) {
+      lat = -90
+    }
+    if (lat > 90) {
+      lat = 90
+    }
+
+    // if (lon < -180.0 || lon > 180.0 || lat < -90.0 || lat > 90.0) {
+    //   throw new Error('Maidenhead: invalid latitude and longitude');
+    // }
+
+    const A = 'A'.charCodeAt(0);
+    let a = [(lon + 180) / 20, (lon + 180) % 20];
+    let b = [(lat + 90) / 10, (lat + 90) % 10];
+
+    let maiden = String.fromCharCode(A + Math.floor(a[0])) + String.fromCharCode(A + Math.floor(b[0]));
+
+    lon = a[1] / 2;
+    lat = b[1];
+
+    let i = 1;
+    while (i < resolution) {
+      i += 1;
+      a = [Math.floor(lon), lon % 1];
+      b = [Math.floor(lat), lat % 1];
+
+      if (i % 2 === 0) {
+        maiden += `${a[0]}${b[0]}`;
+        lon = 24 * a[1];
+        lat = 24 * b[1];
+      } else {
+        maiden += String.fromCharCode(A + a[0]) + String.fromCharCode(A + b[0]);
+        lon = 10 * a[1];
+        lat = 10 * b[1];
+      }
+    }
+
+    if (maiden.length >= 6) {
+      maiden = maiden.slice(0, 4) + maiden.slice(4, 6).toLowerCase() + maiden.slice(6);
+    }
+
+    return maiden;
+  }
+
+  maidenGridCenter(maiden) {
+    if (typeof maiden !== 'string') {
+      throw new TypeError('Maidenhead locator must be a string');
+    }
+
+    maiden = maiden.trim().toUpperCase();
+    const N = maiden.length;
+
+    if (!(N >= 2 && N <= 8 && N % 2 === 0)) {
+      throw new Error('Maidenhead locator requires 2-8 characters, even number of characters');
+    }
+
+    const Oa = 'A'.charCodeAt(0);
+    let lon = -180;
+    let lat = -90;
+
+    // First pair
+    // this.isValid(maiden[0], 0);
+    // this.isValid(maiden[1], 0);
+    lon += (maiden.charCodeAt(0) - Oa) * 20;
+    lat += (maiden.charCodeAt(1) - Oa) * 10;
+    if (N === 2) {
+      lon += 10;
+      lat += 5;
+    }
+
+    // Second pair
+    if (N >= 4) {
+      // this.isValid(maiden[2], 1);
+      // this.isValid(maiden[3], 1);
+      lon += parseInt(maiden[2]) * 2;
+      lat += parseInt(maiden[3]) * 1;
+    }
+    if (N === 4) {
+      lon += 1;
+      lat += 0.5;
+    }
+
+    // Third pair
+    if (N >= 6) {
+      // this.isValid(maiden[4], 2);
+      // this.isValid(maiden[5], 2);
+      lon += (maiden.charCodeAt(4) - Oa) * (5.0 / 60);
+      lat += (maiden.charCodeAt(5) - Oa) * (2.5 / 60);
+    }
+    if (N === 6) {
+      lon += (5.0 / 120);
+      lat += (2.5 / 120);
+    }
+
+    // Fourth pair
+    if (N === 8) {
+      lon += parseInt(maiden[6]) * (5.0 / 600);
+      lat += parseInt(maiden[7]) * (2.5 / 600);
+      lon += (5.0 / 1200);
+      lat += (2.5 / 1200);
+    }
+
+    return { lat, lon };
+  }
+
+  maidenGrid(maiden) {
+    if (typeof maiden !== 'string') {
+        throw new TypeError('Maidenhead locator must be a string');
+    }
+
+    maiden = maiden.trim().toUpperCase();
+    const N = maiden.length;
+
+    if (!(N >= 2 && N <= 8 && N % 2 === 0)) {
+        throw new Error('Maidenhead locator requires 2-8 characters, even number of characters');
+    }
+
+    const Oa = 'A'.charCodeAt(0);
+    let lon = -180;
+    let lat = -90;
+    let lon1, lat1, lon2, lat2;
+
+    // First pair
+    // this.isValid(maiden[0], 0);
+    // this.isValid(maiden[1], 0);
+    lon += (maiden.charCodeAt(0) - Oa) * 20;
+    lat += (maiden.charCodeAt(1) - Oa) * 10;
+
+    if (N === 2) {
+        lon1 = lon;
+        lat1 = lat;
+        lon2 = lon + 20;
+        lat2 = lat + 10;
+        lon += 10;
+        lat += 5;
+    }
+
+    // Second pair
+    if (N >= 4) {
+      // this.isValid(maiden[2], 1);
+      // this.isValid(maiden[3], 1);
+        lon += parseInt(maiden[2]) * 2;
+        lat += parseInt(maiden[3]) * 1;
+    }
+    if (N === 4) {
+        lon1 = lon;
+        lat1 = lat;
+        lon2 = lon + 2;
+        lat2 = lat + 1;
+        lon += 1;
+        lat += 0.5;
+    }
+
+    // Third pair
+    if (N >= 6) {
+      // this.isValid(maiden[4], 2);
+      // this.isValid(maiden[5], 2);
+        lon += (maiden.charCodeAt(4) - Oa) * (5 / 60);
+        lat += (maiden.charCodeAt(5) - Oa) * (2.5 / 60);
+    }
+    if (N === 6) {
+        lon1 = lon;
+        lat1 = lat;
+        lon2 = lon + (5 / 60);
+        lat2 = lat + (2.5 / 60);
+        lon += 5 / 120;
+        lat += 2.5 / 120;
+    }
+
+    // Fourth pair
+    if (N === 8) {
+        lon += parseInt(maiden[6]) * (5 / 600);
+        lat += parseInt(maiden[7]) * (2.5 / 600);
+        lon1 = lon;
+        lat1 = lat;
+        lon2 = lon + (5 / 600);
+        lat2 = lat + (2.5 / 600);
+        lon += 5 / 1200;
+        lat += 2.5 / 1200;
+    }
+
+    return {        
+        lat1,
+        lon1,
+        lat2,
+        lon2
+    };
+}
+}
+export default MaidenheadGrid;
