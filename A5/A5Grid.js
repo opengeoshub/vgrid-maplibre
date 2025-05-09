@@ -10,7 +10,6 @@ class A5Grid {
     };
     this.sourceId = 'a5-grid';
     this.gridLayerId = 'a5-grid-layer';
-    this.labelLayerId = 'a5-label-layer';
     this.initialize();
   }
 
@@ -28,7 +27,7 @@ class A5Grid {
       paint: {
         'fill-color': 'transparent',
         'fill-opacity': 1,
-        'fill-outline-color': ['get', 'color']
+        'fill-outline-color': this.options.color
       }
     });
     this.map.on(this.options.redraw, () => this.updateGrid());
@@ -69,8 +68,7 @@ class A5Grid {
             },
             properties: {
                 a5_id: A5.bigIntToHex(cellId), // Convert bigint to string if necessary
-                resolution,
-                color: this.options.color
+                resolution
             }
         }]
     };

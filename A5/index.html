@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A5 DGGS</title>
     <!-- MapLibre GL CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.css" />
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
     <style>
         body {
             margin: 0;
@@ -24,8 +24,6 @@
 
     <!-- Map container -->
     <div id="map"></div>
-    <!-- A5Grid.js -->
-    <!-- <script src="https://unpkg.com/a5-js/dist/a5.umd.js"></script> -->
     <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
     <script type="module">
         // import A5Grid from "https://unpkg.com/vgridjs@latest/A5/A5Grid.js";
@@ -45,45 +43,46 @@
             center: [config.lng, config.lat],
             zoom: config.zoom,
             style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
-        });
+            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+        })
 
-        map.on('load', () => {
+        map.on('style.load', () => {
+            map.addControl(new maplibregl.GlobeControl()); 
             try {
                 const a5Grid = new A5Grid(map, {
                     color: 'rgba(255, 0, 0, 1)',
                     redraw: 'move',
                 });
-
-                // Wait for the source to become available before adding label layer
-                map.on('sourcedata', (e) => {
-                    if (
-                        e.sourceId === 'a5-grid' &&
-                        map.getSource('a5-grid') &&
-                        !map.getLayer('a5-labels')
-                    ) {
-                        map.addLayer({
-                            id: 'a5-labels',
-                            type: 'symbol',
-                            source: 'a5-grid',
-                            layout: {
-                                'text-field': ['get', 'a5_id'],
-                                'text-size': 12,
-                            },
-                            paint: {
-                                'text-color': ['get', 'color'],
-                                'text-halo-color': 'white',        // halo color
-                                'text-halo-width': 1.5,            // halo width
-                                'text-halo-blur': 0.5              // optional: smooth halo edges
-                            },
-                        });
-                    }
-                });
-
                 console.log('A5 Grid added successfully.');
             } catch (error) {
                 console.error('Failed to add A5 Grid:', error);
             }
         });
+        
+        // Uncomment to display s2_token label
+        map.on('sourcedata', (e) => {
+            if (
+                e.sourceId === 'a5-grid' &&
+                map.getSource('a5-grid') &&
+                !map.getLayer('a5-labels')
+            ) {
+                map.addLayer({
+                    id: 'a5-labels',
+                    type: 'symbol',
+                    source: 'a5-grid',
+                    layout: {
+                        'text-field': ['get', 'a5_id'],
+                        'text-size': 12,
+                    },
+                    paint: {
+                        'text-halo-color': 'white',        // halo color
+                        'text-halo-width': 1.5,            // halo width
+                        'text-halo-blur': 0.5              // optional: smooth halo edges
+                    },
+                });
+            }
+        });
+
 
         map.on('click', (e) => {
             const features = map.queryRenderedFeatures(e.point, {

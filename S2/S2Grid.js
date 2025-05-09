@@ -1,5 +1,5 @@
 //  Reference: https://s2js.org/classes/s2js.s2.Polygon.html
-import {s1, s2, geojson} from 'https://esm.sh/s2js'
+import { s1, s2, geojson } from 'https://esm.sh/s2js'
 
 class S2Grid {
   constructor(map, options = {}) {
@@ -27,7 +27,7 @@ class S2Grid {
       paint: {
         'fill-color': 'transparent',
         'fill-opacity': 1,
-        'fill-outline-color': ['get', 'color']
+        'fill-outline-color': this.options.color
       }
     });
 
@@ -51,7 +51,7 @@ class S2Grid {
     const bounds = this.map.getBounds();
     const zoom = this.map.getZoom();
     const resolution = this.getResolution(zoom);
-  
+
     const polygon = {
       type: 'Polygon',
       coordinates: [[
@@ -62,18 +62,18 @@ class S2Grid {
         [bounds.getWest(), bounds.getSouth()],
       ]],
     };
-  
+
     const coverer = new geojson.RegionCoverer({
       minLevel: resolution,
       maxLevel: resolution,
     });
-  
+
     const cellIds = coverer.covering(polygon);
-  
+
     const features = cellIds.map(cellId => {
       const s2_cell = s2.Cell.fromCellID(cellId);
       let coords = [];
-  
+
       for (let i = 0; i <= 4; i++) {
         const vertex = s2_cell.vertex(i % 4);
         const latLng = s2.LatLng.fromPoint(vertex);
@@ -81,15 +81,14 @@ class S2Grid {
         const lat = s1.angle.degrees(latLng.lat);
         coords.push([lng, lat]);
       }
-  
-      // Fix antimeridian crossing if needed
-      if (coords.find(([lng, _]) => lng < -130)) {
-        coords = coords.map(([lng, lat]) =>
-          lng > 0 ? [lng - 360, lat] : [lng, lat]
-        );
-      }
-  
-      return {
+
+      // Fix antimeridian crossing 
+      if (coords.find(([lng, _]) => lng > 130)) {
+      coords = coords.map(([lng, lat]) =>
+        lng < 0 ? [lng + 360, lat] : [lng, lat]
+      )};
+
+      const feature = {
         type: 'Feature',
         geometry: {
           type: 'Polygon',
@@ -98,17 +97,18 @@ class S2Grid {
         properties: {
           s2_token: s2.cellid.toToken(cellId),
           resolution,
-          color: this.options.color,
         }
       };
+
+      return feature;
+
     });
-  
+
     return {
       type: 'FeatureCollection',
       features
     };
   }
-  
-}
 
+}
 export default S2Grid;

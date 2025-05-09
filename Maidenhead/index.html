@@ -36,50 +36,49 @@
     const map = new maplibregl.Map({
       container: 'map', // Map container ID
       // style: 'https://demotiles.maplibre.org/style.json', // MapLibre style URL
-      // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
-      style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+      style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
+      // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
       center: [config.lng, config.lat],
       zoom: config.zoom,
     });
 
     // Add the Maidenhead Locator Grid when the map loads
-    map.on('load', () => {
+    map.on('style.load', () => {
+      map.addControl(new maplibregl.GlobeControl());
       try {
         const maidenheadGrid = new MaidenheadGrid(map, {
           color: 'rgba(255, 0, 0, 1)',
           redraw: 'move',
         });
-
-        // Wait for the source to become available before adding label layer
-        map.on('sourcedata', (e) => {
-          if (
-            e.sourceId === 'maidenhead-grid' &&
-            map.getSource('maidenhead-grid') &&
-            !map.getLayer('maidenhead-labels')
-          ) {
-            map.addLayer({
-              id: 'maidenhead-labels',
-              type: 'symbol',
-              source: 'maidenhead-grid',
-              layout: {
-                'text-field': ['get', 'maidenhead_id'],
-                'text-size': 12,
-              },
-              paint: {
-                'text-color': ['get', 'color'],
-                'text-halo-color': 'white',        // halo color
-                'text-halo-width': 1.5,            // halo width
-                'text-halo-blur': 0.5              // optional: smooth halo edges
-              },
-            });
-          }
-        });
-
         console.log('Maidenhead Grid added successfully.');
       } catch (error) {
         console.error('Failed to add Maidenhead Grid:', error);
       }
     });
+    // Wait for the source to become available before adding label layer
+    map.on('sourcedata', (e) => {
+      if (
+        e.sourceId === 'maidenhead-grid' &&
+        map.getSource('maidenhead-grid') &&
+        !map.getLayer('maidenhead-labels')
+      ) {
+        map.addLayer({
+          id: 'maidenhead-labels',
+          type: 'symbol',
+          source: 'maidenhead-grid',
+          layout: {
+            'text-field': ['get', 'maidenhead_id'],
+            'text-size': 12,
+          },
+          paint: {
+            'text-halo-color': 'white',        // halo color
+            'text-halo-width': 1.5,            // halo width
+            'text-halo-blur': 0.5              // optional: smooth halo edges
+          },
+        });
+      }
+    });
+
     map.on('click', (e) => {
       const features = map.queryRenderedFeatures(e.point, {
         layers: ['maidenhead-grid-layer']  // This should match the layer name where hexagons are rendered

@@ -91,8 +91,7 @@ class GeohashGrid {
         },
         properties: {
           geohash_id: hash,
-          resolution,
-          color: this.options.color
+          resolution
         },
       };
     });

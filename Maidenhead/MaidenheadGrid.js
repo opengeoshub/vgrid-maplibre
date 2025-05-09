@@ -31,7 +31,7 @@ class MaidenheadGrid {
       paint: {
         'fill-color': 'transparent',
         'fill-opacity': 1,
-        'fill-outline-color': ['get', 'color']
+        'fill-outline-color': this.options.color
       }
     });
 
@@ -134,7 +134,6 @@ class MaidenheadGrid {
           properties: {
             maidenhead_id: maidenhead_id,
             resolution: resolution,
-            color: this.options.color
           },
           geometry: polygon
         });
