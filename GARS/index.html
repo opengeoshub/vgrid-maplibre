@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>gars DGGS</title>
+  <title>GARS DGGS</title>
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
   <style>
     body {
@@ -92,7 +92,7 @@
         const feature = features[0];  // Select the first feature if there are multiple
         // Create a popup with the feature properties
         const popupContent = `
-            <strong>gars ID: </strong> ${feature.properties.gars_id} <br>
+            <strong>GARS ID: </strong> ${feature.properties.gars_id} <br>
             <strong>Resolution: </strong> ${feature.properties.resolution} <br>
             `;
         // Create a popup and set its coordinates
@@ -145,24 +145,24 @@
         currentPopup = null; // Reset the currentPopup variable
       }
     });
+
     function exportToGeoJSON() {
       const features = map.queryRenderedFeatures({ layers: ['gars-grid-layer'] });
 
-      // if (!features.length) {
-      //     alert("No GARS grid features found in the current viewport.");
-      //     return;
-      // }
+      if (!features.length) {
+        alert("No GARS grid features found in the current viewport.");
+        return;
+      }
 
-      // // Remove duplicates (some tiles can appear multiple times)
+      // Remove duplicates (some tiles can appear multiple times)
       // const uniqueFeatures = Array.from(new Map(
-      //     features.map(f => [f.properties.gars_id, f])
+      //   features.map(f => [f.properties.gars_id, f])
       // ).values());
 
       const geojson = {
         type: 'FeatureCollection',
         features: features
       };
-
       // Download as GeoJSON file
       const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);

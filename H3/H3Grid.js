@@ -72,16 +72,6 @@ class H3Grid {
   
     // Render hexagons based on current map zoom
     generateGrid() {
-      const latitudeMax = 90;
-      const latitudeMin = -latitudeMax;
-      const longitudeMax = 180;
-      const longitudeMin = -longitudeMax;
-    
-      const extraFillArea = 0.5;
-      const hexLayer = 'hex-layer';
-      const hexSource = 'hex-source';
-      const hexlabelLayer = 'hex-label';
-    
       var currentZoom = this.map.getZoom();
       var h3res = this.getResolution(currentZoom);
     
@@ -96,21 +86,21 @@ class H3Grid {
       const dh = x2 - x1;
       const dv = y2 - y1;
     
-      let x1withBuffer = x1 - dh * extraFillArea;
-      let x2withBuffer = x2 + dh * extraFillArea;
-      let y1withBuffer = y1 - dv * extraFillArea;
-      let y2withBuffer = y2 + dv * extraFillArea;
+      let x1withBuffer = x1 - dh * this.extraFillArea;
+      let x2withBuffer = x2 + dh * this.extraFillArea;
+      let y1withBuffer = y1 - dv * this.extraFillArea;
+      let y2withBuffer = y2 + dv * this.extraFillArea;
     
-      x1withBuffer = Math.max(x1withBuffer, longitudeMin);
-      x2withBuffer = Math.min(x2withBuffer, longitudeMax);
-      y1withBuffer = Math.max(y1withBuffer, latitudeMin);
-      y2withBuffer = Math.min(y2withBuffer, latitudeMax);
+      x1withBuffer = Math.max(x1withBuffer, this.longitudeMin);
+      x2withBuffer = Math.min(x2withBuffer, this.longitudeMax);
+      y1withBuffer = Math.max(y1withBuffer, this.latitudeMin);
+      y2withBuffer = Math.min(y2withBuffer, this.latitudeMax);
     
       let coordinates = [];
       const xIncrement = 180;
       let lowerX = x1withBuffer;
     
-      while (lowerX < longitudeMax && lowerX < x2withBuffer) {
+      while (lowerX < this.longitudeMax && lowerX < x2withBuffer) {
         let upperX = Math.min(lowerX + xIncrement, x2withBuffer, 180);
         coordinates.push([
           [y2withBuffer, lowerX],

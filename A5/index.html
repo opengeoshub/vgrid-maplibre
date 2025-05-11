@@ -25,6 +25,10 @@
     <!-- Map container -->
     <div id="map"></div>
     <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+    <button onclick="exportToGeoJSON()" style="position: absolute; top: 10px; left: 10px;">
+        Export
+      </button>
+    
     <script type="module">
         // import A5Grid from "https://unpkg.com/vgridjs@latest/A5/A5Grid.js";
         // import A5Grid from "./A5Grid.js";
@@ -34,7 +38,7 @@
         const config = {
             lng: 106.706585,
             lat: 10.775326,
-            zoom: 0
+            zoom: 2
         };
         let currentPopup = null;
 
@@ -47,7 +51,7 @@
         })
 
         map.on('style.load', () => {
-            map.addControl(new maplibregl.GlobeControl()); 
+            map.addControl(new maplibregl.GlobeControl());
             try {
                 const a5Grid = new A5Grid(map, {
                     color: 'rgba(255, 0, 0, 1)',
@@ -58,8 +62,8 @@
                 console.error('Failed to add A5 Grid:', error);
             }
         });
-        
-        // Uncomment to display s2_token label
+
+        // Uncomment to display A5 label
         map.on('sourcedata', (e) => {
             if (
                 e.sourceId === 'a5-grid' &&
@@ -104,44 +108,72 @@
 
                 currentPopup = popup;
 
-                // if (!map.getLayer('highlight-layer')) {
-                //     map.addLayer({
-                //         'id': 'highlight-layer',
-                //         'type': 'fill',
-                //         'source': {
-                //             'type': 'geojson',
-                //             'data': {
-                //                 'type': 'FeatureCollection',
-                //                 'features': []
-                //             }
-                //         },
-                //         'paint': {
-                //             'fill-color': '#FF0000',
-                //             'fill-opacity': 0.2,
-                //         }
-                //     });
-                // }
+                if (!map.getLayer('highlight-layer')) {
+                    map.addLayer({
+                        'id': 'highlight-layer',
+                        'type': 'fill',
+                        'source': {
+                            'type': 'geojson',
+                            'data': {
+                                'type': 'FeatureCollection',
+                                'features': []
+                            }
+                        },
+                        'paint': {
+                            'fill-color': '#FF0000',
+                            'fill-opacity': 0.2,
+                        }
+                    });
+                }
 
-                // map.getSource('highlight-layer').setData({
-                //     'type': 'FeatureCollection',
-                //     'features': [feature]
-                // });
+                map.getSource('highlight-layer').setData({
+                    'type': 'FeatureCollection',
+                    'features': [feature]
+                });
             }
         });
 
         map.on('contextmenu', () => {
-            // if (map.getLayer('highlight-layer')) {
-            //     map.getSource('highlight-layer').setData({
-            //         'type': 'FeatureCollection',
-            //         'features': []
-            //     });
-            // }
+            if (map.getLayer('highlight-layer')) {
+                map.getSource('highlight-layer').setData({
+                    'type': 'FeatureCollection',
+                    'features': []
+                });
+            }
 
             if (currentPopup) {
                 currentPopup.remove();
                 currentPopup = null;
             }
         });
+        function exportToGeoJSON() {
+            let features = map.queryRenderedFeatures({ layers: ['a5-grid-layer'] });
+
+            if (!features.length) {
+                alert("No A5 grid features found in the current viewport.");
+                return;
+            }
+
+            // Remove duplicates (some tiles can appear multiple times)
+            // features = Array.from(new Map(
+            //     features.map(f => [f.properties.a5_id, f])
+            // ).values());
+
+            const geojson = {
+                type: 'FeatureCollection',
+                features: features
+            };
+            // Download as GeoJSON file
+            const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'a5-grid-export.geojson';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        window.exportToGeoJSON = exportToGeoJSON;
+
     </script>
 </body>
 

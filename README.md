@@ -6,9 +6,7 @@
 
 ## A5 (Almost done)	
 
-## RHEALPIX	(In progress)	
-
-## Eaggr ISEA4T	(In progress)	
+## QTM (In progress)	
 
 ## OLC (OpenLocationCode/ Pluscode) (In progress)	
 
@@ -20,6 +18,6 @@
 
 ## Tilecode	(In progress)	
 
-## Maidenhead (In progress)	
+## Maidenhead (Done)	
 
 ## GARS (In progress)

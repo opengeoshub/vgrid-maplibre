@@ -68,10 +68,6 @@ class MaidenheadGrid {
 
     if (resolution === 1) {
       lonWidth = 20.0; latWidth = 10.0;
-      minLat = -90;
-      minLon = -180;
-      maxLat = 90;
-      maxLon = 180;   
     } else if (resolution === 2) {
       lonWidth = 2.0; latWidth = 1.0;
     } else if (resolution === 3) {

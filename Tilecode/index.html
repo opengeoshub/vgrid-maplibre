@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S2 DGGS</title>
+    <title>Tilecode DGGS</title>
     <!-- MapLibre GL CSS -->
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
     <style>
@@ -21,20 +21,23 @@
 </head>
 
 <body>
+
     <!-- Map container -->
     <div id="map"></div>
     <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
     <button onclick="exportToGeoJSON()" style="position: absolute; top: 10px; left: 10px;">
         Export
-    </button>
-   
+      </button>
+    
     <script type="module">
-        import S2Grid from "./S2Grid.js";
+        // import TilecodeGrid from "https://unpkg.com/vgridjs@latest/Tilecode/TilecodeGrid.js";
+        import TilecodeGrid from './tilecodeGrid.js';
+
         // Initialize the map and grid
         const config = {
             lng: 106.706585,
             lat: 10.775326,
-            zoom: 1,
+            zoom: 2
         };
         let currentPopup = null;
 
@@ -43,37 +46,40 @@
             center: [config.lng, config.lat],
             zoom: config.zoom,
             style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
-        });
+            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+        })
 
         map.on('style.load', () => {
-            map.addControl(new maplibregl.GlobeControl());
+            // map.addControl(new maplibregl.GlobeControl());
+            // map.showTileBoundaries = true;
             try {
-                const s2Grid = new S2Grid(map, {
+                const a5Grid = new TilecodeGrid(map, {
                     color: 'rgba(255, 0, 0, 1)',
                     redraw: 'move',
                 });
-                console.log('S2 Grid added successfully.');
+                console.log('Tilecode Grid added successfully.');
             } catch (error) {
-                console.error('Failed to add S2 Grid:', error);
+                console.error('Failed to add Tilecode Grid:', error);
             }
         });
 
-        // Uncomment to display s2_token label
+        // Uncomment to display tilecode label
         map.on('sourcedata', (e) => {
             if (
-                e.sourceId === 's2-grid' &&
-                map.getSource('s2-grid') &&
-                !map.getLayer('s2-labels')
+                e.sourceId === 'tilecode-grid' &&
+                map.getSource('tilecode-grid') &&
+                !map.getLayer('tilecode-labels')
             ) {
                 map.addLayer({
-                    id: 's2-labels',
+                    id: 'tilecode-labels',
                     type: 'symbol',
-                    source: 's2-grid',
+                    source: 'tilecode-grid',
                     layout: {
-                        'text-field': ['get', 's2_token'],
+                        'text-field': ['get', 'tilecode_id'],
                         'text-size': 12,
                     },
                     paint: {
+                        'text-color': 'red',        // halo color
                         'text-halo-color': 'white',        // halo color
                         'text-halo-width': 1.5,            // halo width
                         'text-halo-blur': 0.5              // optional: smooth halo edges
@@ -82,16 +88,18 @@
             }
         });
 
+
         map.on('click', (e) => {
             const features = map.queryRenderedFeatures(e.point, {
-                layers: ['s2-grid-layer']
+                layers: ['tilecode-grid-layer']
             });
 
             if (features.length) {
                 const feature = features[0];  // Select the first feature if there are multiple
 
                 const popupContent = `
-                    <strong>s2 Token: </strong> ${feature.properties.s2_token} <br>
+                    <strong>Tilecode: </strong> ${feature.properties.tilecode_id} <br>
+                    <strong>Quadkey: </strong> ${feature.properties.quadkey_id} <br>
                     <strong>Resolution: </strong> ${feature.properties.resolution} <br>
                 `;
 
@@ -101,7 +109,7 @@
                     .addTo(map);
 
                 currentPopup = popup;
-                // Add a highlight layer if it doesn't exist yet
+
                 if (!map.getLayer('highlight-layer')) {
                     map.addLayer({
                         'id': 'highlight-layer',
@@ -114,13 +122,12 @@
                             }
                         },
                         'paint': {
-                            'fill-color': '#FF0000', // Red color for highlight
-                            'fill-opacity': 0.2,  // Set transparency of the highlight
+                            'fill-color': '#FF0000',
+                            'fill-opacity': 0.2,
                         }
                     });
                 }
 
-                // Update the source of the highlight layer with the clicked feature's geometry
                 map.getSource('highlight-layer').setData({
                     'type': 'FeatureCollection',
                     'features': [feature]
@@ -129,45 +136,41 @@
         });
 
         map.on('contextmenu', () => {
-            // Remove the highlight layer by clearing its source data
             if (map.getLayer('highlight-layer')) {
                 map.getSource('highlight-layer').setData({
                     'type': 'FeatureCollection',
-                    'features': []  // Clear the data to remove the highlight
+                    'features': []
                 });
             }
 
-            // Remove the current popup (if any) from the map
             if (currentPopup) {
                 currentPopup.remove();
-                currentPopup = null; // Reset the currentPopup variable
+                currentPopup = null;
             }
         });
-
         function exportToGeoJSON() {
-            const features = map.queryRenderedFeatures({ layers: ['s2-grid-layer'] });
+            let features = map.queryRenderedFeatures({ layers: ['tilecode-grid-layer'] });
 
             if (!features.length) {
-                alert("No S2 grid features found in the current viewport.");
+                alert("No tilecode grid features found in the current viewport.");
                 return;
             }
 
             // Remove duplicates (some tiles can appear multiple times)
-            // const uniqueFeatures = Array.from(new Map(
-            //     features.map(f => [f.properties.s2_token, f])
+            // features = Array.from(new Map(
+            //     features.map(f => [f.properties.tilecode_id, f])
             // ).values());
 
             const geojson = {
                 type: 'FeatureCollection',
                 features: features
             };
-
             // Download as GeoJSON file
             const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 's2-grid-export.geojson';
+            a.download = 'tilecode-grid-export.geojson';
             a.click();
             URL.revokeObjectURL(url);
         }

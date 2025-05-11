@@ -23,6 +23,10 @@
   <div id="map"></div>
 
   <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+  <button onclick="exportToGeoJSON()" style="position: absolute; top: 10px; left: 10px;">
+    Export
+  </button>
+
   <script type="module">
     import MaidenheadGrid from './MaidenheadGrid.js';
     const config = {
@@ -141,6 +145,36 @@
         currentPopup = null; // Reset the currentPopup variable
       }
     });
+
+    function exportToGeoJSON() {
+            const features = map.queryRenderedFeatures({ layers: ['maidenhead-grid-layer'] });
+
+            if (!features.length) {
+                alert("No Maidenhead grid features found in the current viewport.");
+                return;
+            }
+
+            // Remove duplicates (some tiles can appear multiple times)
+            // const uniqueFeatures = Array.from(new Map(
+            //     features.map(f => [f.properties.maidenhead_id, f])
+            // ).values());
+
+            const geojson = {
+                type: 'FeatureCollection',
+                features: features
+            };
+
+            // Download as GeoJSON file
+            const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'maidenhead-grid-export.geojson';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        window.exportToGeoJSON = exportToGeoJSON;
+
 
   </script>
 </body>

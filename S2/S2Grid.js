@@ -95,7 +95,7 @@ class S2Grid {
           coordinates: [coords],
         },
         properties: {
-          s2_token: s2.cellid.toToken(cellId),
+          s2_token: s2.cellid.toToken(cellId).toString(),
           resolution,
         }
       };

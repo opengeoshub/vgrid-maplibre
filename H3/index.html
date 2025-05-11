@@ -191,13 +191,13 @@
             }
 
             // Remove duplicates (some tiles can appear multiple times)
-            const uniqueFeatures = Array.from(new Map(
-                features.map(f => [f.properties.h3_id, f])
-            ).values());
+            // const uniqueFeatures = Array.from(new Map(
+            //     features.map(f => [f.properties.h3_id, f])
+            // ).values());
 
             const geojson = {
                 type: 'FeatureCollection',
-                features: uniqueFeatures
+                features: features
             };
 
             // Download as GeoJSON file

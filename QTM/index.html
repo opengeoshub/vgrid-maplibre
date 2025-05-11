@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Geohash DGGS</title>
-  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.0.0-pre.1/dist/maplibre-gl.css" />
+  <title>QTM DGGS</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
   <style>
     body {
       margin: 0;
@@ -22,81 +22,76 @@
 <body>
   <div id="map"></div>
 
-  <!-- <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script> -->
   <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
   <button onclick="exportToGeoJSON()" style="position: absolute; top: 10px; left: 10px;">
     Export
   </button>
 
-
   <script type="module">
-    import GeohashGrid from './GeohashGrid.js';
-    // import GeohashGrid from 'https://unpkg.com/github:thangqd/vgridJS@main/Geohash/GeohashGrid.js'
-    // import GeohashGrid from 'https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/Geohash/GeohashGrid.js'
-
+    import MaidenheadGrid from './QTMGrid.js';
     const config = {
       lng: 106.706585,
       lat: 10.775326,
       zoom: 0
     };
-
     let currentPopup = null;
+
+    // Initialize MapLibre map
     const map = new maplibregl.Map({
-      container: 'map',
+      container: 'map', // Map container ID
+      // style: 'https://demotiles.maplibre.org/style.json', // MapLibre style URL
       style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
       // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
       center: [config.lng, config.lat],
       zoom: config.zoom,
     });
-    map.on('load', () => {
+
+    map.on('style.load', () => {
       map.addControl(new maplibregl.GlobeControl());
       try {
-        const geohashGrid = new GeohashGrid(map, {
+        const maidenheadGrid = new MaidenheadGrid(map, {
           color: 'rgba(255, 0, 0, 1)',
           redraw: 'move',
         });
-
-        // Wait for the source to become available before adding label layer
-        map.on('sourcedata', (e) => {
-          if (
-            e.sourceId === 'geohash-grid' &&
-            map.getSource('geohash-grid') &&
-            !map.getLayer('geohash-labels')
-          ) {
-            map.addLayer({
-              id: 'geohash-labels',
-              type: 'symbol',
-              source: 'geohash-grid',
-              layout: {
-                'text-field': ['get', 'geohash_id'],
-                'text-size': 12,
-              },
-              paint: {
-                'text-halo-color': 'white',        // halo color
-                'text-halo-width': 1.5,            // halo width
-                'text-halo-blur': 0.5              // optional: smooth halo edges
-              },
-
-            });
-          }
-        });
-
-        console.log('Geohash Grid added successfully.');
+        console.log('QTM Grid added successfully.');
       } catch (error) {
-        console.error('Failed to add Geohash Grid:', error);
+        console.error('Failed to add QTM Grid:', error);
+      }
+    });
+    // Wait for the source to become available before adding label layer
+    map.on('sourcedata', (e) => {
+      if (
+        e.sourceId === 'qtm-grid' &&
+        map.getSource('qtm-grid') &&
+        !map.getLayer('qtm-labels')
+      ) {
+        map.addLayer({
+          id: 'qtm-labels',
+          type: 'symbol',
+          source: 'qtm-grid',
+          layout: {
+            'text-field': ['get', 'maidenhead_id'],
+            'text-size': 12,
+          },
+          paint: {
+            'text-halo-color': 'white',        // halo color
+            'text-halo-width': 1.5,            // halo width
+            'text-halo-blur': 0.5              // optional: smooth halo edges
+          },
+        });
       }
     });
 
     map.on('click', (e) => {
       const features = map.queryRenderedFeatures(e.point, {
-        layers: ['geohash-grid-layer']  // This should match the layer name where hexagons are rendered
+        layers: ['qtm-grid-layer']  // This should match the layer name where hexagons are rendered
       });
 
       if (features.length) {
         const feature = features[0];  // Select the first feature if there are multiple
         // Create a popup with the feature properties
         const popupContent = `
-            <strong>Geohash ID: </strong> ${feature.properties.geohash_id} <br>
+            <strong>QTM ID: </strong> ${feature.properties.qtm_id} <br>
             <strong>Resolution: </strong> ${feature.properties.resolution} <br>
             `;
         // Create a popup and set its coordinates
@@ -151,33 +146,34 @@
     });
 
     function exportToGeoJSON() {
-      const features = map.queryRenderedFeatures({ layers: ['geohash-grid-layer'] });
+            const features = map.queryRenderedFeatures({ layers: ['qtm-grid-layer'] });
 
-      if (!features.length) {
-          alert("No Geohash grid features found in the current viewport.");
-          return;
-      }
+            if (!features.length) {
+                alert("No Maidenhead grid features found in the current viewport.");
+                return;
+            }
 
-        // Remove duplicates (some tiles can appear multiple times)
-      // const uniqueFeatures = Array.from(new Map(
-      //   features.map(f => [f.properties.geohash_id, f])
-      // ).values());
+            // Remove duplicates (some tiles can appear multiple times)
+            // const uniqueFeatures = Array.from(new Map(
+            //     features.map(f => [f.properties.qtm_id, f])
+            // ).values());
 
-      const geojson = {
-        type: 'FeatureCollection',
-        features: features
-      };
+            const geojson = {
+                type: 'FeatureCollection',
+                features: features
+            };
 
-      // Download as GeoJSON file
-      const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'geohash-grid-export.geojson';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-    window.exportToGeoJSON = exportToGeoJSON;
+            // Download as GeoJSON file
+            const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'qtm-grid-export.geojson';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        window.exportToGeoJSON = exportToGeoJSON;
+
 
   </script>
 </body>

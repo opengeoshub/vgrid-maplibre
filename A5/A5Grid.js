@@ -1,5 +1,5 @@
 //  Reference: https://a5geo.org/
-import  * as A5 from 'https://unpkg.com/a5-js/dist/a5.es.js';
+import * as A5 from 'https://unpkg.com/a5-js/dist/a5.es.js';
 
 class A5Grid {
   constructor(map, options = {}) {
@@ -44,35 +44,40 @@ class A5Grid {
   getResolution(zoom) {
     const resolution = Math.floor(zoom);
     return resolution > 1 ? resolution : 1;
-}
+  }
 
   generateGrid() {
     const center = this.map.getCenter(); // {lng, lat}
-    const centerArray = [center.lng, center.lat]; // Convert to array [lng, lat]
     const zoom = this.map.getZoom();
     const resolution = this.getResolution(zoom);
 
-    // Pass centerArray as [longitude, latitude]
-    const cellId = A5.lonLatToCell(centerArray, resolution);  
+    const cellId = A5.lonLatToCell([center.lng, center.lat], resolution);
     const boundary = A5.cellToBoundary(cellId); // Array of [lng, lat] pairs
-    // Create coordinates for the GeoJSON polygon [lng, lat]
-    const coordinates = [boundary.map(([lon, lat]) => [lon, lat])]; // Ensure [lng, lat]
-
-    return {
-        type: "FeatureCollection",
-        features: [{
-            type: "Feature",
-            geometry: {
-                type: "Polygon",
-                coordinates: coordinates // GeoJSON format: [lng, lat]
-            },
-            properties: {
-                a5_id: A5.bigIntToHex(cellId), // Convert bigint to string if necessary
-                resolution
-            }
-        }]
+    const coordinates = [[...boundary, boundary[0]]];
+    console.log(coordinates)
+  
+    const features = [];
+    
+    const feature = {
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: coordinates,
+      },
+      properties: {
+        a5_id: A5.bigIntToHex(cellId),
+        resolution
+      },
     };
+    console.log(feature)
+    features.push(feature)
+    const geojson_features = {
+      type: "FeatureCollection",
+      features,
+    };
+    return geojson_features
+  }
 }
-}
+
 export default A5Grid;
-export {A5};
+// export { A5 };
