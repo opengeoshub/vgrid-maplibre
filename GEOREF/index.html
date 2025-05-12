@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GARS DGGS</title>
+  <title>GEOREF DGGS</title>
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
   <style>
     body {
@@ -28,11 +28,11 @@
   </button>
 
   <script type="module">
-    import GARSGrid from './GARSGrid.js';
+    import GeorefGrid from './GeorefGrid.js';
     const config = {
       lng: 106.706585,
       lat: 10.775326,
-      zoom: 6
+      zoom: 0
     };
     let currentPopup = null;
 
@@ -44,35 +44,34 @@
       // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
       center: [config.lng, config.lat],
       zoom: config.zoom,
-      minZoom: config.zoom
     });
 
-    // Add the gars Locator Grid when the map loads
+    // Add the Maidenhead Locator Grid when the map loads
     map.on('style.load', () => {
       map.addControl(new maplibregl.GlobeControl());
       try {
-        const garsGrid = new GARSGrid(map, {
+        const georefGrid = new GeorefGrid(map, {
           color: 'rgba(255, 0, 0, 1)',
           redraw: 'move',
         });
-        console.log('GARS Grid added successfully.');
+        console.log('GEOREF Grid added successfully.');
       } catch (error) {
-        console.error('Failed to add GARS Grid:', error);
+        console.error('Failed to add GEOREF Grid:', error);
       }
     });
     // Wait for the source to become available before adding label layer
     map.on('sourcedata', (e) => {
       if (
-        e.sourceId === 'gars-grid' &&
-        map.getSource('gars-grid') &&
-        !map.getLayer('gars-labels')
+        e.sourceId === 'georef-grid' &&
+        map.getSource('georef-grid') &&
+        !map.getLayer('georef-labels')
       ) {
         map.addLayer({
-          id: 'gars-labels',
+          id: 'georef-labels',
           type: 'symbol',
-          source: 'gars-grid',
+          source: 'georef-grid',
           layout: {
-            'text-field': ['get', 'gars_id'],
+            'text-field': ['get', 'georef_id'],
             'text-size': 12,
           },
           paint: {
@@ -86,15 +85,15 @@
 
     map.on('click', (e) => {
       const features = map.queryRenderedFeatures(e.point, {
-        layers: ['gars-grid-layer']  // This should match the layer name where hexagons are rendered
+        layers: ['georef-grid-layer']  // This should match the layer name where hexagons are rendered
       });
 
       if (features.length) {
         const feature = features[0];  // Select the first feature if there are multiple
         // Create a popup with the feature properties
         const popupContent = `
-            <strong>GARS ID: </strong> ${feature.properties.gars_id} <br>
-            <strong>Resolution (minutes): </strong> ${feature.properties.resolution} <br>
+            <strong>GEOREF ID: </strong> ${feature.properties.georef_id} <br>
+            <strong>Resolution: </strong> ${feature.properties.resolution} <br>
             `;
         // Create a popup and set its coordinates
         const popup = new maplibregl.Popup()
@@ -148,32 +147,33 @@
     });
 
     function exportToGeoJSON() {
-      const features = map.queryRenderedFeatures({ layers: ['gars-grid-layer'] });
+            let features = map.queryRenderedFeatures({ layers: ['georef-grid-layer'] });
 
-      if (!features.length) {
-        alert("No GARS grid features found in the current viewport.");
-        return;
-      }
+            if (!features.length) {
+                alert("No GEOREF grid features found in the current viewport.");
+                return;
+            }
 
-      // Remove duplicates (some tiles can appear multiple times)
-      // const uniqueFeatures = Array.from(new Map(
-      //   features.map(f => [f.properties.gars_id, f])
-      // ).values());
+            // Remove duplicates (some tiles can appear multiple times)
+            // const features = Array.from(new Map(
+            //     features.map(f => [f.properties.georef_id, f])
+            // ).values());
 
-      const geojson = {
-        type: 'FeatureCollection',
-        features: features
-      };
-      // Download as GeoJSON file
-      const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'gars-grid-export.geojson';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-    window.exportToGeoJSON = exportToGeoJSON;
+            const geojson = {
+                type: 'FeatureCollection',
+                features: features
+            };
+
+            // Download as GeoJSON file
+            const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'georef-grid-export.geojson';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        window.exportToGeoJSON = exportToGeoJSON;
 
 
   </script>

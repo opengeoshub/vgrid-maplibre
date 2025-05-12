@@ -44,10 +44,11 @@ class GARSGrid {
   }
 
   getResolution(zoom) {
-    if (zoom >= 10 && zoom < 12) return 1;
-    if (zoom >= 12 && zoom < 14) return 2;
-    if (zoom >= 14 && zoom < 16) return 3;
-    if (zoom >= 16) return 4;
+    // resolution: [1, 5, 15, 30 minutes]
+    if (zoom <= 8) return 30;
+    if (zoom > 8 && zoom <= 11) return 15;
+    if (zoom > 11 && zoom <= 12) return 5;
+    if (zoom > 12) return 1;
     return null;
   }
 
@@ -61,83 +62,137 @@ class GARSGrid {
     const maxLat = bounds.getNorth();
     const maxLon = bounds.getEast();
 
-    let lonWidth, latWidth;
-    if (resolution === 1) {
-      lonWidth = 30.0 / 60;
-      latWidth = 30.0 / 60;
-    } else if (resolution === 2) {
-      lonWidth = 15.0 / 60;
-      latWidth = 15.0 / 60;
-    } else if (resolution === 3) {
-      lonWidth = 5.0 / 60;
-      latWidth = 5.0 / 60;
-    } else if (resolution === 4) {
-      lonWidth = 1.0 / 60;
-      latWidth = 1.0 / 60;
-    } else {
-      throw new Error('Unsupported resolution');
-    }
+    const lonWidth = resolution/60
+    const latWidth = resolution/60
+    
+    // if (resolution === 1) {
+    //   lonWidth = 30.0 / 60;
+    //   latWidth = 30.0 / 60;
+    // } else if (resolution === 2) {
+    //   lonWidth = 15.0 / 60;
+    //   latWidth = 15.0 / 60;
+    // } else if (resolution === 3) {
+    //   lonWidth = 5.0 / 60;
+    //   latWidth = 5.0 / 60;
+    // } else if (resolution === 4) {
+    //   lonWidth = 1.0 / 60;
+    //   latWidth = 1.0 / 60;
+    // } else {
+    //   return {}
+    // }
 
     const baseLat = -90;
     const baseLon = -180;
 
-    const startX = Math.floor((minLon - baseLon) / lonWidth);
-    const endX = Math.floor((maxLon - baseLon) / lonWidth);
-    const startY = Math.floor((minLat - baseLat) / latWidth);
-    const endY = Math.floor((maxLat - baseLat) / latWidth);
+    const startLon = Math.floor((minLon - baseLon) / lonWidth) * lonWidth + baseLon;
+    const endLon = Math.ceil((maxLon - baseLon) / lonWidth) * lonWidth + baseLon;
+
+    const startLat = Math.floor((minLat - baseLat) / latWidth) * latWidth + baseLat;
+    const endLat = Math.ceil((maxLat - baseLat) / latWidth) * latWidth + baseLat;
+
+    const longitudes = [];
+    const latitudes = [];
+
+    for (let lon = startLon; lon < endLon; lon += lonWidth) {
+      if (lon >= -180 && lon <= 180) longitudes.push(lon);
+    }
+
+    for (let lat = startLat; lat < endLat; lat += latWidth) {
+      if (lat >= -90 && lat <= 90) latitudes.push(lat);
+    }
 
     const features = [];
+    for (const lon of longitudes) {
+      for (const lat of latitudes) {
+        const minLon = lon;
+        const minLat = lat;
+        const maxLon = lon + lonWidth;
+        const maxLat = lat + latWidth;
 
-    for (let x = startX; x <= endX; x++) {
-      for (let y = startY; y <= endY; y++) {
-        const cellMinLon = baseLon + x * lonWidth;
-        const cellMaxLon = cellMinLon + lonWidth;
-        const cellMinLat = baseLat + y * latWidth;
-        const cellMaxLat = cellMinLat + latWidth;
-
-        if (
-          cellMaxLon < minLon || cellMinLon > maxLon ||
-          cellMaxLat < minLat || cellMinLat > maxLat
-        ) continue;
-
-        const cellCenterLat = (cellMinLat + cellMaxLat) / 2;
-        const cellCenterLon = (cellMinLon + cellMaxLon) / 2;
-        console.log(cellCenterLat)
-        console.log(cellCenterLon)
-
-        const gars_id = this.latLng2GARS(cellCenterLat, cellCenterLon, resolution);
-        console.log(resolution)
-        console.log(gars_id)
-        const bounds = this.GARS2LatLngBounds(gars_id);
         const coordinates = [[
-          [bounds[0], bounds[1]],
-          [bounds[2], bounds[1]],
-          [bounds[2], bounds[3]],
-          [bounds[0], bounds[3]],
-          [bounds[0], bounds[1]],
+          [minLon, minLat],
+          [maxLon, minLat],
+          [maxLon, maxLat],
+          [minLon, maxLat],
+          [minLon, minLat] // close polygon
         ]];
 
-        const feature = {
-          type: 'Feature',
-          geometry: {
-            type: 'Polygon',
-            coordinates: [coordinates],
-          },
+        const polygon = {
+          type: "Polygon",
+          coordinates: coordinates
+        };
+
+        const centroidLat = (minLat + maxLat) / 2
+        const centroidLon = (minLon + maxLon) / 2
+
+        const gars_id = this.latLng2GARS(centroidLat, centroidLon, resolution);
+        features.push({
+          type: "Feature",
           properties: {
             gars_id: gars_id,
             resolution: resolution,
-          }
-        };
-        features.push(feature);
+          },
+          geometry: polygon
+        });
       }
     }
-    const geojson_feaures = {
-      type: 'FeatureCollection',
-      features: features,
+
+    return {
+      type: "FeatureCollection",
+      features: features
     };
-    console.log(geojson_feaures)
-    return geojson_feaures
   }
+
+  //   for (let x = startX; x <= endX; x++) {
+  //     for (let y = startY; y <= endY; y++) {
+  //       const cellMinLon = baseLon + x * lonWidth;
+  //       const cellMaxLon = cellMinLon + lonWidth;
+  //       const cellMinLat = baseLat + y * latWidth;
+  //       const cellMaxLat = cellMinLat + latWidth;
+
+  //       if (
+  //         cellMaxLon < minLon || cellMinLon > maxLon ||
+  //         cellMaxLat < minLat || cellMinLat > maxLat
+  //       ) continue;
+
+  //       const cellCenterLat = (cellMinLat + cellMaxLat) / 2;
+  //       const cellCenterLon = (cellMinLon + cellMaxLon) / 2;
+  //       console.log(cellCenterLat)
+  //       console.log(cellCenterLon)
+
+  //       const gars_id = this.latLng2GARS(cellCenterLat, cellCenterLon, resolution);
+  //       console.log(resolution)
+  //       console.log(gars_id)
+  //       const bounds = this.GARS2LatLngBounds(gars_id);
+  //       const coordinates = [[
+  //         [bounds[0], bounds[1]],
+  //         [bounds[2], bounds[1]],
+  //         [bounds[2], bounds[3]],
+  //         [bounds[0], bounds[3]],
+  //         [bounds[0], bounds[1]],
+  //       ]];
+
+  //       const feature = {
+  //         type: 'Feature',
+  //         geometry: {
+  //           type: 'Polygon',
+  //           coordinates: [coordinates],
+  //         },
+  //         properties: {
+  //           gars_id: gars_id,
+  //           resolution: resolution,
+  //         }
+  //       };
+  //       features.push(feature);
+  //     }
+  //   }
+  //   const geojson_feaures = {
+  //     type: 'FeatureCollection',
+  //     features: features,
+  //   };
+  //   console.log(geojson_feaures)
+  //   return geojson_feaures
+  // }
 
   latLng2GARS(latitude, longitude, resolution) {
     const LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
