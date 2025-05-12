@@ -48,89 +48,142 @@ class GeohashGrid {
   }
 
   generateGrid() {
-    const bounds = this.map.getBounds();
     const zoom = this.map.getZoom();
-  
-    const minLat = bounds.getSouth();
-    const minLon = bounds.getWest();
-    const maxLat = bounds.getNorth();
-    const maxLon = bounds.getEast();
-  
     const resolution = this.getResolution(zoom);
-    const { latStep, lonStep } = this.getStepSize(resolution);
-  
-    const geohashes = [];
-    let currentLat = minLat;
-  
-    while (currentLat < maxLat) {
-      let currentLon = minLon;
-      while (currentLon < maxLon) {
-        const geohashCode = this.encode(currentLat, currentLon, resolution);
-        geohashes.push(geohashCode);
-        currentLon += lonStep;
-      }
-      currentLat += latStep;
+
+    const bounds = this.map.getBounds();
+    let minLat = bounds.getSouth();
+    let minLon = bounds.getWest();
+    let maxLat = bounds.getNorth();
+    let maxLon = bounds.getEast();
+
+    let lonWidth, latWidth;
+
+    const factor = Math.pow(4, resolution - 1);
+    if (resolution === 1) {
+      lonWidth = 360 / 8;
+      latWidth = 180 / 4;
     }
-  
-    const features = geohashes.map((hash) => {
-      const [swLat, swLon, neLat, neLon] = this.decode_bbox(hash);
-  
-      return {
-        type: "Feature",
-        geometry: {
+    else if(resolution === 2)  {
+      lonWidth = 360 / (8 * 4);
+      latWidth = 180 / (8 * 4);
+    }
+    else if(resolution === 3)  {
+      lonWidth = 360 / (8 * 32);
+      latWidth = 180 / (4 * 32);
+    
+    }
+    else if(resolution === 4)  {
+      lonWidth = 360 / (8 * 32*4);
+      latWidth = 180 / (4 * 32*8);
+    }
+
+    else if(resolution === 5)  {
+      lonWidth = 360 / (8 * 32*4*8);
+      latWidth = 180 / (4 * 32*8*4);
+    }
+
+    else if(resolution === 6)  {
+      lonWidth = 360 / (8 * 32*4*8*4);
+      latWidth = 180 / (4 * 32*8*4*8);
+    }
+
+    else if(resolution === 7)  {
+      lonWidth = 360 / (8 * 32*4*8*4*8);
+      latWidth = 180 / (4 * 32*8*4*8*4);
+    }
+
+    else if(resolution === 8)  {
+      lonWidth = 360 / (8 * 32*4*8*4*8*4);
+      latWidth = 180 / (4 * 32*8*4*8*4*8);
+    }
+
+    else if(resolution === 9)  {
+      lonWidth = 360 / (8 * 32*4*8*4*8*4*8);
+      latWidth = 180 / (4 * 32*8*4*8*4*8*4);
+    }
+
+    else if(resolution === 10)  {
+      lonWidth = 360 / (8 * 32*4*8*4*8*4*8*4);
+      latWidth = 180 / (4 * 32*8*4*8*4*8*4*8);
+    }
+    // lonWidth = 360 / (8 * Math.pow(4, resolution - 1));
+    // latWidth = 180 / (4 * Math.pow(4, resolution - 1));
+
+    const baseLon = -180;
+    const baseLat = -90;
+
+    const startLon = Math.floor((minLon - baseLon) / lonWidth) * lonWidth + baseLon;
+    const endLon = Math.ceil((maxLon - baseLon) / lonWidth) * lonWidth + baseLon;
+
+    const startLat = Math.floor((minLat - baseLat) / latWidth) * latWidth + baseLat;
+    const endLat = Math.ceil((maxLat - baseLat) / latWidth) * latWidth + baseLat;
+
+    const longitudes = [];
+    const latitudes = [];
+
+    for (let lon = startLon; lon < endLon; lon += lonWidth) {
+      if (lon >= -180 && lon <= 180) longitudes.push(lon);
+    }
+
+    for (let lat = startLat; lat < endLat; lat += latWidth) {
+      if (lat >= -90 && lat <= 90) latitudes.push(lat);
+    }
+
+    const features = [];
+
+    for (const lon of longitudes) {
+      for (const lat of latitudes) {
+        const minLon = lon;
+        const minLat = lat;
+        const maxLon = lon + lonWidth;
+        const maxLat = lat + latWidth;
+
+        const coordinates = [[
+          [minLon, minLat],
+          [maxLon, minLat],
+          [maxLon, maxLat],
+          [minLon, maxLat],
+          [minLon, minLat] // close polygon
+        ]];
+
+        const polygon = {
           type: "Polygon",
-          coordinates: [
-            [
-              [swLon, swLat],
-              [neLon, swLat],
-              [neLon, neLat],
-              [swLon, neLat],
-              [swLon, swLat],
-            ],
-          ],
-        },
-        properties: {
-          geohash_id: hash,
-          resolution
-        },
-      };
-    });
-  
+          coordinates: coordinates
+        };
+
+        const centroidLat = (minLat + maxLat) / 2
+        const centroidLon = (minLon + maxLon) / 2
+
+        const geohash_id = this.encode(centroidLat, centroidLon, resolution);
+        features.push({
+          type: "Feature",
+          properties: {
+            geohash_id: geohash_id,
+            resolution: resolution,
+          },
+          geometry: polygon
+        });
+      }
+    }
+
     return {
       type: "FeatureCollection",
-      features,
+      features: features
     };
   }
- 
 
   getResolution(zoom) {
     if (zoom < 4) return 1;
     if (zoom >= 4 && zoom < 6) return 2;
-    if (zoom >= 6 && zoom < 9) return 3;
-    if (zoom >= 9 && zoom < 11) return 4;
-    if (zoom >= 11 && zoom < 13) return 5;
-    if (zoom >= 13 && zoom < 16) return 6;
-    if (zoom >= 16 && zoom < 18) return 7;
-    if (zoom >= 18 && zoom < 20) return 8;
-    if (zoom >= 20) return 9;
-  }
-
-  // function getStepSize(resolution) {
-  getStepSize(resolution) {
-    const resolutionData = [
-      { latStep: 180 / 4, lonStep: 360 / 8 },
-      { latStep: 180 / 32, lonStep: 360 / 32 },
-      { latStep: 180 / 128, lonStep: 360 / 128 },
-      { latStep: 180 / 512, lonStep: 360 / 512 },
-      { latStep: 180 / 2048, lonStep: 360 / 2048 },
-      { latStep: 180 / 8192, lonStep: 360 / 8192 },
-      // { latStep: 180 / 32768, lonStep: 360 / 32768},
-      { latStep: 180 / 131072, lonStep: 360 / 131072 },
-      { latStep: 180 / 524288, lonStep: 360 / 524288 },
-      { latStep: 180 / 2097152, lonStep: 360 / 2097152 },
-      { latStep: 180 / 8388608, lonStep: 360 / 8388608 },
-    ];
-    return resolutionData[Math.min(resolution, 9)];
+    if (zoom >= 6 && zoom < 8) return 3;
+    if (zoom >= 8 && zoom < 10) return 4;
+    if (zoom >= 10 && zoom < 12) return 5;
+    if (zoom >= 12 && zoom < 14) return 6;
+    if (zoom >= 14 && zoom < 16) return 7;
+    if (zoom >= 16 && zoom < 18) return 8;
+    if (zoom >= 18 && zoom < 20) return 9;
+    return 10;
   }
 
   encode(latitude, longitude, numberOfChars) {
