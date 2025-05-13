@@ -28,7 +28,7 @@
   </button>
 
   <script type="module">
-    import MaidenheadGrid from './QTMGrid.js';
+    import QTMGrid from './QTMGrid.js';
     const config = {
       lng: 106.706585,
       lat: 10.775326,
@@ -39,8 +39,9 @@
     // Initialize MapLibre map
     const map = new maplibregl.Map({
       container: 'map', // Map container ID
+      style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json',
       // style: 'https://demotiles.maplibre.org/style.json', // MapLibre style URL
-      style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
+      // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
       // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
       center: [config.lng, config.lat],
       zoom: config.zoom,
@@ -49,8 +50,9 @@
     map.on('style.load', () => {
       map.addControl(new maplibregl.GlobeControl());
       try {
-        const maidenheadGrid = new MaidenheadGrid(map, {
+        const qtmGrid = new QTMGrid(map, {
           color: 'rgba(255, 0, 0, 1)',
+          width: 1.5,
           redraw: 'move',
         });
         console.log('QTM Grid added successfully.');
@@ -70,7 +72,7 @@
           type: 'symbol',
           source: 'qtm-grid',
           layout: {
-            'text-field': ['get', 'maidenhead_id'],
+            'text-field': ['get', 'qtm_id'],
             'text-size': 12,
           },
           paint: {
@@ -149,7 +151,7 @@
             const features = map.queryRenderedFeatures({ layers: ['qtm-grid-layer'] });
 
             if (!features.length) {
-                alert("No Maidenhead grid features found in the current viewport.");
+                alert("No QTM grid features found in the current viewport.");
                 return;
             }
 

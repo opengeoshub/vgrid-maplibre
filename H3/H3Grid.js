@@ -11,11 +11,11 @@ class H3Grid {
       this.map = map;
       this.options = {
         color: options.color || 'rgba(255, 0, 0, 1)',
+        width: options.width || 1,
         redraw: options.redraw || 'move', // Default to redraw on move
       };
       this.sourceId = 'h3-grid';
       this.gridLayerId = 'h3-grid-layer';
-      this.labelLayerId = 'h3-label-layer';
       this.initialize();
     }
   
@@ -34,9 +34,20 @@ class H3Grid {
         paint: {
           'fill-color': 'transparent',
           'fill-opacity': 1,
-          'fill-outline-color': ['get', 'color'],
+          // 'fill-outline-color': ['get', 'color'],
         }
       });
+
+      this.map.addLayer({
+        'id': 'outline',
+        'type': 'line',
+        'source': this.sourceId,
+        'layout': {},
+        'paint': {
+            'line-color':  ['get', 'color'],
+            'line-width': this.options.width,
+        }
+    });
   
       // Redraw the grid on map movements
       this.map.on(this.options.redraw, () => this.updateGrid());
@@ -115,30 +126,33 @@ class H3Grid {
       var features = [];
     
       for (var i = 0; i < shapes.length; i++) {
-        let cellId = shapes[i];
-        let boundary = h3.cellToBoundary(cellId, true);
+        let h3_id = shapes[i];
+        const exists = features.some(f => f.properties.h3_id === h3_id);
+        if (exists) continue;
+
+        let boundary = h3.cellToBoundary(h3_id, true);
     
         // Adjust boundary coordinates if they cross the anti-meridian
         if (boundary.find((e) => e[0] < -130) !== undefined) {
           boundary = boundary.map((e) => e[0] > 0 ? [e[0] - 360, e[1]] : e);
         }
-        const resolution = h3.getResolution(cellId);
+        const resolution = h3.getResolution(h3_id);
         const edge_unit = resolution > 7 ? h3.UNITS.m : h3.UNITS.km;
         const area_unit = resolution > 7 ? h3.UNITS.m2 : h3.UNITS.km2;
        
-        const icosa_faces = h3.getIcosahedronFaces(cellId);
+        const icosa_faces = h3.getIcosahedronFaces(h3_id);
         
-        let  area = h3.cellArea(cellId, area_unit);
+        let  area = h3.cellArea(h3_id, area_unit);
         area = parseFloat(area.toFixed(1)).toLocaleString();
     
         let  num_hex = h3.getNumCells(h3res);
         num_hex = num_hex.toLocaleString();
-    
-        features.push({
+        
+        const feature = {
           "type": "Feature",
           "properties": {
-            "color": h3.isPentagon(cellId) ? 'red' : 'blue',
-            "h3_id": cellId, // Include the cell ID as a property
+            "color": h3.isPentagon(h3_id) ? 'cyan' : this.options.color,
+            "h3_id": h3_id, 
             "resolution": resolution,
             "icosa_faces": icosa_faces,
             "area": area,
@@ -150,7 +164,9 @@ class H3Grid {
             "type": "Polygon", // Ensure this is a polygon
             "coordinates": [boundary] // Set the boundary as the polygon's coordinates
           }
-        });
+        }
+
+        features.push(feature);
       }
       const geojson_features = {
         type: "FeatureCollection",

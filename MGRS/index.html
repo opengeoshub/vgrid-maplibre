@@ -45,7 +45,8 @@
             container: 'map', // The ID of the HTML element where MapLibre will render
             center: [config.lng, config.lat],
             zoom: config.zoom,
-            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
+            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json',
+            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
             // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
         })
 
@@ -54,6 +55,7 @@
             try {
                 const mgrsGrid = new MGRSGrid(map, {
                     color: 'rgba(255, 0, 0, 1)',
+                    width: 1.5,
                     redraw: 'move',
                 });
                 console.log('MGRS Grid added successfully.');

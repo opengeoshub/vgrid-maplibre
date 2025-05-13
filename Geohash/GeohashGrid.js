@@ -11,6 +11,7 @@ class GeohashGrid {
     this.map = map;
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
+      width: options.width || 1,
       redraw: options.redraw || 'move', // Default to redraw on move
     };
     this.sourceId = 'geohash-grid';
@@ -32,9 +33,19 @@ class GeohashGrid {
       source: this.sourceId,
       paint: {
         "fill-color": "transparent",
-        "fill-outline-color": this.options.color
+        // "fill-outline-color": this.options.color
       },
     });
+    this.map.addLayer({
+      'id': 'outline',
+      'type': 'line',
+      'source': this.sourceId,
+      'layout': {},
+      'paint': {
+          'line-color': this.options.color,
+          'line-width': this.options.width,
+      }
+  });
     // Redraw the grid on map movements
     this.map.on(this.options.redraw, () => this.updateGrid());
   }
@@ -107,9 +118,6 @@ class GeohashGrid {
       lonWidth = 360 / (8 * 32*4*8*4*8*4*8*4);
       latWidth = 180 / (4 * 32*8*4*8*4*8*4*8);
     }
-    // lonWidth = 360 / (8 * Math.pow(4, resolution - 1));
-    // latWidth = 180 / (4 * Math.pow(4, resolution - 1));
-
     const baseLon = -180;
     const baseLat = -90;
 
@@ -139,7 +147,7 @@ class GeohashGrid {
         const maxLon = lon + lonWidth;
         const maxLat = lat + latWidth;
 
-        const coordinates = [[
+        const coords = [[
           [minLon, minLat],
           [maxLon, minLat],
           [maxLon, maxLat],
@@ -147,23 +155,25 @@ class GeohashGrid {
           [minLon, minLat] // close polygon
         ]];
 
-        const polygon = {
-          type: "Polygon",
-          coordinates: coordinates
-        };
-
         const centroidLat = (minLat + maxLat) / 2
         const centroidLon = (minLon + maxLon) / 2
 
         const geohash_id = this.encode(centroidLat, centroidLon, resolution);
-        features.push({
-          type: "Feature",
+        const exists = features.some(f => f.properties.geohash_id === geohash_id);
+        if (exists) continue;
+
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: coords,
+          },
           properties: {
             geohash_id: geohash_id,
-            resolution: resolution,
-          },
-          geometry: polygon
-        });
+            resolution,
+          }
+        };
+        features.push(feature);
       }
     }
 

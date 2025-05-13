@@ -39,8 +39,9 @@
     // Initialize MapLibre map
     const map = new maplibregl.Map({
       container: 'map', // Map container ID
+      style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json',
       // style: 'https://demotiles.maplibre.org/style.json', // MapLibre style URL
-      style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
+      // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
       // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
       center: [config.lng, config.lat],
       zoom: config.zoom,
@@ -52,6 +53,7 @@
       try {
         const maidenheadGrid = new MaidenheadGrid(map, {
           color: 'rgba(255, 0, 0, 1)',
+          width: 1.5,
           redraw: 'move',
         });
         console.log('Maidenhead Grid added successfully.');

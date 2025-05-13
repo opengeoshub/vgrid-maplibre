@@ -18,6 +18,7 @@ class GeorefGrid {
     this.map = map;
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
+      width: options.width || 1,
       redraw: options.redraw || 'move', // Default to redraw on move
     };
     this.sourceId = 'georef-grid';
@@ -40,9 +41,19 @@ class GeorefGrid {
       paint: {
         'fill-color': 'transparent',
         'fill-opacity': 1,
-        'fill-outline-color': this.options.color
+        // 'fill-outline-color': this.options.color
       }
     });
+    this.map.addLayer({
+      'id': 'outline',
+      'type': 'line',
+      'source': this.sourceId,
+      'layout': {},
+      'paint': {
+          'line-color': this.options.color,
+          'line-width': this.options.width,
+      }
+  });
     // Redraw the grid on map movements
     this.map.on(this.options.redraw, () => this.updateGrid());
   }
@@ -121,7 +132,7 @@ class GeorefGrid {
         const maxLon = lon + lonWidth;
         const maxLat = lat + latWidth;
 
-        const coordinates = [[
+        const coords = [[
           [minLon, minLat],
           [maxLon, minLat],
           [maxLon, maxLat],
@@ -129,23 +140,26 @@ class GeorefGrid {
           [minLon, minLat] // close polygon
         ]];
 
-        const polygon = {
-          type: "Polygon",
-          coordinates: coordinates
-        };
-
         const centroidLat = (minLat+maxLat)/2
         const centroidLon = (minLon+maxLon)/2
 
         const georef_id = this.encode(centroidLat, centroidLon, resolution);
-        features.push({
-          type: "Feature",
+        const exists = features.some(f => f.properties.georef_id === georef_id);
+        if (exists) continue;
+
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: coords,
+          },
           properties: {
             georef_id: georef_id,
-            resolution: resolution,
-          },
-          geometry: polygon
-        });
+            resolution,
+          }
+        };
+        features.push(feature);
+
       }
     }
 
@@ -169,7 +183,6 @@ class GeorefGrid {
     const r = s.indexOf(c);
     return r < 0 ? -1 : r;
   }
-
 
   encode(lat, lon, prec) {
     if (lon < -180) {

@@ -9,6 +9,7 @@ class MaidenheadGrid {
     this.map = map;
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
+      width: options.width || 1,
       redraw: options.redraw || 'move', // Default to redraw on move
     };
     this.sourceId = 'maidenhead-grid';
@@ -31,9 +32,19 @@ class MaidenheadGrid {
       paint: {
         'fill-color': 'transparent',
         'fill-opacity': 1,
-        'fill-outline-color': this.options.color
+        // 'fill-outline-color': this.options.color
       }
     });
+    this.map.addLayer({
+      'id': 'outline',
+      'type': 'line',
+      'source': this.sourceId,
+      'layout': {},
+      'paint': {
+          'line-color': this.options.color,
+          'line-width': this.options.width,
+      }
+  });
 
     // Redraw the grid on map movements
     this.map.on(this.options.redraw, () => this.updateGrid());
@@ -104,6 +115,8 @@ class MaidenheadGrid {
         const cellCenterLon = (cellMinLon + cellMaxLon) / 2;
 
         const maidenhead_id = this.toMaiden(cellCenterLat, cellCenterLon, resolution);
+        const exists = features.some(f => f.properties.maidenhead_id === maidenhead_id);
+        if (exists) continue;
 
         const {
           lat1: min_lat_maiden,
@@ -112,7 +125,7 @@ class MaidenheadGrid {
           lon2: max_lon_maiden
         } = this.maidenGrid(maidenhead_id);
         
-        const coordinates = [[
+        const coords = [[
           [min_lon_maiden, min_lat_maiden],  // Bottom-left corner
           [max_lon_maiden, min_lat_maiden], // Bottom-right corner
           [max_lon_maiden, max_lat_maiden], // Top-right corner
@@ -120,19 +133,19 @@ class MaidenheadGrid {
           [min_lon_maiden, min_lat_maiden]  // Closing the polygon (same as the first point)
         ]]
 
-        const polygon = {
-          type: "Polygon",
-          coordinates: coordinates,
-        };
-
-        features.push({
-          type: "Feature",
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: coords,
+          },
           properties: {
             maidenhead_id: maidenhead_id,
-            resolution: resolution,
-          },
-          geometry: polygon
-        });
+            resolution,
+          }
+        };
+
+        features.push(feature);
       }
     }
 

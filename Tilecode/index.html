@@ -45,7 +45,8 @@
             container: 'map', // The ID of the HTML element where MapLibre will render
             center: [config.lng, config.lat],
             zoom: config.zoom,
-            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
+            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json',
+            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
             // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
         })
 
@@ -53,8 +54,9 @@
             // map.addControl(new maplibregl.GlobeControl());
             // map.showTileBoundaries = true;
             try {
-                const a5Grid = new TilecodeGrid(map, {
+                const tilecodeGrid = new TilecodeGrid(map, {
                     color: 'rgba(255, 0, 0, 1)',
+                    width: 1.5,
                     redraw: 'move',
                 });
                 console.log('Tilecode Grid added successfully.');
@@ -79,7 +81,7 @@
                         'text-size': 12,
                     },
                     paint: {
-                        'text-color': 'red',        // halo color
+                        // 'text-color': 'red',        // halo color
                         'text-halo-color': 'white',        // halo color
                         'text-halo-width': 1.5,            // halo width
                         'text-halo-blur': 0.5              // optional: smooth halo edges

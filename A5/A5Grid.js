@@ -5,8 +5,9 @@ class A5Grid {
   constructor(map, options = {}) {
     this.map = map;
     this.options = {
+      color: options.color || 'rgba(255, 0, 0, 1)',
+      width: options.width || 1,
       redraw: options.redraw || 'move',
-      color: options.color || 'rgba(255, 0, 0, 1)'
     };
     this.sourceId = 'a5-grid';
     this.gridLayerId = 'a5-grid-layer';
@@ -26,10 +27,21 @@ class A5Grid {
       layout: {},
       paint: {
         'fill-color': 'transparent',
-        'fill-opacity': 1,
-        'fill-outline-color': this.options.color
+        // 'fill-outline-color': 'red'
       }
     });
+    this.map.addLayer({
+      'id': 'outline',
+      'type': 'line',
+      'source': this.sourceId,
+      'layout': {},
+      'paint': {
+        'line-color': this.options.color,
+        'line-width': this.options.width,
+      }
+    });
+
+
     this.map.on(this.options.redraw, () => this.updateGrid());
   }
 
@@ -42,41 +54,130 @@ class A5Grid {
   }
 
   getResolution(zoom) {
-    const resolution = Math.floor(zoom);
+    const resolution = Math.floor(zoom) + 1;
     return resolution > 1 ? resolution : 1;
   }
 
   generateGrid() {
-    const center = this.map.getCenter(); // {lng, lat}
     const zoom = this.map.getZoom();
     const resolution = this.getResolution(zoom);
+    let lonWidth, latWidth;
 
-    const cellId = A5.lonLatToCell([center.lng, center.lat], resolution);
-    const boundary = A5.cellToBoundary(cellId); // Array of [lng, lat] pairs
-    const coordinates = [[...boundary, boundary[0]]];
-    console.log(coordinates)
-  
-    const features = [];
+    if (resolution === 1) {
+      lonWidth = 75;
+      latWidth = 75;
+    } else if (resolution === 2) {
+      lonWidth = 15;
+      latWidth = 15;
+    } else if (resolution === 3) {
+      lonWidth = 10;
+      latWidth = 10;
+    } else if (resolution > 3) {
+      const baseWidth = 10; // at resolution 3
+      const factor = Math.pow(0.5, resolution - 3);
+      lonWidth = baseWidth * factor;
+      latWidth = baseWidth * factor;
+    }
     
-    const feature = {
-      type: "Feature",
-      geometry: {
-        type: "Polygon",
-        coordinates: coordinates,
-      },
-      properties: {
-        a5_id: A5.bigIntToHex(cellId),
-        resolution
-      },
-    };
-    console.log(feature)
-    features.push(feature)
-    const geojson_features = {
+    const bounds = this.map.getBounds();
+    const minLat = bounds.getSouth();
+    const minLon = bounds.getWest();
+    const maxLat = bounds.getNorth();
+    const maxLon = bounds.getEast();
+
+    const longitudes = [];
+    const latitudes = [];
+
+    for (let lon = minLon; lon < maxLon; lon += lonWidth) {
+      longitudes.push(lon);
+    }
+
+    for (let lat = minLat; lat < maxLat; lat += latWidth) {
+      latitudes.push(lat);
+    }
+
+    const features = [];
+    for (const lon of longitudes) {
+      for (const lat of latitudes) {
+        const minLon = lon;
+        const minLat = lat;
+        const maxLon = lon + lonWidth;
+        const maxLat = lat + latWidth;
+
+        const centroidLat = (minLat + maxLat) / 2
+        const centroidLon = (minLon + maxLon) / 2
+
+        const cellId = A5.lonLatToCell([centroidLon, centroidLat], resolution);
+        const boundary = A5.cellToBoundary(cellId); // Array of [lng, lat] pairs
+        const coords = [[...boundary, boundary[0]]];
+        // Fix antimeridian crossing 
+        // if (coords.find(([lng, _]) => lng > 130)) {
+        //   coords = coords.map(([lng, lat]) =>
+        //     lng < 0 ? [lng + 360, lat] : [lng, lat]
+        //   )
+        // };
+      
+        const a5_id = A5.bigIntToHex(cellId);
+        const exists = features.some(f => f.properties.a5_id === a5_id);
+        if (exists) continue;
+
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: coords,
+          },
+          properties: {
+            a5_id: a5_id,
+            resolution,
+          }
+        };
+
+        features.push(feature)
+      }
+    }
+
+    return {
       type: "FeatureCollection",
-      features,
+      features: features
     };
-    return geojson_features
+
+    
   }
+
+  // generateGrid() {
+  //   const center = this.map.getCenter(); // {lng, lat}
+  //   const zoom = this.map.getZoom();
+  //   const resolution = this.getResolution(zoom);
+
+  //   const cellId = A5.lonLatToCell([center.lng, center.lat], resolution);
+  //   const boundary = A5.cellToBoundary(cellId); // Array of [lng, lat] pairs
+  //   const coordinates = [[...boundary, boundary[0]]];
+  //   const a5_id = A5.bigIntToHex(cellId);
+  //   // const exists = features.some(f => f.properties.a5_id === a5_id);
+  //   // if (exists) continue;
+
+  //   const features = [];
+
+  //   const feature = {
+  //     type: "Feature",
+  //     geometry: {
+  //       type: "Polygon",
+  //       coordinates: coordinates,
+  //     },
+  //     properties: {
+  //       a5_id: a5_id,
+  //       resolution
+  //     },
+  //   };
+  //   features.push(feature)
+
+  //   return {
+  //     type: "FeatureCollection",
+  //     features: features
+  //   };
+
+  // }
 }
 
 export default A5Grid;

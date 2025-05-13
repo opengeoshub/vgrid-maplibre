@@ -6,6 +6,7 @@ class S2Grid {
     this.map = map;
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
+      width: options.width || 1,
       redraw: options.redraw || 'move',
     };
     this.sourceId = 's2-grid';
@@ -27,9 +28,20 @@ class S2Grid {
       paint: {
         'fill-color': 'transparent',
         'fill-opacity': 1,
-        'fill-outline-color': this.options.color
+        // 'fill-outline-color': this.options.color
       }
     });
+    this.map.addLayer({
+      'id': 'outline',
+      'type': 'line',
+      'source': this.sourceId,
+      'layout': {},
+      'paint': {
+          'line-color': this.options.color,
+          'line-width': this.options.width,
+      }
+  });
+
 
     this.map.on(this.options.redraw, () => this.updateGrid());
   }

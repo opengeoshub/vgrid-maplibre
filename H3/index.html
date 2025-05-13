@@ -48,8 +48,9 @@
             container: 'map', // The ID of the HTML element where MapLibre will render
             center: [config.lng, config.lat],
             zoom: config.zoom,
+            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json',
             // style: 'https://demotiles.maplibre.org/style.json' // Default MapLibre style
-            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
+            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
             // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
         });
 
@@ -58,6 +59,7 @@
                 type: 'geojson',
                 // Fetch GeoJSON from the URL
                 data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/H3/icosahedron.geojson'
+                // data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/H3/icosahedron_polygon.geojson'
 
             });
             // Add the layer to display the GeoJSON features
@@ -68,11 +70,10 @@
                 source: 'icosahedron',  // The source we added above
                 paint: {
                     'line-color': '#008000',  // Line color (if using 'line' layer)
-                    'line-width': 1,       // Line width
+                    'line-width': 1.5,       // Line width
                     'line-dasharray': [2, 4, 1, 4]  // Dash-dot pattern: [dash length, gap length, dash length, gap length]
-                    // 'fill-color': '#008000',         // Fill color
-                    // 'fill-opacity': 0.3,             // Transparency
-                    // 'fill-outline-color': '#000000'  // Border/Outline color
+                    // 'fill-color': 'transparent',         // Fill color
+                    // 'fill-outline-color': '#008000'  // Border/Outline color
                 }
             });
         }
@@ -82,6 +83,7 @@
             try {
                 const h3Grid = new H3Grid(map, {
                     color: 'rgba(255, 0, 0, 1)',
+                    width: 1.5,
                     redraw: 'move',
                 });
                 addIcosaLayer();

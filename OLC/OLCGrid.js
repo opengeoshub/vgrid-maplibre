@@ -3,6 +3,7 @@ class OLCGrid {
     this.map = map;
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
+      width: options.width || 1,
       redraw: options.redraw || 'move',
     };
     this.sourceId = 'olc-grid';
@@ -27,6 +28,16 @@ class OLCGrid {
         'fill-outline-color': this.options.color
       }
     });
+    this.map.addLayer({
+      'id': 'outline',
+      'type': 'line',
+      'source': this.sourceId,
+      'layout': {},
+      'paint': {
+        'line-color': this.options.color,
+        'line-width': this.options.width,
+      }
+    });
 
     this.map.on(this.options.redraw, () => this.updateGrid());
   }
@@ -40,72 +51,95 @@ class OLCGrid {
   }
 
   getResolution(zoom) {
-    if (zoom <= 4) return 2;
-    if (zoom <= 9) return 4;
-    if (zoom <= 12) return 6;
-    if (zoom <= 14) return 8;
-    if (zoom <= 16) return 10;
-    if (zoom <= 18) return 11;
-    if (zoom <= 20) return 12;
-    if (zoom <= 22) return 13;
-    if (zoom <= 24) return 14;
+    if (zoom <= 6) return 2;
+    if (zoom <= 10) return 4;
+    if (zoom <= 14) return 6;
+    if (zoom <= 18) return 8;
+    if (zoom <= 21) return 10;
+    if (zoom <= 23) return 11;
+    if (zoom <= 25) return 12;
+    if (zoom <= 27) return 13;
+    if (zoom <= 29) return 14;
     return 15;
   }
 
   generateGrid() {
-    const bounds = this.map.getBounds();
     const zoom = this.map.getZoom();
     const resolution = this.getResolution(zoom);
-    const swLat = bounds.getSouthWest().lat;
-    const swLng = bounds.getSouthWest().lng;
-    const neLat = bounds.getNorthEast().lat;
-    const neLng = bounds.getNorthEast().lng;
+    const bounds = this.map.getBounds();
 
-    const area = OpenLocationCode.decode(OpenLocationCode.encode(swLat, swLng, resolution))
-    const latStep = area.latitudeHi - area.latitudeLo
-    const lngStep = area.longitudeHi - area.longitudeLo
-    const olcFeatures = [];
+    let minLat = bounds.getSouth();
+    let minLon = bounds.getWest();
+    let maxLat = bounds.getNorth();
+    let maxLon = bounds.getEast();
 
-    for (let lat = swLat; lat < neLat; lat += latStep) {
-      for (let lng = swLng; lng < neLng; lng += lngStep) {
-        const centerLat = lat + latStep / 2;
-        const centerLng = lng + lngStep / 2;
+    const area = OpenLocationCode.decode(OpenLocationCode.encode(minLat, minLon, resolution))
+    const latWidth = area.latitudeHi - area.latitudeLo
+    const lonWidth = area.longitudeHi - area.longitudeLo
 
-        const olcId = OpenLocationCode.encode(centerLat, centerLng, resolution);
-        const decoded = OpenLocationCode.decode(olcId);
-        const codeLength = decoded.codeLength;
+    const baseLon = -180;
+    const baseLat = -90;
 
-        const cellPolygon = {
-          type: "Polygon",
-          coordinates: [[
-            [lng, lat],                       // SW
-            [lng, lat + latStep],             // NW
-            [lng + lngStep, lat + latStep],   // NE
-            [lng + lngStep, lat],             // SE
-            [lng, lat]                        // Close polygon
-          ]],
+    const startLon = Math.floor((minLon - baseLon) / lonWidth) * lonWidth + baseLon;
+    const endLon = Math.ceil((maxLon - baseLon) / lonWidth) * lonWidth + baseLon;
+
+    const startLat = Math.floor((minLat - baseLat) / latWidth) * latWidth + baseLat;
+    const endLat = Math.ceil((maxLat - baseLat) / latWidth) * latWidth + baseLat;
+
+    const longitudes = [];
+    const latitudes = [];
+
+    for (let lon = startLon; lon < endLon; lon += lonWidth) {
+      if (lon >= -180 && lon <= 180) longitudes.push(lon);
+    }
+
+    for (let lat = startLat; lat < endLat; lat += latWidth) {
+      if (lat >= -90 && lat <= 90) latitudes.push(lat);
+    }
+
+    const features = [];
+
+    for (const lon of longitudes) {
+      for (const lat of latitudes) {
+        const minLon = lon;
+        const minLat = lat;
+        const maxLon = lon + lonWidth;
+        const maxLat = lat + latWidth;
+
+        const centroidLat = (minLat + maxLat) / 2
+        const centroidLon = (minLon + maxLon) / 2
+
+        const olc_id = OpenLocationCode.encode(centroidLat, centroidLon, resolution);
+        const exists = features.some(f => f.properties.olc_id === olc_id);
+        if (exists) continue;
+    
+        const coords = [[
+          [minLon, minLat],
+          [maxLon, minLat],
+          [maxLon, maxLat],
+          [minLon, maxLat],
+          [minLon, minLat] // close polygon
+        ]];
+
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: coords,
+          },
           properties: {
-            olc_id: olcId,
+            olc_id: olc_id,
             resolution,
           }
-
         };
 
-        const olcFeature = {
-          type: "Feature",
-          geometry: cellPolygon,
-          properties: {
-            olc_id: olcId,
-            resolution,
-          }
-        };
-        olcFeatures.push(olcFeature);
+        features.push(feature)
       }
     }
 
     return {
       type: "FeatureCollection",
-      features: olcFeatures
+      features: features
     };
   }
 

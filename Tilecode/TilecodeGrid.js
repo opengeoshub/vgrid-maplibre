@@ -5,8 +5,9 @@ class TilecodeGrid {
   constructor(map, options = {}) {
     this.map = map;
     this.options = {
-      redraw: options.redraw || 'move',
       color: options.color || 'rgba(255, 0, 0, 1)',
+      width: options.width || 1,
+      redraw: options.redraw || 'move',
     };
     this.sourceId = 'tilecode-grid';
     this.gridLayerId = 'tilecode-grid-layer';
@@ -30,6 +31,18 @@ class TilecodeGrid {
         'fill-outline-color': this.options.color,
       },
     });
+
+    this.map.addLayer({
+      'id': 'outline',
+      'type': 'line',
+      'source': this.sourceId,
+      'layout': {},
+      'paint': {
+          'line-color': this.options.color,
+          'line-width': this.options.width,
+      }
+  });
+
 
     this.map.on(this.options.redraw, () => this.updateGrid());
   }
@@ -55,27 +68,33 @@ class TilecodeGrid {
     for (let x = sw[0]; x <= ne[0]; x++) {
       for (let y = ne[1]; y <= sw[1]; y++) {
         const tile = [x, y, resolution];
+        const tilecode_id =  this.tileToTilecode(tile);
+        const quadkey_id =  this.tileToQuadkey(tile);
+        const exists = features.some(f => f.properties.tilecode_id === tilecode_id);
+        if (exists) continue;
+
         const bbox = this.tileToBBOX(tile); // [w, s, e, n]
-        const coordinates = [[
+        const coords = [[
           [bbox[0], bbox[3]],
           [bbox[0], bbox[1]],
           [bbox[2], bbox[1]],
           [bbox[2], bbox[3]],
           [bbox[0], bbox[3]],
         ]];
-  
-        features.push({
+
+        const feature = {
           type: 'Feature',
           geometry: {
             type: 'Polygon',
-            coordinates: coordinates,
+            coordinates: coords,
           },
           properties: {
-            tilecode_id: this.tileToTilecode(tile),
-            quadkey_id: this.tileToQuadkey(tile),
-            resolution: resolution,
-          },
-        });
+            tilecode_id: tilecode_id,
+            quadkey_id: quadkey_id,
+            resolution,
+          }
+        };  
+        features.push(feature);
       }
     }
   

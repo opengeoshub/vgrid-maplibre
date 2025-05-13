@@ -1,12 +1,9 @@
 class GARSGrid {
   constructor(map, options = {}) {
-    this.latitudeMax = 90;
-    this.latitudeMin = -this.latitudeMax;
-    this.longitudeMax = 180;
-    this.longitudeMin = -this.longitudeMax;
     this.map = map;
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
+      width: options.width || 1,
       redraw: options.redraw || 'move',
     };
     this.sourceId = 'gars-grid';
@@ -27,10 +24,19 @@ class GARSGrid {
       layout: {},
       paint: {
         'fill-color': 'transparent',
-        'fill-opacity': 1,
-        'fill-outline-color': this.options.color,
-      },
+        // 'fill-outline-color': this.options.color,
+      },      
     });
+    this.map.addLayer({
+      'id': 'outline',
+      'type': 'line',
+      'source': this.sourceId,
+      'layout': {},
+      'paint': {
+          'line-color': this.options.color,
+          'line-width': this.options.width,
+      }
+  });
 
     this.map.on(this.options.redraw, () => this.updateGrid());
   }
@@ -65,22 +71,6 @@ class GARSGrid {
     const lonWidth = resolution/60
     const latWidth = resolution/60
     
-    // if (resolution === 1) {
-    //   lonWidth = 30.0 / 60;
-    //   latWidth = 30.0 / 60;
-    // } else if (resolution === 2) {
-    //   lonWidth = 15.0 / 60;
-    //   latWidth = 15.0 / 60;
-    // } else if (resolution === 3) {
-    //   lonWidth = 5.0 / 60;
-    //   latWidth = 5.0 / 60;
-    // } else if (resolution === 4) {
-    //   lonWidth = 1.0 / 60;
-    //   latWidth = 1.0 / 60;
-    // } else {
-    //   return {}
-    // }
-
     const baseLat = -90;
     const baseLon = -180;
 
@@ -109,7 +99,7 @@ class GARSGrid {
         const maxLon = lon + lonWidth;
         const maxLat = lat + latWidth;
 
-        const coordinates = [[
+        const coords = [[
           [minLon, minLat],
           [maxLon, minLat],
           [maxLon, maxLat],
@@ -117,23 +107,26 @@ class GARSGrid {
           [minLon, minLat] // close polygon
         ]];
 
-        const polygon = {
-          type: "Polygon",
-          coordinates: coordinates
-        };
-
         const centroidLat = (minLat + maxLat) / 2
         const centroidLon = (minLon + maxLon) / 2
 
         const gars_id = this.latLng2GARS(centroidLat, centroidLon, resolution);
-        features.push({
-          type: "Feature",
+        const exists = features.some(f => f.properties.gars_id === gars_id);
+        if (exists) continue;
+    
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: coords,
+          },
           properties: {
             gars_id: gars_id,
-            resolution: resolution,
-          },
-          geometry: polygon
-        });
+            resolution,
+          }
+        };
+
+        features.push(feature)
       }
     }
 
@@ -142,57 +135,6 @@ class GARSGrid {
       features: features
     };
   }
-
-  //   for (let x = startX; x <= endX; x++) {
-  //     for (let y = startY; y <= endY; y++) {
-  //       const cellMinLon = baseLon + x * lonWidth;
-  //       const cellMaxLon = cellMinLon + lonWidth;
-  //       const cellMinLat = baseLat + y * latWidth;
-  //       const cellMaxLat = cellMinLat + latWidth;
-
-  //       if (
-  //         cellMaxLon < minLon || cellMinLon > maxLon ||
-  //         cellMaxLat < minLat || cellMinLat > maxLat
-  //       ) continue;
-
-  //       const cellCenterLat = (cellMinLat + cellMaxLat) / 2;
-  //       const cellCenterLon = (cellMinLon + cellMaxLon) / 2;
-  //       console.log(cellCenterLat)
-  //       console.log(cellCenterLon)
-
-  //       const gars_id = this.latLng2GARS(cellCenterLat, cellCenterLon, resolution);
-  //       console.log(resolution)
-  //       console.log(gars_id)
-  //       const bounds = this.GARS2LatLngBounds(gars_id);
-  //       const coordinates = [[
-  //         [bounds[0], bounds[1]],
-  //         [bounds[2], bounds[1]],
-  //         [bounds[2], bounds[3]],
-  //         [bounds[0], bounds[3]],
-  //         [bounds[0], bounds[1]],
-  //       ]];
-
-  //       const feature = {
-  //         type: 'Feature',
-  //         geometry: {
-  //           type: 'Polygon',
-  //           coordinates: [coordinates],
-  //         },
-  //         properties: {
-  //           gars_id: gars_id,
-  //           resolution: resolution,
-  //         }
-  //       };
-  //       features.push(feature);
-  //     }
-  //   }
-  //   const geojson_feaures = {
-  //     type: 'FeatureCollection',
-  //     features: features,
-  //   };
-  //   console.log(geojson_feaures)
-  //   return geojson_feaures
-  // }
 
   latLng2GARS(latitude, longitude, resolution) {
     const LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -311,82 +253,3 @@ class GARSGrid {
   }
 }
 export default GARSGrid;
-
-// latLng2GARS(lat, lng) {
-//   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ";
-//   if (lng < this.longitudeMin) {
-//     lng = this.longitudeMin
-//   }
-//   if (lng > this.longitudeMax) {
-//     lng = this.longitudeMax
-//   }
-//   if (lat < this.latitudeMin) {
-//     lat = this.latitudeMin
-//   }
-//   if (lat > this.latitudeMax) {
-//     lat = this.latitudeMax
-//   }
-
-//   // if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-//   //   console.error("arguments to latLng2GARS out of bounds");
-//   //   return -1;
-//   // }
-
-//   let aLat = (lat + 90) * 2;
-//   let aLng = (lng + 180) * 2;
-//   const adj = 0.0000001;
-
-//   if (aLat === 360) aLat -= adj;
-//   if (aLat === 0) aLat += adj;
-//   if (aLng === 0) aLng += adj;
-//   if (aLng === 720) aLng -= adj;
-
-//   let firstThree = Math.ceil(aLng);
-//   const fourFiveValue = Math.floor(aLat);
-//   firstThree = ("000" + firstThree).slice(-3);
-//   let fourFive = chars[Math.floor(fourFiveValue / 24)];
-//   fourFive += chars[fourFiveValue % 24];
-//   const subLat = Math.round((aLat - Math.floor(aLat)) * 5);
-//   const subLng = Math.round((aLng - Math.floor(aLng)) * 5);
-//   let six = subLng >= 3 ? 2 : 1;
-//   let seven = (subLng % 3) + 1;
-//   if (subLat < 3) six += 2;
-//   seven += (2 - subLat % 3) * 3;
-//   return firstThree + fourFive + six + seven;
-// }
-
-// GARS2LatLngBounds(gars) {
-//   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ";
-//   const bounds = [[0, 0], [0, 0]];
-
-//   if (gars.length < 5) {
-//     console.error("Invalid GARS string");
-//     return bounds;
-//   }
-
-//   const firstThree = parseInt(gars.substr(0, 3));
-//   const fourFive = chars.indexOf(gars[3]) * 24 + chars.indexOf(gars[4]);
-
-//   bounds[0][0] = fourFive / 2 - 90;
-//   bounds[1][0] = bounds[0][0] + 0.5;
-//   bounds[0][1] = firstThree / 2 - 180 - 0.5;
-//   bounds[1][1] = bounds[0][1] + 0.5;
-
-//   if (gars.length > 5) {
-//     const six = parseInt(gars[5]);
-//     if (six % 2) bounds[1][1] -= 0.25;
-//     else bounds[0][1] += 0.25;
-//     if (six >= 3) bounds[1][0] -= 0.25;
-//     else bounds[0][0] += 0.25;
-
-//     if (gars.length > 6) {
-//       const seven = parseInt(gars[6]);
-//       bounds[0][0] += (2 - Math.floor((seven - 1) / 3)) * 0.25 / 3;
-//       bounds[1][0] -= Math.floor((seven - 1) / 3) * 0.25 / 3;
-//       bounds[0][1] += ((seven - 1) % 3) * 0.25 / 3;
-//       bounds[1][1] -= (2 - ((seven - 1) % 3)) * 0.25 / 3;
-//     }
-//   }
-
-//   return bounds;
-// }

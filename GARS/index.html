@@ -40,7 +40,8 @@
     const map = new maplibregl.Map({
       container: 'map', // Map container ID
       // style: 'https://demotiles.maplibre.org/style.json', // MapLibre style URL
-      style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
+      style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json',
+      // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
       // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
       center: [config.lng, config.lat],
       zoom: config.zoom,
@@ -53,6 +54,7 @@
       try {
         const garsGrid = new GARSGrid(map, {
           color: 'rgba(255, 0, 0, 1)',
+          width: 1.5,
           redraw: 'move',
         });
         console.log('GARS Grid added successfully.');
@@ -76,9 +78,10 @@
             'text-size': 12,
           },
           paint: {
+            // 'text-color': 'rgba(255, 0, 0, 1)',
             'text-halo-color': 'white',        // halo color
-            'text-halo-width': 1.5,            // halo width
-            'text-halo-blur': 0.5              // optional: smooth halo edges
+            'text-halo-width': 1,            // halo width
+            'text-halo-blur': 0.2              // optional: smooth halo edges
           },
         });
       }

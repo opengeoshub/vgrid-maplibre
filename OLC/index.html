@@ -42,7 +42,8 @@
             container: 'map', // The ID of the HTML element where MapLibre will render
             center: [config.lng, config.lat],
             zoom: config.zoom,
-            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
+            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json',
+            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
         });
 
         map.on('style.load', () => {
@@ -50,6 +51,7 @@
             try {
                 const olcGrid = new OLCGrid(map, {
                     color: 'rgba(255, 0, 0, 1)',
+                    width: 1.5,
                     redraw: 'move',
                 });
                 console.log('OLC Grid added successfully.');
