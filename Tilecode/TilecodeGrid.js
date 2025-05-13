@@ -62,7 +62,7 @@ class TilecodeGrid {
     // Convert map bounds to tile coordinates
     const sw = this.latlonToTile(bounds.getSouth(), bounds.getWest(), resolution);
     const ne = this.latlonToTile(bounds.getNorth(), bounds.getEast(), resolution);
-  
+
     const features = [];
   
     for (let x = sw[0]; x <= ne[0]; x++) {
@@ -73,15 +73,15 @@ class TilecodeGrid {
         const exists = features.some(f => f.properties.tilecode_id === tilecode_id);
         if (exists) continue;
 
-        const bbox = this.tileToBBOX(tile); // [w, s, e, n]
+        const bbox = this.tileToBBOX(tile); // {w, s, e, n}
         const coords = [[
-          [bbox[0], bbox[3]],
-          [bbox[0], bbox[1]],
-          [bbox[2], bbox[1]],
-          [bbox[2], bbox[3]],
-          [bbox[0], bbox[3]],
+          [bbox.w, bbox.n],
+          [bbox.w, bbox.s],
+          [bbox.e, bbox.s],
+          [bbox.e, bbox.n],
+          [bbox.w, bbox.n] // close polygon
         ]];
-
+        
         const feature = {
           type: 'Feature',
           geometry: {
@@ -103,7 +103,7 @@ class TilecodeGrid {
       features: features,
     };
   }
-  
+
   tile2lon(x, z) {
     return (x / Math.pow(2, z)) * 360 - 180;
   }
@@ -118,7 +118,7 @@ class TilecodeGrid {
     const w = this.tile2lon(tile[0], tile[2]);
     const s = this.tile2lat(tile[1] + 1, tile[2]);
     const n = this.tile2lat(tile[1], tile[2]);
-    return [w, s, e, n];
+    return { w, s, e, n };
   }
 
   latlonToTile(lat, lon, z) {
