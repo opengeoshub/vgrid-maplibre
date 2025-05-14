@@ -1,23 +1,23 @@
 # VgridJS - DGGS Visualization on MapLibre GL JS
 
-## H3 (Done)
+## H3 
 
-## S2 (Done)	
+## S2 	
 
-## A5 (Almost done)	
+## A5 	
 
 ## QTM (In progress)	
 
-## OLC (OpenLocationCode/ Pluscode) (In progress)	
+## OLC (OpenLocationCode/ Google Pluscode) 	
 
-## Geohash (Done)
+## Geohash 
  
-## GEOREF (In progress)	
+## GEOREF 
 
 ## MGRS	(In progress)	
 
-## Tilecode	(In progress)	
+## Tilecode	
 
-## Maidenhead (Done)	
+## Maidenhead 	
 
-## GARS (In progress)
+## GARS 

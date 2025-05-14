@@ -37,11 +37,10 @@ class S2Grid {
       'source': this.sourceId,
       'layout': {},
       'paint': {
-          'line-color': this.options.color,
-          'line-width': this.options.width,
+        'line-color': this.options.color,
+        'line-width': this.options.width,
       }
-  });
-
+    });
 
     this.map.on(this.options.redraw, () => this.updateGrid());
   }
@@ -96,9 +95,10 @@ class S2Grid {
 
       // Fix antimeridian crossing 
       if (coords.find(([lng, _]) => lng > 130)) {
-      coords = coords.map(([lng, lat]) =>
-        lng < 0 ? [lng + 360, lat] : [lng, lat]
-      )};
+        coords = coords.map(([lng, lat]) =>
+          lng < 0 ? [lng + 360, lat] : [lng, lat]
+        )
+      };
 
       const feature = {
         type: 'Feature',

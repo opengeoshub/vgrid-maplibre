@@ -37,7 +37,7 @@
         const config = {
             lng: 106.706585,
             lat: 10.775326,
-            zoom: 0
+            zoom: 8
         };
         let currentPopup = null;
 
@@ -150,10 +150,10 @@
         function exportToGeoJSON() {
             const features = map.queryRenderedFeatures({ layers: ['mgrs-grid-layer'] });
 
-            // if (!features.length) {
-            //     alert("No MGRS grid features found in the current viewport.");
-            //     return;
-            // }
+            if (!features.length) {
+                alert("No MGRS grid features found in the current viewport.");
+                return;
+            }
 
             // // Remove duplicates (some tiles can appear multiple times)
             // const uniqueFeatures = Array.from(new Map(
