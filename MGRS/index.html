@@ -2,10 +2,9 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MGRS DGGS</title>
-    <!-- MapLibre GL CSS -->
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
     <style>
         body {
@@ -17,54 +16,139 @@
             width: 100%;
             height: 100vh;
         }
+
+        button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+        }
     </style>
 </head>
 
 <body>
-
-    <!-- Map container -->
     <div id="map"></div>
     <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
-    <button onclick="exportToGeoJSON()" style="position: absolute; top: 10px; left: 10px;">
-        Export
-    </button>
+    <button onclick="exportToGeoJSON()">Export</button>
 
     <script type="module">
-        // import MGRSGrid from "https://unpkg.com/vgridjs@latest/mgrs/MGRSGrid.js";
-        import MGRSGrid from './MGRSGrid.js';
+        import { Protocol } from "https://unpkg.com/pmtiles@3.0.3/dist/index.js";
+        import MGRSGrid from './MGRSGrid.js'; // Adjust if needed
 
-        // Initialize the map and grid
         const config = {
             lng: 106.706585,
             lat: 10.775326,
-            zoom: 8
+            zoom: 0
         };
+
         let currentPopup = null;
 
         const map = new maplibregl.Map({
-            container: 'map', // The ID of the HTML element where MapLibre will render
+            container: 'map',
             center: [config.lng, config.lat],
             zoom: config.zoom,
-            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json',
-            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
-            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
-        })
+            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json'
+        });
+
+        // PMTiles setup
+        const protocol = new Protocol();
+        maplibregl.addProtocol("pmtiles", protocol.tile);
+
+        const pmtilesUrl = "https://map-api-new.sovereignsolutions.net/sovereign/v20240410/pmtiles/MGRS_100km.pmtiles";
+
+        function addPMTilesLayer() {
+
+            map.addSource('MGRS_100km', {
+                type: 'vector',
+                url: `pmtiles://${pmtilesUrl}`
+            });
+
+            map.addLayer({
+                id: 'MGRS_100km_line',
+                type: 'line',
+                source: 'MGRS_100km',
+                'source-layer': 'MGRS_100km', // Adjust if needed
+                paint: {
+                    'line-color': '#ff0000',
+                    'line-width': 1.5
+                },
+                minzoom: 4
+            });
+
+            map.addLayer({
+                id: 'MGRS_100km_label',
+                type: 'symbol',
+                source: 'MGRS_100km',
+                'source-layer': 'MGRS_100km', // Same source-layer
+                layout: {
+                    'text-field': '{MGRS}',
+                    'text-size': 12,
+                    'text-anchor': 'center',
+                    // 'symbol-placement': 'point',
+                    // 'text-allow-overlap': false
+                },
+                paint: {
+                    'text-halo-color': '#fff',
+                    'text-halo-width': 1.5,
+                    'text-halo-blur': 0.5
+                },
+                minzoom: 4,
+                maxzoom: 10
+            });
+
+        }
+
+        function addGZD() {
+            map.addSource('gzd', {
+                type: 'geojson',
+                data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/MGRS/gzd.geojson'
+            });
+
+            map.addLayer({
+                id: 'gzd-layer',
+                type: 'line',
+                source: 'gzd',
+                paint: {
+                    'line-color': 'rgba(255,255,255,1)',
+                    'line-width': 1
+                },
+            });
+            map.addLayer({
+                    id: 'gzd-labels',
+                    type: 'symbol',
+                    source: 'gzd',
+                    layout: {
+                        'text-field': ['get', 'gzd'],
+                        'text-size': 12,
+                    },
+                    paint: {
+                        'text-halo-color': 'white',
+                        'text-halo-width': 1.5,
+                        'text-halo-blur': 0.5
+                    },
+                    minzoom: 2,
+                    maxzoom: 6
+                });
+        }
 
         map.on('style.load', () => {
-            map.addControl(new maplibregl.GlobeControl()); 
+            map.addControl(new maplibregl.GlobeControl());
+            // map.setProjection({ type: 'globe' });
+            addPMTilesLayer();
             try {
                 const mgrsGrid = new MGRSGrid(map, {
                     color: 'rgba(255, 0, 0, 1)',
                     width: 1.5,
+                    minzoom: 6,
                     redraw: 'move',
                 });
                 console.log('MGRS Grid added successfully.');
             } catch (error) {
                 console.error('Failed to add MGRS Grid:', error);
             }
+            addGZD();
         });
-        
-        // Uncomment to display mgrs_id label
+
         map.on('sourcedata', (e) => {
             if (
                 e.sourceId === 'mgrs-grid' &&
@@ -80,14 +164,14 @@
                         'text-size': 12,
                     },
                     paint: {
-                        'text-halo-color': 'white',        // halo color
-                        'text-halo-width': 1.5,            // halo width
-                        'text-halo-blur': 0.5              // optional: smooth halo edges
+                        'text-halo-color': 'white',
+                        'text-halo-width': 1.5,
+                        'text-halo-blur': 0.5
                     },
+                    minzoom: 6
                 });
             }
         });
-
 
         map.on('click', (e) => {
             const features = map.queryRenderedFeatures(e.point, {
@@ -95,7 +179,7 @@
             });
 
             if (features.length) {
-                const feature = features[0];  // Select the first feature if there are multiple
+                const feature = features[0];
 
                 const popupContent = `
                     <strong>mgrs: </strong> ${feature.properties.mgrs_id} <br>
@@ -110,26 +194,28 @@
                 currentPopup = popup;
 
                 if (!map.getLayer('highlight-layer')) {
+                    map.addSource('highlight-layer', {
+                        type: 'geojson',
+                        data: {
+                            type: 'FeatureCollection',
+                            features: []
+                        }
+                    });
+
                     map.addLayer({
-                        'id': 'highlight-layer',
-                        'type': 'fill',
-                        'source': {
-                            'type': 'geojson',
-                            'data': {
-                                'type': 'FeatureCollection',
-                                'features': []
-                            }
-                        },
-                        'paint': {
+                        id: 'highlight-layer',
+                        type: 'fill',
+                        source: 'highlight-layer',
+                        paint: {
                             'fill-color': '#FF0000',
-                            'fill-opacity': 0.2,
+                            'fill-opacity': 0.2
                         }
                     });
                 }
 
                 map.getSource('highlight-layer').setData({
-                    'type': 'FeatureCollection',
-                    'features': [feature]
+                    type: 'FeatureCollection',
+                    features: [feature]
                 });
             }
         });
@@ -137,8 +223,8 @@
         map.on('contextmenu', () => {
             if (map.getLayer('highlight-layer')) {
                 map.getSource('highlight-layer').setData({
-                    'type': 'FeatureCollection',
-                    'features': []
+                    type: 'FeatureCollection',
+                    features: []
                 });
             }
 
@@ -147,6 +233,7 @@
                 currentPopup = null;
             }
         });
+
         function exportToGeoJSON() {
             const features = map.queryRenderedFeatures({ layers: ['mgrs-grid-layer'] });
 
@@ -155,17 +242,11 @@
                 return;
             }
 
-            // // Remove duplicates (some tiles can appear multiple times)
-            // const uniqueFeatures = Array.from(new Map(
-            //     features.map(f => [f.properties.mgrs_id, f])
-            // ).values());
-
             const geojson = {
                 type: 'FeatureCollection',
                 features: features
             };
 
-            // Download as GeoJSON file
             const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -174,8 +255,8 @@
             a.click();
             URL.revokeObjectURL(url);
         }
-        window.exportToGeoJSON = exportToGeoJSON;
 
+        window.exportToGeoJSON = exportToGeoJSON;
     </script>
 </body>
 

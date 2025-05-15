@@ -6,6 +6,7 @@ class MGRSGrid {
         this.options = {
             color: options.color || 'rgba(255, 0, 0, 1)',
             width: options.width || 1,
+            minzoom: options.minzoom || 6,
             redraw: options.redraw || 'move',
         };
         this.sourceId = 'mgrs-grid';
@@ -28,7 +29,8 @@ class MGRSGrid {
                 'fill-color': 'transparent',
                 'fill-opacity': 1,
                 // 'fill-outline-color': this.options.color
-            }
+            }, 
+            minzoom: this.options.minzoom
         });
         this.map.addLayer({
             'id': 'outline',
@@ -38,7 +40,8 @@ class MGRSGrid {
             'paint': {
                 'line-color': this.options.color,
                 'line-width': this.options.width,
-            }
+            },
+            minzoom: this.options.minzoom
         });
 
         this.map.on(this.options.redraw, () => this.updateGrid());
@@ -48,13 +51,13 @@ class MGRSGrid {
     updateGrid() {
         const newGrid = this.generateGrid();
         const source = this.map.getSource(this.sourceId);
-        if (source) {
+        if (source ) {
             source.setData(newGrid);
         }
     }
 
     getResolution(zoom) {
-        if (zoom >= 8 && zoom < 10) {
+        if (zoom >= 6 && zoom < 10) {
             return 0;
         };
         if (zoom < 14) {
@@ -69,13 +72,16 @@ class MGRSGrid {
         if (zoom <= 22) {
             return 4;
         };
+        if (zoom <= 24) {
+            return 5;
+        };
         return NaN;
     }
 
     generateGrid() {
         const bounds = this.map.getBounds();
         const zoom = this.map.getZoom();
-        if (zoom >= 8) {
+        if (zoom >= 6) {
             const resolution = this.getResolution(zoom);
 
             const minLat = bounds.getSouth();
@@ -85,28 +91,8 @@ class MGRSGrid {
 
             let lonWidth, latWidth
 
-            if (resolution === 0) {
-                lonWidth = 0.5
-                latWidth = 0.5
-            }
-            if (resolution === 1) {
-                lonWidth = 0.05
-                latWidth = 0.05
-            }
-
-            if (resolution === 2) {
-                lonWidth = 0.005
-                latWidth = 0.005
-            }
-            if (resolution === 3) {
-                lonWidth = 0.0005
-                latWidth = 0.0005
-            }
-
-            if (resolution === 4) {
-                lonWidth = 0.00005
-                latWidth = 0.00005
-            }
+            lonWidth = 0.5 * Math.pow(0.1, resolution);
+            latWidth = 0.5 * Math.pow(0.1, resolution);
 
             const baseLat = -90;
             const baseLon = -180;

@@ -1,5 +1,5 @@
 //  Reference: https://a5geo.org/
-import * as A5 from 'https://unpkg.com/a5-js/dist/a5.es.js';
+import * as A5 from 'https://unpkg.com/a5-js/dist/a5.js';
 
 class A5Grid {
   constructor(map, options = {}) {
@@ -144,41 +144,6 @@ class A5Grid {
 
     
   }
-
-  // generateGrid() {
-  //   const center = this.map.getCenter(); // {lng, lat}
-  //   const zoom = this.map.getZoom();
-  //   const resolution = this.getResolution(zoom);
-
-  //   const cellId = A5.lonLatToCell([center.lng, center.lat], resolution);
-  //   const boundary = A5.cellToBoundary(cellId); // Array of [lng, lat] pairs
-  //   const coordinates = [[...boundary, boundary[0]]];
-  //   const a5_id = A5.bigIntToHex(cellId);
-  //   // const exists = features.some(f => f.properties.a5_id === a5_id);
-  //   // if (exists) continue;
-
-  //   const features = [];
-
-  //   const feature = {
-  //     type: "Feature",
-  //     geometry: {
-  //       type: "Polygon",
-  //       coordinates: coordinates,
-  //     },
-  //     properties: {
-  //       a5_id: a5_id,
-  //       resolution
-  //     },
-  //   };
-  //   features.push(feature)
-
-  //   return {
-  //     type: "FeatureCollection",
-  //     features: features
-  //   };
-
-  // }
 }
 
 export default A5Grid;
-// export { A5 };
