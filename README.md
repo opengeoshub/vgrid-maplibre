@@ -6,7 +6,7 @@
 
 ## A5 	
 
-## QTM (In progress)	
+## QTM 	
 
 ## OLC (OpenLocationCode/ Google Pluscode) 	
 
@@ -14,7 +14,7 @@
  
 ## GEOREF 
 
-## MGRS	(In progress)	
+## MGRS	
 
 ## Tilecode	
 

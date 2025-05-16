@@ -140,23 +140,23 @@ class QTMGrid {
               const coords = subfacetGeom.coordinates[0];  // Extract the coordinates from the geometry object
               if (lvl === resolution - 1) {
                 const qtm_id = newId;
-                const exists = qtmFeatures.some(f => f.properties.qtm_id === qtm_id);
-                if (!exists) {
-                  const qtmFeature = {
-                    type: 'Feature',
-                    geometry: {
-                      type: 'Polygon',
-                      coordinates: [coords],
-                    },
-                    properties: {
-                      qtm_id: qtm_id,
-                      resolution,
-                    }
-                  };
-                  qtmFeatures.push(qtmFeature);
-                }
+                // const exists = qtmFeatures.some(f => f.properties.qtm_id === qtm_id);
+                // if (!exists) {
+                const qtmFeature = {
+                  type: 'Feature',
+                  geometry: {
+                    type: 'Polygon',
+                    coordinates: [coords],
+                  },
+                  properties: {
+                    qtm_id: qtm_id,
+                    resolution,
+                  }
+                };
+                qtmFeatures.push(qtmFeature);
               }
             }
+            // }
           });
         });
       }

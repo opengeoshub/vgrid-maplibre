@@ -1,20 +1,25 @@
 {
   "name": "vgridjs",
   "type": "module",
-  "version": "1.0.18",
+  "version": "1.0.21",
   "description": "DGGS Visualization for MapLibre GL JS",
   "main": "index.js",
   "exports": {
     ".": "./index.js",
-    "./Geohash/GeohashGrid": "./Geohash/GeohashGrid.js",
-    "./Maidenhead/MaidenheadGrid": "./Maidenhead/MaidenheadGrid.js",
-    "./MGRS/MGRSGrid": "./MGRS/MGRSGrid.js",
     "./H3/H3Grid": "./H3/H3Grid.js",
     "./S2/S2Grid": "./S2/S2Grid.js",
-    "./A5/A5Grid": "./A5/A5Grid.js"
+    "./A5/A5Grid": "./A5/A5Grid.js",
+    "./QTM/QTMGrid": "./QTM/QTMGrid.js",
+    "./OLC/OLCGrid": "./OLC/OLCGrid.js",
+    "./Geohash/GeohashGrid": "./Geohash/GeohashGrid.js",
+    "./GEOREF/GEOREFGrid": "./GEOREF/GEOREFGrid.js",
+    "./MGRS/MGRSGrid": "./MGRS/MGRSGrid.js",
+    "./Tilecode/TilecodeGrid": "./Tilecode/TilecodeGrid.js",
+    "./Maidenhead/MaidenheadGrid": "./Maidenhead/MaidenheadGrid.js",
+    "./GARS/GARSGrid": "./GARS/GARSGrid.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -22,17 +27,16 @@
   },
   "keywords": [
     "DGGS",
-    "Rhealpix",
-    "Eaggr",
-    "ISEA4T",
-    "OpenLocationCode",
+    "H3",
+    "S2",
+    "A5",
+    "QTM",
     "OLC",
-    "Plus code",
-    "MGRS",
+    "OpenLocationCode",
+    "Google Pluscode",
     "Geohash",
     "GEOREF",
-    "S2",
-    "H3",
+    "MGRS",
     "Tilecode",
     "Maidenhead",
     "GARS"
@@ -45,9 +49,9 @@
   "homepage": "https://github.com/thangqd/vgridjs#readme",
   "dependencies": {
     "a5-js": "^0.0.3",
-    "d3": "^7.9.0",
+    "h3-js": "^4.2.1",
     "maplibre-gl": "^4.7.1",
-    "s2-geometry": "^1.2.10",
+    "open-location-code": "^1.0.3",
     "s2js": "^1.43.6"
   },
   "devDependencies": {
