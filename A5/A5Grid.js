@@ -15,41 +15,87 @@ class A5Grid {
   }
 
   initialize() {
-    this.map.addSource(this.sourceId, {
-      type: 'geojson',
-      data: this.generateGrid(),
-    });
-
-    this.map.addLayer({
-      id: this.gridLayerId,
-      source: this.sourceId,
-      type: 'fill',
-      layout: {},
-      paint: {
-        'fill-color': 'transparent',
-        // 'fill-outline-color': 'red'
-      }
-    });
-    this.map.addLayer({
-      'id': 'outline',
-      'type': 'line',
-      'source': this.sourceId,
-      'layout': {},
-      'paint': {
-        'line-color': this.options.color,
-        'line-width': this.options.width,
-      }
-    });
-
-
-    this.map.on(this.options.redraw, () => this.updateGrid());
+    if (!this.map.getSource(this.sourceId)) {
+      this.map.addSource(this.sourceId, {
+        type: 'geojson',
+        data: this.generateGrid(),
+      });
+    }
+  
+    if (!this.map.getLayer(this.gridLayerId)) {
+      this.map.addLayer({
+        id: this.gridLayerId,
+        source: this.sourceId,
+        type: 'fill',
+        layout: {},
+        paint: {
+          'fill-color': 'transparent',
+          'fill-opacity': 1,
+        }
+      });
+    }
+  
+    if (!this.map.getLayer('outline')) {
+      this.map.addLayer({
+        id: 'outline',
+        type: 'line',
+        source: this.sourceId,
+        layout: {},
+        paint: {
+          'line-color': this.options.color,
+          'line-width': this.options.width,
+        }
+      });
+    }
+  
+    if (!this._hasListener) {
+      this.map.on(this.options.redraw, () => this.updateGrid());
+      this._hasListener = true;
+    }
   }
-
+  
   updateGrid() {
     const newGrid = this.generateGrid();
     const source = this.map.getSource(this.sourceId);
     if (source) {
       source.setData(newGrid);
+    }
+  }
+
+  show() {
+    if (!this.map.getLayer(this.gridLayerId)) {
+      this.map.addLayer({
+        id: this.gridLayerId,
+        source: this.sourceId,
+        type: 'fill',
+        layout: {},
+        paint: {
+          'fill-color': 'transparent',
+          'fill-opacity': 1,
+        },
+      });
+    }
+
+    if (!this.map.getLayer('outline')) {
+      this.map.addLayer({
+        id: 'outline',
+        type: 'line',
+        source: this.sourceId,
+        layout: {},
+        paint: {
+          'line-color': this.options.color,
+          'line-width': this.options.width,
+        }
+      });
+    }
+  }
+
+  remove() {
+    if (this.map.getLayer(this.gridLayerId)) {
+      this.map.removeLayer(this.gridLayerId);
+    }
+    if (this.map.getLayer('outline')) {
+      this.map.removeLayer('outline');
     }
   }
 
