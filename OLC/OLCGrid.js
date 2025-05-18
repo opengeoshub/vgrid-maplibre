@@ -39,7 +39,7 @@ class OLCGrid {
         source: this.sourceId,
         layout: {},
         paint: {
-          'line-color': ['get', 'color'],
+          'line-color': this.options.color,
           'line-width': this.options.width,
         }
       });
@@ -80,7 +80,7 @@ class OLCGrid {
         source: this.sourceId,
         layout: {},
         paint: {
-          'line-color': ['get', 'color'],
+          'line-color': this.options.color,
           'line-width': this.options.width,
         }
       });

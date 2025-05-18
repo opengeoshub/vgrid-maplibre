@@ -4,6 +4,7 @@ class GARSGrid {
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
       width: options.width || 1,
+      minzoom: options.minzoom || 6,
       redraw: options.redraw || 'move',
     };
     this.sourceId = 'gars-grid';
@@ -98,7 +99,7 @@ class GARSGrid {
 
   getResolution(zoom) {
     // resolution: [1, 5, 15, 30 minutes]
-    if (zoom <= 8) return 30;
+    if (zoom >=  this.options.minzoom && zoom <= 8) return 30;
     if (zoom > 8 && zoom <= 11) return 15;
     if (zoom > 11 && zoom <= 12) return 5;
     if (zoom > 12) return 1;

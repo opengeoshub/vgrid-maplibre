@@ -1,6 +1,6 @@
 // Reference: https://github.com/ha8tks/Leaflet.Georef/blob/master/src/L.Georef.js
 
-class GeorefGrid {
+class GEOREFGrid {
   constructor(map, options = {}) {
     this.lonorig_ = -180;
     this.latorig_ = -90;
@@ -392,4 +392,4 @@ class GeorefGrid {
   }
 
 }
-export default GeorefGrid;
+export default GEOREFGrid;

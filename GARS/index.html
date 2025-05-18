@@ -46,7 +46,6 @@
       // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
       center: [config.lng, config.lat],
       zoom: config.zoom,
-      minZoom: config.zoom
     });
 
     // Add the gars Locator Grid when the map loads
@@ -56,6 +55,7 @@
         const garsGrid = new GARSGrid(map, {
           color: 'rgba(255, 0, 0, 1)',
           width: 1.5,
+          minzoom: 6,
           redraw: 'move',
         });
         console.log('GARS Grid added successfully.');

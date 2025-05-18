@@ -99,7 +99,7 @@ class MGRSGrid {
         }
     }
     getResolution(zoom) {
-        if (zoom >= 6 && zoom < 10) {
+        if (zoom >= this.options.minzoom && zoom < 10) {
             return 0;
         };
         if (zoom < 14) {
