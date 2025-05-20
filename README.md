@@ -49,7 +49,7 @@
 ## H3 
 [View H3 Demo](https://thangqd.github.io/pages/dggs/h3/)
 
-![image](https://github.com/user-attachments/assets/cec1127e-91fc-4df1-92f1-f73f53dcc573)
+![image](https://github.com/user-attachments/assets/00d27bea-523b-4d89-abf2-a1809dcffd12)
 
 ## S2 	
 [View S2 Demo](https://thangqd.github.io/pages/dggs/s2/)
