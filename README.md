@@ -1,6 +1,6 @@
 # VgridJS - DGGS Visualization on MapLibre GL JS
 
-## Basic Usage
+## Basic Usage (for H3 as an example)
 ```html
 <!DOCTYPE html>
 <html>
@@ -47,34 +47,34 @@
 ```
 
 ## H3 
-<iframe src="https://thangqd.github.io/pages/dggs/h3/" width="100%" height="600px" frameborder="0"></iframe>
+[View H3 Demo](https://thangqd.github.io/pages/dggs/h3/)
 
 ## S2 	
-<iframe src="https://thangqd.github.io/pages/dggs/s2/" width="100%" height="600px" frameborder="0"></iframe>
+[View S2 Demo](https://thangqd.github.io/pages/dggs/s2/)
 
 ## A5 	
-<iframe src="https://thangqd.github.io/pages/dggs/a5/" width="100%" height="600px" frameborder="0"></iframe>
+[View A5 Demo](https://thangqd.github.io/pages/dggs/a5/)
 
 ## QTM 	
-<iframe src="https://thangqd.github.io/pages/dggs/qtm/" width="100%" height="600px" frameborder="0"></iframe>
+[View QTM Demo](https://thangqd.github.io/pages/dggs/qtm/)
 
 ## OLC (OpenLocationCode/ Google Pluscode) 	
-<iframe src="https://thangqd.github.io/pages/dggs/olc/" width="100%" height="600px" frameborder="0"></iframe>
+[View OLC Demo](https://thangqd.github.io/pages/dggs/olc/)
 
 ## Geohash 
-<iframe src="https://thangqd.github.io/pages/dggs/geohash/" width="100%" height="600px" frameborder="0"></iframe>
+[View Geohash Demo](https://thangqd.github.io/pages/dggs/geohash/)
 
 ## GEOREF 
-<iframe src="https://thangqd.github.io/pages/dggs/georef/" width="100%" height="600px" frameborder="0"></iframe>
+[View GEOREF Demo](https://thangqd.github.io/pages/dggs/georef/)
 
 ## MGRS	
-<iframe src="https://thangqd.github.io/pages/dggs/mgrs/" width="100%" height="600px" frameborder="0"></iframe>
+[View MGRS Demo](https://thangqd.github.io/pages/dggs/mgrs/)
 
 ## Tilecode	
-<iframe src="https://thangqd.github.io/pages/dggs/tilecode/" width="100%" height="600px" frameborder="0"></iframe>
+[View Tilecode Demo](https://thangqd.github.io/pages/dggs/tilecode/)
 
 ## Maidenhead 	
-<iframe src="https://thangqd.github.io/pages/dggs/maidenhead/" width="100%" height="600px" frameborder="0"></iframe>
+[View Maidenhead Demo](https://thangqd.github.io/pages/dggs/maidenhead/)
 
 ## GARS 
-<iframe src="https://thangqd.github.io/pages/dggs/gars/" width="100%" height="600px" frameborder="0"></iframe>
+[View GARS Demo](https://thangqd.github.io/pages/dggs/gars/)
