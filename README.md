@@ -8,7 +8,7 @@
 <html>
 
 <head>
-    <title>VgridJS Example</title>
+    <title>VgridJS Demo</title>
     <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
     <style>
