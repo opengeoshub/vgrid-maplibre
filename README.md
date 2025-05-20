@@ -1,5 +1,7 @@
 # VgridJS - DGGS Visualization on MapLibre GL JS
-
+## Visit Vgrid on [NPM](https://www.npmjs.com/package/vgridjs)
+## Visit [Vgrid Home](https://vgrid.vn)
+ 
 ## Basic Usage (for H3 as an example)
 ```html
 <!DOCTYPE html>
