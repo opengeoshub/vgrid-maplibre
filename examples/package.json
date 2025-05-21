@@ -1,0 +1,17 @@
+{
+  "name": "vgridjs-examples",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "vgridjs": "^1.0.31",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+} 

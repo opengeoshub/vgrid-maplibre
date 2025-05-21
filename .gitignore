@@ -9,8 +9,8 @@
 /coverage
 
 /references
-/examples
-/scripts
+/examples/node_modules
+
 
 # production
 /build
@@ -25,3 +25,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Local Netlify folder
+.netlify
