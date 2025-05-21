@@ -1,7 +1,7 @@
 {
   "name": "vgridjs",
   "type": "module",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "DGGS Visualization for MapLibre GL JS",
   "main": "index.js",
   "exports": {
