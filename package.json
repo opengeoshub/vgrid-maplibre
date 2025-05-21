@@ -19,7 +19,8 @@
     "./GARS/GARSGrid": "./GARS/GARSGrid.js"
   },
   "scripts": {
-    "test": "jest"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "serve": "node --experimental-modules scripts/serve.js"
   },
   "repository": {
     "type": "git",
@@ -53,9 +54,7 @@
     "maplibre-gl": "^4.7.1",
     "open-location-code": "^1.0.3",
     "s2js": "^1.43.6",
-    "turf": "^3.0.14"
-  },
-  "devDependencies": {
-    "jest": "^29.7.0"
-  }
+    "turf": "^3.0.14",
+    "vgridjs": "^1.1.1"
+  } 
 }

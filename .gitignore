@@ -9,7 +9,8 @@
 /coverage
 
 /references
-/test
+/examples
+/scripts
 
 # production
 /build
