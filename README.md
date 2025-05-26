@@ -3,7 +3,11 @@
   <img src="https://raw.githubusercontent.com/thangqd/vgridtools/main/images/readme/dggs.png">
 </div>
 
-## Visit Vgrid on [NPM](https://www.npmjs.com/package/vgridjs)
+[![npm package](https://img.shields.io/npm/v/vgridjs)](https://www.npmjs.com/package/vgridjs)
+![downloads](https://img.shields.io/npm/dm/vgridjs)
+![total](https://img.shields.io/npm/dt/vgridjs)
+
+
 ## Visit [Vgrid Home](https://vgrid.vn)
  
 ## Basic Usage (for H3 as an example)
