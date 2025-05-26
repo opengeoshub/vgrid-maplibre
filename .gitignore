@@ -10,7 +10,7 @@
 
 /references
 /examples/node_modules
-
+/utils
 
 # production
 /build

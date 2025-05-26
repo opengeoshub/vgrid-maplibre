@@ -34,7 +34,6 @@
     <script type="module">
         import H3Grid from "https://unpkg.com/vgridjs/H3/H3Grid.js";
         // import H3Grid from "https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/H3/H3Grid.js";
-        // import H3Grid from "./H3Grid.js";
 
         // Initialize the map and grid
         const config = {
@@ -48,10 +47,10 @@
             container: 'map', // The ID of the HTML element where MapLibre will render
             center: [config.lng, config.lat],
             zoom: config.zoom,
-            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json',
+            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json',
             // style: 'https://demotiles.maplibre.org/style.json' // Default MapLibre style
             // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/positron/positron.json',
-            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
         });
 
         function addIcosaLayer() {

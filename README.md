@@ -34,7 +34,7 @@
         import H3Grid from "https://unpkg.com/vgridjs/H3/H3Grid.js";
         const map = new maplibregl.Map({
             container: 'map',
-            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json',
+            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
             center: [0, 0],
             zoom: 0
         });
