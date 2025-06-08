@@ -10,6 +10,7 @@
 [![npm package](https://img.shields.io/npm/v/vgridjs)](https://www.npmjs.com/package/vgridjs)
 ![downloads](https://img.shields.io/npm/dm/vgridjs)
 ![total](https://img.shields.io/npm/dt/vgridjs)
+[![image](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
 ## Visit [Vgrid Home](https://vgrid.vn)
