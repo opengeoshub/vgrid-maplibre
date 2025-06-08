@@ -1,7 +1,11 @@
-# VgridJS - DGGS Visualization on MapLibre GL JS
-<div align="center">
+<p align="center">
+  <strong >VgridJS </strong> <br>
+    <b><i>DGGS Visualization on MapLibre GL JS</i><b>
+</p>
+<p align="center">
   <img src="https://raw.githubusercontent.com/thangqd/vgridtools/main/images/readme/dggs.png">
-</div>
+</p>
+
 
 [![npm package](https://img.shields.io/npm/v/vgridjs)](https://www.npmjs.com/package/vgridjs)
 ![downloads](https://img.shields.io/npm/dm/vgridjs)
