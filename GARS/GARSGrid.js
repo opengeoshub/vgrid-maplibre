@@ -108,7 +108,7 @@ class GARSGrid {
 
   generateGrid() {
     const zoom = this.map.getZoom();
-    const resolution = this.getResolution(zoom);
+    const resolution_minutes = this.getResolution(zoom);
 
     const bounds = this.map.getBounds();
     const minLat = bounds.getSouth();
@@ -116,8 +116,8 @@ class GARSGrid {
     const maxLat = bounds.getNorth();
     const maxLon = bounds.getEast();
 
-    const lonWidth = resolution/60
-    const latWidth = resolution/60
+    const lonWidth = resolution_minutes/60
+    const latWidth = resolution_minutes/60
     
     const baseLat = -90;
     const baseLon = -180;
@@ -158,10 +158,11 @@ class GARSGrid {
         const centroidLat = (minLat + maxLat) / 2
         const centroidLon = (minLon + maxLon) / 2
 
-        const gars_id = this.latLng2GARS(centroidLat, centroidLon, resolution);
+        const gars_id = this.latLng2GARS(centroidLat, centroidLon, resolution_minutes);
         const exists = features.some(f => f.properties.gars_id === gars_id);
         if (exists) continue;
     
+        const resolution = resolution_minutes === 30 ? 1 : resolution_minutes === 15 ? 2 : resolution_minutes === 5 ? 1 : 4;
         const feature = {
           type: 'Feature',
           geometry: {
@@ -170,7 +171,7 @@ class GARSGrid {
           },
           properties: {
             gars_id: gars_id,
-            resolution,
+            resolution: resolution
           }
         };
 
@@ -184,7 +185,7 @@ class GARSGrid {
     };
   }
 
-  latLng2GARS(latitude, longitude, resolution) {
+  latLng2GARS(latitude, longitude, resolution_minutes) {
     const LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 
     longitude = longitude !== 180 ? (longitude + 180) % 360 : 360;
@@ -202,7 +203,7 @@ class GARSGrid {
     let quadrant5min = '';
     let quadrant1min = '';
 
-    if (resolution < 30) {
+    if (resolution_minutes < 30) {
       function indexFromDegrees(numDegrees, inverse = false) {
         const minutes = (numDegrees - Math.floor(numDegrees)) * 60;
         const minutes30 = minutes % 30;
@@ -226,11 +227,11 @@ class GARSGrid {
 
       quadrant15min = String((lat15 - 1) * 2 + lon15);
 
-      if (resolution < 15) {
+      if (resolution_minutes < 15) {
         quadrant5min = String((lat5 - 1) * 3 + lon5);
       }
 
-      if (resolution < 5) {
+      if (resolution_minutes < 5) {
         quadrant1min = String((lat1 - 1) * 5 + lon1).padStart(2, '0');
       }
     }
