@@ -7,3 +7,4 @@ utils/
 .netlify/
 .gitignore
 .npmignore
+upload.md
