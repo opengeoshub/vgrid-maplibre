@@ -1,7 +1,7 @@
 {
-  "name": "vgridjs",
+  "name": "vgrid-maplibre",
   "type": "module",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "DGGS Visualization for MapLibre GL JS",
   "main": "index.js",
   "exports": {
@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thangqd/vgridjs.git"
+    "url": "git+https://github.com/thangqd/vgrid-maplibre.git"
   },
   "keywords": [
     "DGGS",
@@ -45,16 +45,15 @@
   "author": "Thang Quach",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/thangqd/vgridjs/issues"
+    "url": "https://github.com/opengeoshub/vgrid-maplibre/issues"
   },
-  "homepage": "https://github.com/thangqd/vgridjs#readme",
+  "homepage": "https://github.com/opengeoshub/vgrid-maplibre#readme",
   "dependencies": {
     "a5-js": "^0.0.3",
     "h3-js": "^4.2.1",
     "maplibre-gl": "^4.7.1",
     "open-location-code": "^1.0.3",
     "s2js": "^1.43.6",
-    "turf": "^3.0.14",
-    "vgridjs": "^1.1.1"
+    "turf": "^3.0.14"
   } 
 }

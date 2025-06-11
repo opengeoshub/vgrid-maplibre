@@ -33,7 +33,7 @@
 
     <script type="module">
         import { Protocol } from "https://unpkg.com/pmtiles@3.0.3/dist/index.js";
-        import MGRSGrid from "https://unpkg.com/vgridjs/MGRS/MGRSGrid.js";
+        import MGRSGrid from "https://unpkg.com/vgrid-maplibre/MGRS/MGRSGrid.js";
         // import MGRSGrid from './MGRSGrid.js'; 
 
         const config = {
@@ -103,7 +103,7 @@
         function addGZD() {
             map.addSource('gzd', {
                 type: 'geojson',
-                data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/MGRS/gzd.geojson'
+                data: 'https://raw.githubusercontent.com/thangqd/vgrid-maplibre/main/MGRS/gzd.geojson'
             });
 
             map.addLayer({

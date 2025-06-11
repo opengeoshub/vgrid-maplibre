@@ -1,5 +1,5 @@
 {
-  "name": "vgridjs-examples",
+  "name": "vgrid-maplibre-examples",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -8,7 +8,7 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "vgridjs": "^1.0.31",
+    "vgrid-maplibre": "^1.0.31",
     "express": "^4.18.2"
   },
   "devDependencies": {

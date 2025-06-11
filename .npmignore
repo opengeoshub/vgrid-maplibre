@@ -4,3 +4,6 @@ references/
 examples/
 utils/
 *.tgz
+.netlify/
+.gitignore
+.npmignore

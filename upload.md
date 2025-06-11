@@ -1,3 +1,3 @@
 npm version patch
 npm publish --verbose
-npm info vgridjs
+npm info vgrid-maplibre

@@ -1,5 +1,5 @@
 <p align="center">
-  <strong >VgridJS </strong> <br>
+  <strong >vgrid-maplibre </strong> <br>
     <b><i>DGGS Visualization on MapLibre GL JS</i><b>
 </p>
 <p align="center">
@@ -7,9 +7,9 @@
 </p>
 
 
-[![npm package](https://img.shields.io/npm/v/vgridjs)](https://www.npmjs.com/package/vgridjs)
-![downloads](https://img.shields.io/npm/dm/vgridjs)
-![total](https://img.shields.io/npm/dt/vgridjs)
+[![npm package](https://img.shields.io/npm/v/vgrid-maplibre)](https://www.npmjs.com/package/vgrid-maplibre)
+![downloads](https://img.shields.io/npm/dm/vgrid-maplibre)
+![total](https://img.shields.io/npm/dt/vgrid-maplibre)
 [![image](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
@@ -21,7 +21,7 @@
 <html>
 
 <head>
-    <title>VgridJS Demo</title>
+    <title>vgrid-maplibre Demo</title>
     <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
     <style>
@@ -40,7 +40,7 @@
 <body>
     <div id="map"></div>
     <script type="module">
-        import H3Grid from "https://unpkg.com/vgridjs/H3/H3Grid.js";
+        import H3Grid from "https://unpkg.com/vgrid-maplibre/H3/H3Grid.js";
         const map = new maplibregl.Map({
             container: 'map',
             style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json',

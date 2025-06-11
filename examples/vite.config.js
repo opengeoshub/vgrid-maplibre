@@ -26,7 +26,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      'vgridjs': resolve(__dirname, '../'),
+      'vgrid-maplibre': resolve(__dirname, '../'),
       'h3-js': '/h3-js',
       's2js': '/s2js'
     }

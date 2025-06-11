@@ -32,8 +32,8 @@
     </button>
 
     <script type="module">
-        import H3Grid from "https://unpkg.com/vgridjs/H3/H3Grid.js";
-        // import H3Grid from "https://cdn.jsdelivr.net/gh/thangqd/vgridJS@main/H3/H3Grid.js";
+        import H3Grid from "https://unpkg.com/vgrid-maplibre/H3/H3Grid.js";
+        // import H3Grid from "https://cdn.jsdelivr.net/gh/thangqd/vgrid-maplibre@main/H3/H3Grid.js";
 
         // Initialize the map and grid
         const config = {
@@ -57,8 +57,8 @@
             map.addSource('icosahedron', {
                 type: 'geojson',
                 // Fetch GeoJSON from the URL
-                data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/H3/icosahedron.geojson'
-                // data: 'https://raw.githubusercontent.com/thangqd/vgridJS/main/H3/icosahedron_polygon.geojson'
+                data: 'https://raw.githubusercontent.com/thangqd/vgrid-maplibre/main/H3/icosahedron.geojson'
+                // data: 'https://raw.githubusercontent.com/thangqd/vgrid-maplibre/main/H3/icosahedron_polygon.geojson'
 
             });
             // Add the layer to display the GeoJSON features
