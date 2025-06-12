@@ -48,8 +48,8 @@
             container: 'map',
             center: [config.lng, config.lat],
             zoom: config.zoom,
-            // style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/omt/fiord/fiord.json'
-            style: 'https://raw.githubusercontent.com/thangqd/vstyles/main/vstyles/sbr/eclipse/eclipse.json'
+            // style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/fiord/fiord.json'
+            style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/sbr/eclipse/eclipse.json'
         });
 
         // PMTiles setup
@@ -103,7 +103,7 @@
         function addGZD() {
             map.addSource('gzd', {
                 type: 'geojson',
-                data: 'https://raw.githubusercontent.com/thangqd/vgrid-maplibre/main/MGRS/gzd.geojson'
+                data: 'https://raw.githubusercontent.com/opengeoshub/vgrid-maplibre/main/MGRS/gzd.geojson'
             });
 
             map.addLayer({
