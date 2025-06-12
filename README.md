@@ -62,7 +62,6 @@
 </html>
 ```
 
-<<<<<<< Updated upstream
 ### H3 
 [View H3 Demo](https://gishub.vn/pages/dggs/h3/)
 
