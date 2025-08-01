@@ -44,7 +44,7 @@
         import H3Grid from "https://unpkg.com/vgrid-maplibre/H3/H3Grid.js";
         const map = new maplibregl.Map({
             container: 'map',
-            style: 'https://raw.githubusercontent.com/opengeohubs/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+            style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
             center: [0, 0],
             zoom: 0
         });
