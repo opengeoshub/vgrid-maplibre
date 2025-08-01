@@ -100,26 +100,28 @@ class A5Grid {
   }
 
   getResolution(zoom) {
-    const resolution = Math.floor(zoom) + 1;
+    const resolution = Math.floor(zoom);
     return resolution > 1 ? resolution : 1;
+   
   }
 
   generateGrid() {
     const zoom = this.map.getZoom();
     const resolution = this.getResolution(zoom);
+    console.log(resolution);
     let lonWidth, latWidth;
 
     if (resolution === 1) {
-      lonWidth = 75;
-      latWidth = 75;
+      lonWidth = 20;
+      latWidth = 20;
     } else if (resolution === 2) {
-      lonWidth = 15;
-      latWidth = 15;
-    } else if (resolution === 3) {
       lonWidth = 10;
       latWidth = 10;
+    } else if (resolution === 3) {
+      lonWidth = 5;
+      latWidth = 5;
     } else if (resolution > 3) {
-      const baseWidth = 10; // at resolution 3
+      const baseWidth = 5; // at resolution 3
       const factor = Math.pow(0.5, resolution - 3);
       lonWidth = baseWidth * factor;
       latWidth = baseWidth * factor;
@@ -156,16 +158,9 @@ class A5Grid {
         const cellId = A5.lonLatToCell([centroidLon, centroidLat], resolution);
         const boundary = A5.cellToBoundary(cellId); // Array of [lng, lat] pairs
         const coords = [[...boundary, boundary[0]]];
-        // Fix antimeridian crossing 
-        // if (coords.find(([lng, _]) => lng > 130)) {
-        //   coords = coords.map(([lng, lat]) =>
-        //     lng < 0 ? [lng + 360, lat] : [lng, lat]
-        //   )
-        // };
-      
         const a5_id = A5.bigIntToHex(cellId);
-        const exists = features.some(f => f.properties.a5_id === a5_id);
-        if (exists) continue;
+        // const exists = features.some(f => f.properties.a5_id === a5_id);
+        // if (exists) continue;
 
         const feature = {
           type: 'Feature',
