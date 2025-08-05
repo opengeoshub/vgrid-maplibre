@@ -116,7 +116,7 @@
 [GARS Demo](https://gishub.vn/pages/dggs/gars/)
 ![image](https://github.com/user-attachments/assets/cb9a43f6-52be-46c9-a670-509884903f68)
 
-### DGGS Comparisions (contributed by [@akre54](https://github.com/akre54)
+### DGGS Comparisions (contributed by [akre54](https://github.com/akre54))
 
 Grid System Name | Authors/Origin | Primary Cell Shape | Hierarchical Structure/Resolution | Equal Area vs. Uniform Perception/Distortion Characteristics | Key Intended Uses/Applications
 -- | -- | -- | -- | -- | --
