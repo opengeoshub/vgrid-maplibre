@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>H3 DGGS</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/opengeoshub/vgridtools/refs/heads/main/images/vgrid.svg">
     <!-- MapLibre GL CSS -->
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
     <style>
@@ -33,7 +35,8 @@
 
     <script type="module">
         import H3Grid from "https://unpkg.com/vgrid-maplibre/H3/H3Grid.js";
-        // import H3Grid from "https://cdn.jsdelivr.net/gh/thangqd/vgrid-maplibre@main/H3/H3Grid.js";
+        // import H3Grid from "https://cdn.jsdelivr.net/gh/opengeoshub/vgrid-maplibre@main/H3/H3Grid.js";
+        // import H3Grid from "./H3Grid.js";
 
         // Initialize the map and grid
         const config = {
@@ -47,10 +50,10 @@
             container: 'map', // The ID of the HTML element where MapLibre will render
             center: [config.lng, config.lat],
             zoom: config.zoom,
-            // style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/fiord/fiord.json',
+            style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/fiord/fiord.json',
             // style: 'https://demotiles.maplibre.org/style.json' // Default MapLibre style
             // style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/positron/positron.json',
-            style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+            // style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
         });
 
         function addIcosaLayer() {
@@ -83,7 +86,7 @@
                 const h3Grid = new H3Grid(map, {
                     color: 'rgba(255, 0, 0, 1)',
                     width: 1.5,
-                    redraw: 'move',
+                    redraw: 'moveend',
                 });
                 addIcosaLayer();
                 console.log('H3 Grid added successfully.');

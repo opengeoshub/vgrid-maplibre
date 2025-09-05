@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GARS DGGS</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/opengeoshub/vgridtools/refs/heads/main/images/vgrid.svg">
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
   <style>
     body {
@@ -28,7 +30,7 @@
   </button>
 
   <script type="module">
-    import GARSGrid from "https://unpkg.com/vgrid-maplibre/GARS/GARSGrid.js";
+      import GARSGrid from "https://unpkg.com/vgrid-maplibre/GARS/GARSGrid.js";
       // import GARSGrid from './GARSGrid.js';
     const config = {
       lng: 106.706585,
@@ -41,9 +43,9 @@
     const map = new maplibregl.Map({
       container: 'map', // Map container ID
       // style: 'https://demotiles.maplibre.org/style.json', // MapLibre style URL
-      // style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/fiord/fiord.json',
+      style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/fiord/fiord.json',
       // style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/positron/positron.json',
-      style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+      // style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
       center: [config.lng, config.lat],
       zoom: config.zoom,
     });
@@ -56,7 +58,7 @@
           color: 'rgba(255, 0, 0, 1)',
           width: 1.5,
           minzoom: 6,
-          redraw: 'move',
+          redraw: 'moveend',
         });
         console.log('GARS Grid added successfully.');
       } catch (error) {

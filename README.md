@@ -44,7 +44,7 @@
         import H3Grid from "https://unpkg.com/vgrid-maplibre/H3/H3Grid.js";
         const map = new maplibregl.Map({
             container: 'map',
-            style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+            style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/fiord/fiord.json',
             center: [0, 0],
             zoom: 0
         });
@@ -53,7 +53,7 @@
             const h3Grid = new H3Grid(map, {
                 color: 'rgba(255, 0, 0, 1)',
                 width: 1.5,
-                redraw: 'move',
+                redraw: 'moveend',
             });
         });
     </script>
