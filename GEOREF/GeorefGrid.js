@@ -19,7 +19,7 @@ class GEOREFGrid {
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
       width: options.width || 1,
-      redraw: options.redraw || 'move', // Default to redraw on move
+      redraw: options.redraw || 'moveend', // Default to redraw on moveend
     };
     this.sourceId = 'georef-grid';
     this.gridLayerId = 'georef-grid-layer';

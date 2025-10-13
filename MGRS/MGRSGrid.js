@@ -7,7 +7,7 @@ class MGRSGrid {
             color: options.color || 'rgba(255, 0, 0, 1)',
             width: options.width || 1,
             minzoom: options.minzoom || 6,
-            redraw: options.redraw || 'move',
+            redraw: options.redraw || 'moveend',
         };
         this.sourceId = 'mgrs-grid';
         this.gridLayerId = 'mgrs-grid-layer';

@@ -7,7 +7,7 @@ class A5Grid {
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
       width: options.width || 1,
-      redraw: options.redraw || 'move',
+      redraw: options.redraw || 'moveend',
     };
     this.sourceId = 'a5-grid';
     this.gridLayerId = 'a5-grid-layer';

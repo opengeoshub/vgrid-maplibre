@@ -17,7 +17,8 @@
     "./Tilecode/TilecodeGrid": "./Tilecode/TilecodeGrid.js",
     "./Maidenhead/MaidenheadGrid": "./Maidenhead/MaidenheadGrid.js",
     "./GARS/GARSGrid": "./GARS/GARSGrid.js",
-    "./DIGIPIN/DGIGIPINGrid": "./DIGIPIN/DGIGIPINGrid.js"
+    "./DIGIPIN/DGIGIPINGrid": "./DIGIPIN/DGIGIPINGrid.js",
+    "./DGGAL/DGGALGrid": "./DGGAL/DGGALGrid.js"
   },
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
@@ -42,8 +43,27 @@
     "Tilecode",
     "Maidenhead",
     "GARS",
-    "DIGIPIN"
-  ],
+    "DIGIPIN",
+    "DGGAL",
+    "GNOSISGlobalGrid",
+    "ISEA4R",
+    "ISEA9R",
+    "ISEA3H",
+    "ISEA7H",
+    "ISEA7H_Z7",
+    "IVEA4R",
+    "IVEA9R",
+    "IVEA3H",
+    "IVEA7H",
+    "IVEA7H_Z7",
+    "RTEA4R",
+    "RTEA9R",
+    "RTEA3H",
+    "RTEA7H",
+    "RTEA7H_Z7",
+    "HEALPix",
+    "rHEALPix"
+    ],
   "author": "Thang Quach",
   "license": "ISC",
   "bugs": {

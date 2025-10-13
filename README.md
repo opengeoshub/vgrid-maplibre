@@ -77,6 +77,29 @@
 
 ![image](https://github.com/user-attachments/assets/c744df93-4374-4903-a47a-0ff752c744f6)
 
+### DGGAL 	
+```javascript
+// Initialize a DGGAL grid by specifying the desired DGGS type
+// Available options include:
+// 'GNOSISGlobalGrid', 'ISEA4R', 'ISEA9R', 'ISEA3H', 'ISEA7H', 'ISEA7H_Z7',
+// 'IVEA4R', 'IVEA9R', 'IVEA3H', 'IVEA7H', 'IVEA7H_Z7',
+// 'RTEA4R', 'RTEA9R', 'RTEA3H', 'RTEA7H', 'RTEA7H_Z7',
+// 'HEALPix', 'rHEALPix'
+
+const dggalGrid = new DGGALGrid(
+    <dggs_type>,
+    map,
+    {
+        color: 'rgba(255, 0, 0, 1)',
+        width: 1.5,
+        redraw: 'moveend',
+    }
+);
+```
+
+[DGGAL ISEA7H_Z7 Demo](https://gishub.vn/pages/dggs/dggal/)
+
+
 ### QTM 	
 [QTM Demo](https://gishub.vn/pages/dggs/qtm/)
 

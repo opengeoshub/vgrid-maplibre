@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DGGAL</title>
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/opengeoshub/vgridtools/refs/heads/main/images/vgrid.svg">
+    <link rel="icon" type="image/svg+xml"
+        href="https://raw.githubusercontent.com/opengeoshub/vgridtools/refs/heads/main/images/vgrid.svg">
     <!-- MapLibre GL CSS -->
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
     <style>
@@ -29,17 +30,25 @@
     <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
     <button onclick="exportToGeoJSON()" style="position: absolute; top: 10px; left: 10px;">
         Export
-      </button>
-    
+    </button>
+
     <script type="module">
-        import A5Grid from "https://unpkg.com/vgrid-maplibre/A5/A5Grid.js";
-        // import A5Grid from './A5Grid.js';
+        // import DGGALGrid from "https://unpkg.com/vgrid-maplibre/DGGAL/DGGALGrid.js";
+        import DGGALGrid from './DGGALGrid.js';
+        // 'GNOSISGlobalGrid', 'ISEA4R', 'ISEA9R', 'ISEA3H', 'ISEA7H', 'ISEA7H_Z7',
+        // 'IVEA4R', 'IVEA9R', 'IVEA3H', 'IVEA7H', 'IVEA7H_Z7', 'RTEA4R', 'RTEA9R',
+        // 'RTEA3H', 'RTEA7H', 'RTEA7H_Z7', 'HEALPix', 'rHEALPix'
+        const dggs = 'ISEA7H_Z7';
+        
+        // Update page title with DGGS type
+        document.title = `DGGAL ${dggs}`;
 
         // Initialize the map and grid
         const config = {
             lng: 106.706585,
             lat: 10.775326,
-            zoom: 0
+            zoom: 0,
+            maxZoom: 24,
         };
         let currentPopup = null;
 
@@ -47,38 +56,40 @@
             container: 'map', // The ID of the HTML element where MapLibre will render
             center: [config.lng, config.lat],
             zoom: config.zoom,
-            style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/fiord/fiord.json',
-            // style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/positron/positron.json',
-            // style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/sbr/eclipse/eclipse.json',
+            maxZoom: config.maxZoom,
+            style: 'https://tiles.versatiles.org/assets/styles/eclipse/style.json',
         })
 
         map.on('style.load', () => {
             map.addControl(new maplibregl.GlobeControl());
             try {
-                const a5Grid = new A5Grid(map, {
-                    color: 'rgba(255, 0, 0, 1)',
-                    width: 1.5,
-                    redraw: 'moveend',
-                });
-                console.log('A5 Grid added successfully.');
+                const dggalGrid = new DGGALGrid(
+                    dggs,
+                    map,
+                    {
+                        color: 'rgba(255, 0, 0, 1)',
+                        width: 1.5,
+                        redraw: 'moveend',
+                    });
+                console.log('DGGAL Grid added successfully.');
             } catch (error) {
-                console.error('Failed to add A5 Grid:', error);
+                console.error('Failed to add DGGAL Grid:', error);
             }
         });
 
-        // Uncomment to display A5 label
+        // Uncomment to display DGGAL label
         // map.on('sourcedata', (e) => {
         //     if (
-        //         e.sourceId === 'a5-grid' &&
-        //         map.getSource('a5-grid') &&
-        //         !map.getLayer('a5-labels')
+        //         e.sourceId === 'dggal-grid' &&
+        //         map.getSource('dggal-grid') &&
+        //         !map.getLayer('dggal-labels')
         //     ) {
         //         map.addLayer({
-        //             id: 'a5-labels',
+        //             id: 'dggal-labels',
         //             type: 'symbol',
-        //             source: 'a5-grid',
+        //             source: 'dggal-grid',
         //             layout: {
-        //                 'text-field': ['get', 'a5_id'],
+        //                 'text-field': ['get', 'dggal_id'],
         //                 'text-size': 12,
         //             },
         //             paint: {
@@ -93,14 +104,14 @@
 
         map.on('click', (e) => {
             const features = map.queryRenderedFeatures(e.point, {
-                layers: ['a5-grid-layer']
+                layers: ['dggal-grid-layer']
             });
 
             if (features.length) {
                 const feature = features[0];  // Select the first feature if there are multiple
 
                 const popupContent = `
-                    <strong>A5 ID: </strong> ${feature.properties.a5_id} <br>
+                    <strong>${dggs} ID: </strong> ${feature.properties.dggal_id} <br>
                     <strong>Resolution: </strong> ${feature.properties.resolution} <br>
                 `;
 
@@ -150,18 +161,13 @@
             }
         });
         function exportToGeoJSON() {
-            let features = map.queryRenderedFeatures({ layers: ['a5-grid-layer'] });
+            let features = map.queryRenderedFeatures({ layers: ['dggal-grid-layer'] });
 
             if (!features.length) {
-                alert("No A5 grid features found in the current viewport.");
+                alert("No DGGAL grid features found in the current viewport.");
                 return;
             }
-
-            // Remove duplicates (some tiles can appear multiple times)
-            // features = Array.from(new Map(
-            //     features.map(f => [f.properties.a5_id, f])
-            // ).values());
-
+           
             const geojson = {
                 type: 'FeatureCollection',
                 features: features
@@ -171,7 +177,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'a5-grid-export.geojson';
+            a.download = `DGGAL_${dggs}.geojson`;
             a.click();
             URL.revokeObjectURL(url);
         }

@@ -4,7 +4,7 @@ class OLCGrid {
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
       width: options.width || 1,
-      redraw: options.redraw || 'move',
+      redraw: options.redraw || 'moveend',
     };
     this.sourceId = 'olc-grid';
     this.gridLayerId = 'olc-grid-layer';

@@ -7,7 +7,7 @@ class TilecodeGrid {
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
       width: options.width || 1,
-      redraw: options.redraw || 'move',
+      redraw: options.redraw || 'moveend',
     };
     this.sourceId = 'tilecode-grid';
     this.gridLayerId = 'tilecode-grid-layer';

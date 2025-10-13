@@ -11,7 +11,7 @@ class H3Grid {
     this.options = {
       color: options.color || 'rgba(255, 0, 0, 1)',
       width: options.width || 1,
-      redraw: options.redraw || 'move', // Default to redraw on move
+      redraw: options.redraw || 'moveend', // Default to redraw on moveend
     };
     this.sourceId = 'h3-grid';
     this.gridLayerId = 'h3-grid-layer';
