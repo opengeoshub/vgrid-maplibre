@@ -99,6 +99,7 @@ const dggalGrid = new DGGALGrid(
 
 [DGGAL ISEA7H_Z7 Demo](https://gishub.vn/pages/dggs/dggal/)
 
+![image](https://github.com/user-attachments/assets/2dfa1798-b5af-42db-b3f6-4eeb71cb393f)
 
 ### QTM 	
 [QTM Demo](https://gishub.vn/pages/dggs/qtm/)
