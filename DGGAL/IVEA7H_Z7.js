@@ -1,7 +1,9 @@
-//  Reference: https://a5geo.org/
-import * as A5 from 'https://unpkg.com/a5-js/dist/a5.js';
+//  Reference: https://ivea7h_z7geo.org/
+import { DGGAL } from './dggal.js';
+let dggal;
+const initPromise = DGGAL.init();
 
-class A5Grid {
+class IVEA7H_Z7Grid {
   constructor(map, options = {}) {
     this.map = map;
     this.options = {
@@ -9,8 +11,8 @@ class A5Grid {
       width: options.width || 1,
       redraw: options.redraw || 'move',
     };
-    this.sourceId = 'a5-grid';
-    this.gridLayerId = 'a5-grid-layer';
+    this.sourceId = 'dggal-grid';
+    this.gridLayerId = 'dggal-grid-layer';
     this.initialize();
   }
 
@@ -154,11 +156,12 @@ class A5Grid {
         const centroidLat = (minLat + maxLat) / 2
         const centroidLon = (minLon + maxLon) / 2
 
-        const cellId = A5.lonLatToCell([centroidLon, centroidLat], resolution);
-        const boundary = A5.cellToBoundary(cellId); // Array of [lng, lat] pairs
+        const dggrs = dggal.createDGGRS('IVEA7H_Z7');
+        const zone = dggrs.getZoneFromTextID('0234'); 
+        const boundary = dggrs.getZoneRefinedWGS84Vertices(zone, 0); // Array of [lng, lat] pairs
         const coords = [[...boundary, boundary[0]]];
-        const a5_id = A5.u64ToHex(cellId);
-        // const exists = features.some(f => f.properties.a5_id === a5_id);
+        const ivea7h_z7_id = dggrs.getZoneTextID(zone);
+        // const exists = features.some(f => f.properties.ivea7h_z7_id === ivea7h_z7_id);
         // if (exists) continue;
 
         const feature = {
@@ -168,7 +171,7 @@ class A5Grid {
             coordinates: coords,
           },
           properties: {
-            a5_id: a5_id,
+            ivea7h_z7_id: ivea7h_z7_id,
             resolution,
           }
         };
@@ -186,4 +189,4 @@ class A5Grid {
   }
 }
 
-export default A5Grid;
+export default IVEA7H_Z7Grid;

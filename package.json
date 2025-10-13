@@ -1,7 +1,7 @@
 {
   "name": "vgrid-maplibre",
   "type": "module",
-  "version": "1.1.7",
+  "version": "1.1.9",
   "description": "DGGS Visualization for MapLibre GL JS",
   "main": "index.js",
   "exports": {
@@ -16,7 +16,8 @@
     "./MGRS/MGRSGrid": "./MGRS/MGRSGrid.js",
     "./Tilecode/TilecodeGrid": "./Tilecode/TilecodeGrid.js",
     "./Maidenhead/MaidenheadGrid": "./Maidenhead/MaidenheadGrid.js",
-    "./GARS/GARSGrid": "./GARS/GARSGrid.js"
+    "./GARS/GARSGrid": "./GARS/GARSGrid.js",
+    "./DIGIPIN/DGIGIPINGrid": "./DIGIPIN/DGIGIPINGrid.js"
   },
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
@@ -40,7 +41,8 @@
     "MGRS",
     "Tilecode",
     "Maidenhead",
-    "GARS"
+    "GARS",
+    "DIGIPIN"
   ],
   "author": "Thang Quach",
   "license": "ISC",
