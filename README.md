@@ -116,6 +116,10 @@
 [GARS Demo](https://gishub.vn/pages/dggs/gars/)
 ![image](https://github.com/user-attachments/assets/cb9a43f6-52be-46c9-a670-509884903f68)
 
+### India DIGIPIN 
+[India DIGIPIN Demo](https://gishub.vn/pages/dggs/digipin/)
+![image](https://github.com/user-attachments/assets/d418ac9e-7639-4a11-8f71-86118e5820bd)
+
 ### DGGS Comparisions (contributed by [akre54](https://github.com/akre54))
 
 Grid System Name | Authors/Origin | Primary Cell Shape | Hierarchical Structure/Resolution | Equal Area vs. Uniform Perception/Distortion Characteristics | Key Intended Uses/Applications
