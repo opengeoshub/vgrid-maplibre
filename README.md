@@ -1,6 +1,6 @@
 <p align="center">
   <strong >vgrid-maplibre </strong> <br>
-    <b><i>DGGS Visualization on MapLibre GL JS</i><b>
+    <b><i>DGGS Visualization in MapLibre and Mapbox GL JS</i><b>
 </p>
 <p align="center">
   <img src="https://raw.githubusercontent.com/opengeoshub/vgridtools/main/images/readme/dggs.png">
@@ -16,6 +16,8 @@
 ### [vgrid-maplibre on NPM](https://www.npmjs.com/package/vgrid-maplibre)
 ### [Vgrid Home](https://vgrid.vn)
 
+### vgrid-maplibre can be used with both MapLibre and Mapbox GL JS to interactively visualize a wide range of DGGS, including geodesic DGGS such as H3, S2, A5, DGGAL, and QTM, as well as graticule-based DGGS like OLC, Geohash, GEOREF, MGRS, Tilecode (by Vigrid), Maidenhead, GARS, and India DIGIPIN.
+
 ### Basic usage (for H3 as an example)
 ```html
 <!DOCTYPE html>
@@ -23,8 +25,8 @@
 
 <head>
     <title>vgrid-maplibre Demo</title>
-    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
-    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@lates/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
     <style>
         body {
             margin: 0;
@@ -63,9 +65,11 @@
 ```
 
 ### H3 
-[H3 Demo](https://gishub.vn/pages/dggs/h3/)
-
+[H3 in MapLibre](https://gishub.vn/pages/dggs/h3/)
 ![image](https://github.com/user-attachments/assets/00d27bea-523b-4d89-abf2-a1809dcffd12)
+
+[H3 in Mapbox](https://gishub.vn/pages/dggs/h3/mapbox.html)
+
 
 ### S2 	
 [S2 Demo](https://gishub.vn/pages/dggs/s2/)
