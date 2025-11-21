@@ -66,9 +66,11 @@
 
 ### H3 
 [H3 in MapLibre](https://gishub.vn/pages/dggs/h3/)
+
 ![image](https://github.com/user-attachments/assets/00d27bea-523b-4d89-abf2-a1809dcffd12)
 
 [H3 in Mapbox](https://gishub.vn/pages/dggs/h3/mapbox.html)
+
 <img width="2880" height="1466" alt="image" src="https://github.com/user-attachments/assets/50b605ab-c471-414b-91d3-909cfb9e2fc7" />
 
 
@@ -135,6 +137,7 @@ const dggalGrid = new DGGALGrid(
 
 ### Vgrid Tilecode	
 [Vgrid Tilecode in MapLibre](https://gishub.vn/pages/dggs/tilecode/)
+
 <img width="2880" height="1468" alt="image" src="https://github.com/user-attachments/assets/20cccd9f-e746-4f49-85e6-d22194e4993f" />
 
 
@@ -145,10 +148,12 @@ const dggalGrid = new DGGALGrid(
 
 ### GARS 
 [GARS in MapLibre](https://gishub.vn/pages/dggs/gars/)
+
 ![image](https://github.com/user-attachments/assets/cb9a43f6-52be-46c9-a670-509884903f68)
 
 ### India DIGIPIN 
 [India DIGIPIN Demo](https://gishub.vn/pages/dggs/digipin/)
+
 ![image](https://github.com/user-attachments/assets/d418ac9e-7639-4a11-8f71-86118e5820bd)
 
 ### DGGS Comparisions (contributed by [akre54](https://github.com/akre54))
