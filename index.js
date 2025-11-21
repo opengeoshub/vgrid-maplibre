@@ -7,6 +7,9 @@ export { default as S2Grid } from './S2/S2Grid.js';
 // A5 Grid 
 export { default as A5Grid } from './A5/A5Grid.js';
 
+// DGGAL Grid   
+export { default as DGGALGrid } from './DGGAL/DGGALGrid.js';
+
 // QTM Grid 
 export { default as QTMGrid } from './QTM/QTMGrid.js';
 
@@ -30,3 +33,6 @@ export { default as MaidenheadGrid } from './Maidenhead/MaidenheadGrid.js';
 
 // GARS Grid 
 export { default as GARSGrid } from './GARS/GARSGrid.js';
+
+// DIGIPIN Grid 
+export { default as DIGIPINGrid } from './DIGIPIN/DIGIPINGrid.js';
