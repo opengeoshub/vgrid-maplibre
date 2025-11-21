@@ -134,18 +134,18 @@ class DGGALGrid {
     }
   }
 
-  getResolution(zoom) {
-    // Different DGGS types have different resolution ranges    
+  getResolution(dggs, zoom) {
+    // Different DGGS types have different resolution ranges
     let resolution = Math.floor(zoom);    
     // Get the DGGS type configuration
-    const dggsConfig = DGGAL_TYPES[this.dggs];
+    const dggsConfig = DGGAL_TYPES[dggs];
 
-    switch(this.dggs) {
+    switch(dggs) {
         
       case 'ISEA3H':
       case 'IVEA3H':
       case 'RTEA3H':
-        resolution = Math.floor(zoom * 1.2) 
+        resolution = Math.max(dggsConfig.min_res, Math.floor(zoom * 1.2))  
         break; 
       
       case 'ISEA7H':
@@ -154,26 +154,27 @@ class DGGALGrid {
       case 'IVEA7H_Z7':
       case 'RTEA7H':
       case 'RTEA7H_Z7':
-        resolution = Math.floor(zoom * 0.7)  
+        resolution = Math.max(dggsConfig.min_res, Math.floor(zoom * 0.7))  
         break;
 
       case 'ISEA9R':
       case 'IVEA9R':
       case 'RTEA9R':
       case 'rHEALPix':
-        resolution = Math.floor(zoom * 0.6)  
+        resolution = Math.max(dggsConfig.min_res, Math.floor(zoom * 0.6))  
         break;       
     }
 
+  
     resolution = Math.max(dggsConfig.min_res, Math.min(resolution, dggsConfig.max_res));
-    
+  
     return resolution;
   
   }
 
   generateGrid() {
     const zoom = this.map.getZoom();
-    const resolution = this.getResolution(zoom);
+    const resolution = this.getResolution(this.dggs, zoom);
     
     // Get current map bounds
     const bounds = this.map.getBounds();

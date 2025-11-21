@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DGGAL</title>
+    <title>DGGAL IVEA7H_Z7</title>
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml"
         href="https://raw.githubusercontent.com/opengeoshub/vgridtools/refs/heads/main/images/vgrid.svg">
@@ -38,8 +38,8 @@
         // 'GNOSISGlobalGrid', 'ISEA4R', 'ISEA9R', 'ISEA3H', 'ISEA7H', 'ISEA7H_Z7',
         // 'IVEA4R', 'IVEA9R', 'IVEA3H', 'IVEA7H', 'IVEA7H_Z7', 'RTEA4R', 'RTEA9R',
         // 'RTEA3H', 'RTEA7H', 'RTEA7H_Z7', 'HEALPix', 'rHEALPix'
-        const dggs = 'GNOSISGlobalGrid';
-        
+        const dggs = 'IVEA7H_Z7';
+
         // Update page title with DGGS type
         document.title = `DGGAL ${dggs}`;
 
@@ -57,7 +57,7 @@
             center: [config.lng, config.lat],
             zoom: config.zoom,
             maxZoom: config.maxZoom,
-            style: 'https://tiles.versatiles.org/assets/styles/eclipse/style.json',
+            style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/versatiles/eclipse.json',
         })
 
         map.on('style.load', () => {
@@ -167,7 +167,7 @@
                 alert("No DGGAL grid features found in the current viewport.");
                 return;
             }
-           
+
             const geojson = {
                 type: 'FeatureCollection',
                 features: features

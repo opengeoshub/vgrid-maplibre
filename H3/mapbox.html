@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H3 DGGS</title>
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/opengeoshub/vgridtools/refs/heads/main/images/vgrid.svg">
-    <!-- MapLibre GL CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+    <title>vgrid-maplibre in Mapbox GL JS</title>
+
+    <!-- Mapbox GL JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css" rel="stylesheet" />
+
     <style>
         body {
             margin: 0;
@@ -19,49 +18,109 @@
             width: 100%;
             height: 100vh;
         }
+
+        .projection-panel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            font-family: Arial, sans-serif;
+            width: 180px;
+        }
+
+        .projection-panel label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .projection-panel select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .projection-panel select:hover {
+            border-color: #999;
+        }
+
+        .projection-panel select:focus {
+            outline: none;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+        }
+
+        .projection-panel button {
+            width: 100%;
+            margin-top: 12px;
+            padding: 8px 12px;
+            border: 1px solid #0066cc;
+            border-radius: 4px;
+            font-size: 14px;
+            background: #0066cc;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .projection-panel button:hover {
+            background: #0052a3;
+            border-color: #0052a3;
+        }
+
+        .projection-panel button:active {
+            background: #003d7a;
+        }
     </style>
 </head>
 
 <body>
-
-    <!-- Map container -->
     <div id="map"></div>
-    <!-- H3Grid.js -->
-    <!-- <script src="https://unpkg.com/h3-js/dist/h3-js.umd.js"></script> -->
-    <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
-    <button onclick="exportToGeoJSON()" style="position: absolute; top: 10px; left: 10px;">
-        Export
-    </button>
-
+    <div class="projection-panel">
+        <label for="projection-select">Projection:</label>
+        <select id="projection-select">
+            <option value="equalEarth">Equal Earth</option>
+            <option value="albers">Albers</option>
+            <option value="mercator">Mercator</option>
+            <option value="lambertConformalConic">Lambert Conformal Conic</option>
+            <option value="winkelTripel">Winkel Tripel</option>
+            <option value="naturalEarth">Natural Earth</option>
+            <option value="equirectangular">Equirectangular</option>
+            <option value="globe">Globe</option>
+        </select>
+        <button onclick="exportToGeoJSON()">Export to GeoJSON</button>
+    </div>
     <script type="module">
         import H3Grid from "https://unpkg.com/vgrid-maplibre/H3/H3Grid.js";
-        // import H3Grid from "https://cdn.jsdelivr.net/gh/opengeoshub/vgrid-maplibre@main/H3/H3Grid.js";
-        // import H3Grid from "./H3Grid.js";
 
-        // Initialize the map and grid
-        const config = {
-            lng: 106.706585,
-            lat: 10.775326,
-            zoom: 0
-        };
-        let currentPopup = null;
+        // 🔑 Add your Mapbox access token
+        mapboxgl.accessToken = "pk.eyJ1IjoidGhhbmdxZCIsImEiOiJucHFlNFVvIn0.j5yb-N8ZR3d4SJAYZz-TZA";
 
-        const map = new maplibregl.Map({
-            container: 'map', // The ID of the HTML element where MapLibre will render
-            center: [config.lng, config.lat],
-            zoom: config.zoom,
-            // style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/fiord/fiord.json',
-            // style: 'https://demotiles.maplibre.org/style.json' // Default MapLibre style
-            // style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/positron/positron.json',
+        const map = new mapboxgl.Map({
+            container: 'map',
             style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/versatiles/eclipse.json',
+            center: [0, 0],
+            zoom: 1.2,
+            projection: { name: 'equalEarth' }
         });
+        map.addControl(new mapboxgl.NavigationControl())
 
         function addIcosaLayer() {
             map.addSource('icosahedron', {
                 type: 'geojson',
                 // Fetch GeoJSON from the URL
                 data: 'https://raw.githubusercontent.com/opengeoshub/vgrid-maplibre/main/H3/icosahedron.geojson'
-                // data: 'https://raw.githubusercontent.com/opengeoshub/vgrid-maplibre/main/H3/icosahedron_polygon.geojson'
 
             });
             // Add the layer to display the GeoJSON features
@@ -80,45 +139,36 @@
             });
         }
 
-        map.on('load', () => {
-            map.addControl(new maplibregl.GlobeControl());
-            try {
-                const h3Grid = new H3Grid(map, {
-                    color: 'rgba(255, 0, 0, 1)',
-                    width: 1.5,
-                    redraw: 'moveend',
-                });
-                addIcosaLayer();
-                console.log('H3 Grid added successfully.');
-            } catch (error) {
-                console.error('Failed to add H3 Grid:', error);
-            }
-        });
-        // Uncomment to display h3_id label
-        // map.on('sourcedata', (e) => {
-        //     if (
-        //         e.sourceId === 'h3-grid' &&
-        //         map.getSource('h3-grid') &&
-        //         !map.getLayer('h3-labels')
-        //     ) {
-        //         map.addLayer({
-        //             id: 'h3-labels',
-        //             type: 'symbol',
-        //             source: 'h3-grid',
-        //             layout: {
-        //                 'text-field': ['get', 'h3_id'],
-        //                 'text-size': 12,
-        //             },
-        //             paint: {
-        //                 'text-color': ['get', 'color'],
-        //                 'text-halo-color': 'white',        // halo color
-        //                 'text-halo-width': 1.5,            // halo width
-        //                 'text-halo-blur': 0.5              // optional: smooth halo edges
-        //             },
-        //         });
-        //     }
-        // });
+        // Projection list
+        const projections = [
+            { name: "equalEarth", value: "equalEarth" },
+            { name: "albers", value: "albers" },
+            { name: "mercator", value: "mercator" },
+            { name: "lambertConformalConic", value: "lambertConformalConic" },
+            { name: "winkelTripel", value: "winkelTripel" },
+            { name: "naturalEarth", value: "naturalEarth" },
+            { name: "equirectangular", value: "equirectangular" },
+            { name: "globe", value: "globe" }
+        ];
 
+        // Set initial projection in dropdown
+        const projectionSelect = document.getElementById('projection-select');
+        projectionSelect.value = 'equalEarth';
+
+        // Handle projection change
+        projectionSelect.addEventListener('change', (e) => {
+            const selectedProjection = e.target.value;
+            map.setProjection({ name: selectedProjection });
+        });
+
+        map.on('load', () => {
+            const h3Grid = new H3Grid(map, {
+                color: 'rgba(255, 0, 0, 1)',
+                width: 1.5,
+                redraw: 'moveend',
+            });
+            addIcosaLayer();
+        });
         map.on('click', (e) => {
             const features = map.queryRenderedFeatures(e.point, {
                 layers: ['h3-grid-layer']  // This should match the layer name where hexagons are rendered
@@ -136,7 +186,7 @@
             <strong>Total Cells: </strong> ${feature.properties.num_hex}<br>
             `;
                 // Create a popup and set its coordinates
-                const popup = new maplibregl.Popup()
+                const popup = new mapboxgl.Popup()
                     .setLngLat(e.lngLat)  // Position the popup at the clicked location
                     .setHTML(popupContent) // Set the HTML content for the popup
                     .addTo(map);  // Add the popup to the map
@@ -169,23 +219,6 @@
                 });
             }
         });
-
-        map.on('contextmenu', () => {
-            // Remove the highlight layer by clearing its source data
-            if (map.getLayer('highlight-layer')) {
-                map.getSource('highlight-layer').setData({
-                    'type': 'FeatureCollection',
-                    'features': []  // Clear the data to remove the highlight
-                });
-            }
-
-            // Remove the current popup (if any) from the map
-            if (currentPopup) {
-                currentPopup.remove();
-                currentPopup = null; // Reset the currentPopup variable
-            }
-        });
-
         function exportToGeoJSON() {
             const features = map.queryRenderedFeatures({ layers: ['h3-grid-layer'] });
 
@@ -214,7 +247,6 @@
             URL.revokeObjectURL(url);
         }
         window.exportToGeoJSON = exportToGeoJSON;
-
     </script>
 </body>
 
