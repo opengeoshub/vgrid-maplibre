@@ -69,6 +69,7 @@
 ![image](https://github.com/user-attachments/assets/00d27bea-523b-4d89-abf2-a1809dcffd12)
 
 [H3 in Mapbox](https://gishub.vn/pages/dggs/h3/mapbox.html)
+<img width="2880" height="1466" alt="image" src="https://github.com/user-attachments/assets/50b605ab-c471-414b-91d3-909cfb9e2fc7" />
 
 
 ### S2 	
