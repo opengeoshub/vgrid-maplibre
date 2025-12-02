@@ -100,9 +100,10 @@ class A5Grid {
   }
 
   getResolution(zoom) {
-    const resolution = Math.floor(zoom);
-    return resolution > 1 ? resolution : 1;
-   
+    const min_res = 0;
+    const max_res = 29;
+    const resolution = Math.min(max_res, Math.max(min_res, Math.floor(zoom)));
+    return resolution;
   }
 
   generateGrid() {
@@ -110,7 +111,11 @@ class A5Grid {
     const resolution = this.getResolution(zoom);
     let lonWidth, latWidth;
 
-    if (resolution === 1) {
+    if (resolution === 0) {
+      lonWidth = 30;
+      latWidth = 30;
+    }
+    else if (resolution === 1) {
       lonWidth = 20;
       latWidth = 20;
     } else if (resolution === 2) {

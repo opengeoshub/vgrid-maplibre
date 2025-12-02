@@ -106,22 +106,10 @@ class H3Grid {
 
   // Determine the H3 resolution based on zoom level
   getResolution(zoom) {
-    if (zoom <= 3.0) return 0;
-    if (zoom <= 4.4) return 1;
-    if (zoom <= 5.7) return 2;
-    if (zoom <= 7.1) return 3;
-    if (zoom <= 8.4) return 4;
-    if (zoom <= 9.8) return 5;
-    if (zoom <= 11.4) return 6;
-    if (zoom <= 12.7) return 7;
-    if (zoom <= 14.1) return 8;
-    if (zoom <= 15.5) return 9;
-    if (zoom <= 16.8) return 10;
-    if (zoom <= 18.2) return 11;
-    if (zoom <= 19.5) return 12;
-    if (zoom <= 21.1) return 13;
-    if (zoom <= 21.9) return 14;
-    return 15;
+    const min_res = 0;
+    const max_res =15;
+    const resolution = Math.min(max_res, Math.max(min_res, Math.floor((zoom-3)*0.8)));
+    return resolution;
   }
 
   // Render hexagons based on current map zoom

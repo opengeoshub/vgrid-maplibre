@@ -103,12 +103,12 @@ class MaidenheadGrid {
   }
 
   getResolution(zoom) {
-    if (zoom <= 4) return 1;
-    if (zoom <= 7) return 2;
-    if (zoom <= 12) return 3;
-    return 4;
+    const min_res = 1;
+    const max_res = 4;
+    const resolution = Math.min(max_res, Math.max(min_res, Math.floor(zoom*0.3)));
+    return resolution;
   }
-
+  
   generateGrid() {
     const zoom = Math.floor(this.map.getZoom());
     const resolution = this.getResolution(zoom);

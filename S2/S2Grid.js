@@ -101,7 +101,9 @@ class S2Grid {
 
 
   getResolution(zoom) {
-    const resolution = Math.floor(zoom);
+    const min_res = 0;
+    const max_res = 30;
+    const resolution = Math.min(max_res, Math.max(min_res, Math.floor(zoom)));
     return resolution;
   }
 

@@ -103,8 +103,10 @@ class QTMGrid {
 
 
   getResolution(zoom) {
-    const resolution = Math.floor(zoom) + 1;
-    return resolution > 1 ? resolution : 1;
+    const min_res = 0;
+    const max_res = 23;
+    const resolution = Math.min(max_res, Math.max(min_res, Math.floor(zoom)));
+    return resolution;
   }
 
   generateGrid() {

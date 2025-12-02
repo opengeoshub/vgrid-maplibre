@@ -232,16 +232,10 @@ class GeohashGrid {
   }
 
   getResolution(zoom) {
-    if (zoom < 4) return 1;
-    if (zoom >= 4 && zoom < 6) return 2;
-    if (zoom >= 6 && zoom < 8) return 3;
-    if (zoom >= 8 && zoom < 10) return 4;
-    if (zoom >= 10 && zoom < 12) return 5;
-    if (zoom >= 12 && zoom < 14) return 6;
-    if (zoom >= 14 && zoom < 16) return 7;
-    if (zoom >= 16 && zoom < 18) return 8;
-    if (zoom >= 18 && zoom < 20) return 9;
-    return 10;
+    const min_res = 0;
+    const max_res = 11;
+    const resolution = Math.min(max_res, Math.max(min_res, Math.floor(zoom*0.45)));
+    return resolution;
   }
 
   encode(latitude, longitude, numberOfChars) {

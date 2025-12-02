@@ -30,8 +30,8 @@
   </button>
 
   <script type="module">
-   import GeorefGrid from 'https://unpkg.com/vgrid-maplibre/GEOREF/GeorefGrid.js'
-  // import GeorefGrid from './GeorefGrid.js';
+    import GeorefGrid from 'https://unpkg.com/vgrid-maplibre/GEOREF/GEOREFGrid.js'
+    // import GEOREFGrid from './GEOREFGrid.js';
     const config = {
       lng: 106.706585,
       lat: 10.775326,
@@ -54,7 +54,7 @@
     map.on('style.load', () => {
       map.addControl(new maplibregl.GlobeControl());
       try {
-        const georefGrid = new GeorefGrid(map, {
+        const georefGrid = new GEOREFGrid(map, {
           color: 'rgba(255, 0, 0, 1)',
           width: 1.5,
           redraw: 'moveend',

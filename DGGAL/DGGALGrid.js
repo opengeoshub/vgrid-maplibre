@@ -135,41 +135,48 @@ class DGGALGrid {
   }
 
   getResolution(dggs, zoom) {
-    // Different DGGS types have different resolution ranges
-    let resolution = Math.floor(zoom);    
-    // Get the DGGS type configuration
-    const dggsConfig = DGGAL_TYPES[dggs];
-
+    let resolution;
+    
     switch(dggs) {
-        
       case 'ISEA3H':
       case 'IVEA3H':
       case 'RTEA3H':
-        resolution = Math.max(dggsConfig.min_res, Math.floor(zoom * 1.2))  
+        resolution = Math.floor(zoom * 1.15);
         break; 
       
+      case 'ISEA4R':
+      case 'IVEA4R':
+      case 'RTEA4R':
+      case 'HEALPix':
+        resolution = Math.floor(zoom * 0.95);
+        break; 
+
       case 'ISEA7H':
       case 'ISEA7H_Z7':
       case 'IVEA7H':
       case 'IVEA7H_Z7':
       case 'RTEA7H':
       case 'RTEA7H_Z7':
-        resolution = Math.max(dggsConfig.min_res, Math.floor(zoom * 0.7))  
+        resolution = Math.floor(zoom * 0.65);
         break;
 
       case 'ISEA9R':
       case 'IVEA9R':
       case 'RTEA9R':
       case 'rHEALPix':
-        resolution = Math.max(dggsConfig.min_res, Math.floor(zoom * 0.6))  
-        break;       
+        resolution = Math.floor(zoom * 0.6);
+        break;
+        
+      default:
+        // Default case for GNOSISGlobalGrid.
+        resolution = Math.floor(zoom);
+        break;
     }
 
-  
-    resolution = Math.max(dggsConfig.min_res, Math.min(resolution, dggsConfig.max_res));
+    // Clamp resolution to valid range for this DGGS type
+    resolution = Math.min(DGGAL_TYPES[dggs].max_res, Math.max(DGGAL_TYPES[dggs].min_res, resolution));
   
     return resolution;
-  
   }
 
   generateGrid() {

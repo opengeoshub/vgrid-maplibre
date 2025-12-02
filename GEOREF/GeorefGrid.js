@@ -112,12 +112,13 @@ class GEOREFGrid {
   }
 
   getResolution(zoom) {
-    if (zoom <= 7) return 0;
-    if (zoom <= 11) return 1;
+    if (zoom <= 6) return 0;
+    if (zoom <= 10) return 1;
     if (zoom <= 15) return 2;
-    if (zoom <= 18) return 3;
-    if (zoom <= 21) return 4;
-    return 5;
+    if (zoom <= 19) return 3;
+    if (zoom <= 22) return 4;
+    if (zoom <= 24) return 5;
+    return 6;
   }
 
   generateGrid() {
