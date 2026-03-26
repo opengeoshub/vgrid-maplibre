@@ -101,12 +101,12 @@ class A5Grid {
 
   getResolution(zoom) {
     const min_res = 0;
-    const max_res = 29;
+    const max_res = 30;
     const resolution = Math.min(max_res, Math.max(min_res, Math.floor(zoom)));
     return resolution;
   }
 
-  generateGrid() {
+  generateGrid_old() {
     const zoom = this.map.getZoom();
     const resolution = this.getResolution(zoom);
     let lonWidth, latWidth;
