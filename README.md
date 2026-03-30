@@ -128,7 +128,7 @@ const dggalGrid = new DGGALGrid(
 ### GEOREF 
 [GEOREF in MapLibre](https://gishub.vn/pages/dggs/georef/)
 
-![image](https://github.com/user-attachments/assets/c4ee4c02-e531-48f3-b618-5c3d7b4c9d00)
+![image](https://github.com/user-attachments/assets/d7225223-5a1e-4c2f-ac88-1609af0aa841)
 
 ### MGRS	
 [MGRS in MapLibre](https://gishub.vn/pages/dggs/mgrs/)
