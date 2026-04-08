@@ -1,7 +1,7 @@
 {
   "name": "vgrid-maplibre",
   "type": "module",
-  "version": "1.1.13",
+  "version": "1.1.15",
   "description": "DGGS Visualization for MapLibre and Mapbox GL JS",
   "main": "index.js",
   "exports": {
@@ -9,6 +9,7 @@
     "./H3/H3Grid": "./H3/H3Grid.js",
     "./S2/S2Grid": "./S2/S2Grid.js",
     "./A5/A5Grid": "./A5/A5Grid.js",
+    "./DGGRID/DGGRIDGrid": "./DGGRID/DGGRIDGrid.js",
     "./DGGAL/DGGALGrid": "./DGGAL/DGGALGrid.js",
     "./QTM/QTMGrid": "./QTM/QTMGrid.js",
     "./OLC/OLCGrid": "./OLC/OLCGrid.js",
@@ -33,6 +34,10 @@
     "H3",
     "S2",
     "A5",
+    "DGGRID",
+    "ISEEA4H",
+    "ISEEA4T",
+    "ISEEA4D",
     "DGGAL",
     "GNOSISGlobalGrid",
     "ISEA4R",

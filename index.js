@@ -7,6 +7,9 @@ export { default as S2Grid } from './S2/S2Grid.js';
 // A5 Grid 
 export { default as A5Grid } from './A5/A5Grid.js';
 
+// DGGRID Grid 
+export { default as DGGRIDGrid } from './DGGRID/DGGRIDGrid.js';
+
 // DGGAL Grid   
 export { default as DGGALGrid } from './DGGAL/DGGALGrid.js';
 
