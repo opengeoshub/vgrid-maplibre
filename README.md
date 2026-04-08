@@ -73,7 +73,6 @@
 
 ![image](https://github.com/user-attachments/assets/50b605ab-c471-414b-91d3-909cfb9e2fc7)
 
-
 ### S2 	
 [S2 in MapLibre](https://gishub.vn/pages/dggs/s2/)
 
@@ -84,6 +83,32 @@
 
 ![image](https://github.com/user-attachments/assets/426e1033-4623-4b15-a793-d03dac439a92)
 
+
+### DGGRID
+Referencs: [DGGRID](https://github.com/sahrk/DGGRID), [webdggrid](https://github.com/am2222/webDggrid) (see [Getting Started](https://am2222.github.io/webDggrid/getting-started.html)). 
+
+
+```javascript
+import DGGRIDGrid from "https://unpkg.com/vgrid-maplibre/DGGRID/DGGRID.js";
+
+const dggridGrid = new DGGRIDGrid(map, {
+    color: 'rgba(255, 0, 0, 1)',
+    width: 1.5,
+    redraw: 'moveend',
+    // minResolution / maxResolution: optional top-level (defaults 0 and 21).
+    // dggsConfig: optional; passed to Webdggrid.setDggs (poleCoordinates, azimuth,
+    // topology, projection, aperture or apertureSequence).
+    dggsConfig: {
+        poleCoordinates: { lat: 0, lng: 0 },
+        azimuth: 0,
+        topology: 'HEXAGON', // HEXAGON, TRIANGLE, DIAMOND
+        projection: 'ISEA',
+        aperture: 4,
+    },
+});
+```
+[DGGRID ISEA4H in MapLibre](https://gishub.vn/pages/dggs/dggrid/)
+
 ### DGGAL 	
 ```javascript
 // Initialize a DGGAL grid by specifying the desired DGGS type
@@ -92,6 +117,7 @@
 // 'IVEA4R', 'IVEA9R', 'IVEA3H', 'IVEA7H', 'IVEA7H_Z7',
 // 'RTEA4R', 'RTEA9R', 'RTEA3H', 'RTEA7H', 'RTEA7H_Z7',
 // 'HEALPix', 'rHEALPix'
+import DGGALGrid from "https://unpkg.com/vgrid-maplibre/DGGAL/DGGALGrid.js";
 
 const dggalGrid = new DGGALGrid(
     <dggs_type>,

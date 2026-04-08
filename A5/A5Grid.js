@@ -106,7 +106,7 @@ class A5Grid {
     return resolution;
   }
 
-  generateGrid_old() {
+  generateGrid() {
     const zoom = this.map.getZoom();
     const resolution = this.getResolution(zoom);
     let lonWidth, latWidth;
