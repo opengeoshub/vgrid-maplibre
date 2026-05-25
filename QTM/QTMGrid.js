@@ -1,5 +1,5 @@
 // Reference: https://github.com/paulojraposo/QTM
-import * as turf from 'https://cdn.skypack.dev/@turf/turf';
+import * as turf from 'https://esm.sh/@turf/turf@7.3.0';
 
 class QTMGrid {
   constructor(map, options = {}) {
