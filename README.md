@@ -25,7 +25,6 @@
 
 <head>
     <title>vgrid-maplibre Demo</title>
-    <script src="https://unpkg.com/maplibre-gl@lates/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
     <style>
         body {
@@ -43,6 +42,7 @@
 <body>
     <div id="map"></div>
     <script type="module">
+        import * as maplibregl from 'https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.mjs';
         import H3Grid from "https://unpkg.com/vgrid-maplibre/H3/H3Grid.js";
         const map = new maplibregl.Map({
             container: 'map',

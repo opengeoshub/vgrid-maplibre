@@ -182,7 +182,7 @@ class H3Grid {
       const feature = {
         type: "Feature",
         properties: {
-          color: h3.isPentagon(h3_id) ? 'cyan' : this.options.color,
+          color: h3.isPentagon(h3_id) ? 'blue' : this.options.color,
           h3_id: h3_id,
           resolution: resolution,
           icosa_faces: icosa_faces,

@@ -27,12 +27,12 @@
 
     <!-- Map container -->
     <div id="map"></div>
-    <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
     <button onclick="exportToGeoJSON()" style="position: absolute; top: 10px; left: 10px;">
         Export
     </button>
 
     <script type="module">
+        import * as maplibregl from 'https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.mjs';
         import DGGALGrid from "https://unpkg.com/vgrid-maplibre/DGGAL/DGGALGrid.js";
         // import DGGALGrid from './DGGALGrid.js';
         // 'GNOSISGlobalGrid', 'ISEA4R', 'ISEA9R', 'ISEA3H', 'ISEA7H', 'ISEA7H_Z7',

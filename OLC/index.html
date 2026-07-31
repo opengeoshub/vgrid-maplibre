@@ -28,9 +28,9 @@
     <button onclick="exportToGeoJSON()" style="position: absolute; top: 10px; left: 10px;">
         Export
     </button>
-    <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
     <script src=https://cdn.jsdelivr.net/openlocationcode/latest/openlocationcode.js></script>
     <script type="module">
+        import * as maplibregl from 'https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.mjs';
         import OLCGrid from "https://unpkg.com/vgrid-maplibre/OLC/OLCGrid.js";
         // import OLCGrid from "./OLCGrid.js";
         // Initialize the map and grid
