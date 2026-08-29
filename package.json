@@ -1,7 +1,7 @@
 {
   "name": "vgrid-maplibre",
   "type": "module",
-  "version": "1.1.16",
+  "version": "1.1.17",
   "description": "DGGS Visualization for MapLibre and Mapbox GL JS",
   "main": "index.js",
   "exports": {
@@ -70,17 +70,9 @@
     "DIGIPIN"  
     ],
   "author": "Thang Quach",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/opengeoshub/vgrid-maplibre/issues"
   },
-  "homepage": "https://github.com/opengeoshub/vgrid-maplibre#readme",
-  "dependencies": {
-    "a5-js": "^0.6.1",
-    "h3-js": "^4.3.0",
-    "maplibre-gl": "^5.13.0",
-    "open-location-code": "^1.0.3",
-    "s2js": "^1.43.6",
-    "turf": "^7.3.0"
-  } 
+  "homepage": "https://github.com/opengeoshub/vgrid-maplibre#readme"
 }

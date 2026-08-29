@@ -4,8 +4,7 @@
     <title>vgrid-maplibre Example</title>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-    <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+    <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -22,7 +21,9 @@
         .control-panel {
             position: absolute;
             top: 10px;
-            right: 10px;
+            right: 60px;
+            display: flex;
+            gap: 6px;
             background: white;
             padding: 10px;
             border-radius: 4px;
@@ -31,57 +32,78 @@
         }
 
         button {
-            margin: 5px;
+            margin: 0;
             padding: 8px 12px;
             border: none;
             border-radius: 4px;
-            background: #4CAF50;
+            background: #5a5a5a;
             color: white;
             cursor: pointer;
+            white-space: nowrap;
         }
 
         button:hover {
-            background: #45a049;
+            filter: brightness(1.15);
+        }
+
+        button.active[data-grid="h3"] {
+            background: #e53935;
+        }
+
+        button.active[data-grid="s2"] {
+            background: #1e88e5;
+        }
+
+        button.active[data-grid="a5"] {
+            background: #43a047;
         }
     </style>
 </head>
 <body>
     <div id="map"></div>
     <div class="control-panel">
-        <button onclick="toggleGrid('h3')">Toggle H3 Grid</button>
-        <button onclick="toggleGrid('s2')">Toggle S2 Grid</button>
-        <button onclick="toggleGrid('geohash')">Toggle Geohash Grid</button>
+        <button data-grid="h3" onclick="toggleGrid('h3')">H3</button>
+        <button data-grid="s2" onclick="toggleGrid('s2')">S2</button>
+        <button data-grid="a5" onclick="toggleGrid('a5')">A5</button>
     </div>
 
     <script type="module">
-        import H3Grid from 'vgrid-maplibre/H3/H3Grid';
-        import S2Grid from 'vgrid-maplibre/S2/S2Grid';
-        import GeohashGrid from 'vgrid-maplibre/Geohash/GeohashGrid';
+        import * as maplibregl from 'https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.mjs';
+        import H3Grid from '../H3/H3Grid.js';
+        import S2Grid from '../S2/S2Grid.js';
+        import A5Grid from '../A5/A5Grid.js';
 
-        // Initialize the map
         const map = new maplibregl.Map({
             container: 'map',
-            style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/fiord/fiord.json',
+            style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/versatiles/eclipse.json',
+            center: [0, 0],
             zoom: 0
         });
 
-        // Global variables to store grid instances and state
         let grids = {};
         let gridState = {
             h3: false,
             s2: false,
-            geohash: false
+            a5: false
         };
 
-        // Global toggle function
         window.toggleGrid = function (type) {
             if (gridState[type]) {
                 grids[type].remove();
                 gridState[type] = false;
             } else {
+                Object.keys(grids).forEach((other) => {
+                    if (other !== type && gridState[other]) {
+                        grids[other].remove();
+                        gridState[other] = false;
+                    }
+                });
                 grids[type].show();
                 gridState[type] = true;
             }
+            Object.keys(gridState).forEach((key) => {
+                document.querySelector(`[data-grid="${key}"]`).classList.toggle('active', gridState[key]);
+            });
         };
 
         map.on('style.load', () => {
@@ -89,24 +111,27 @@
         });
 
         function initializeGrids() {
-            // Initialize grid instances
             grids = {
                 h3: new H3Grid(map, {
                     color: 'rgba(255, 0, 0, 0.5)',
                     width: 2
                 }),
                 s2: new S2Grid(map, {
-                    color: 'rgba(0, 255, 0, 0.5)',
+                    color: 'rgba(0, 0, 255, 0.5)',
                     width: 2
                 }),
-                geohash: new GeohashGrid(map, {
-                    color: 'rgba(0, 0, 255, 0.5)',
+                a5: new A5Grid(map, {
+                    color: 'rgba(0, 255, 0, 0.5)',
                     width: 2
                 })
             };
 
-            // Add map controls
+            Object.keys(grids).forEach((type) => {
+                grids[type].remove();
+            });
+
             map.addControl(new maplibregl.NavigationControl());
+            map.addControl(new maplibregl.GlobeControl());
             map.addControl(new maplibregl.GeolocateControl({
                 positionOptions: {
                     enableHighAccuracy: true
@@ -116,4 +141,4 @@
         }
     </script>
 </body>
-</html> 
+</html>

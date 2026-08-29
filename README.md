@@ -1,6 +1,6 @@
 <p align="center">
   <strong >vgrid-maplibre </strong> <br>
-    <b><i>DGGS Visualization in MapLibre and Mapbox GL JS</i><b>
+    <b><i>DGGS Adaptive Visualization in MapLibre and Mapbox GL JS</i><b>
 </p>
 <p align="center">
   <img src="https://raw.githubusercontent.com/opengeoshub/vgridtools/main/images/readme/dggs.png">
@@ -46,7 +46,7 @@
         import H3Grid from "https://unpkg.com/vgrid-maplibre/H3/H3Grid.js";
         const map = new maplibregl.Map({
             container: 'map',
-            style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/vstyles/omt/fiord/fiord.json',
+            style: 'https://raw.githubusercontent.com/opengeoshub/vstyles/main/versatiles/eclipse.json',
             center: [0, 0],
             zoom: 0
         });
@@ -65,21 +65,21 @@
 ```
 
 ### H3 
-[H3 in MapLibre](https://gishub.vn/pages/dggs/h3/)
+[H3 in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/h3/)
 
 ![image](https://github.com/user-attachments/assets/ca3eb53d-7800-4810-a257-e1e697df1800)
 
-[H3 in Mapbox](https://gishub.vn/pages/dggs/h3/mapbox.html)
+[H3 in Mapbox](https://opengeoshub.github.io/pages/vgridmaplibre/h3/mapbox.html)
 
 ![image](https://github.com/user-attachments/assets/50b605ab-c471-414b-91d3-909cfb9e2fc7)
 
 ### S2 	
-[S2 in MapLibre](https://gishub.vn/pages/dggs/s2/)
+[S2 in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/s2/)
 
 ![image](https://github.com/user-attachments/assets/79fe26f2-58c8-4642-8071-c62b0d21633e)
 
 ### A5 	
-[A5 in MapLibre](https://gishub.vn/pages/dggs/a5/)
+[A5 in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/a5/)
 
 ![image](https://github.com/user-attachments/assets/426e1033-4623-4b15-a793-d03dac439a92)
 
@@ -105,7 +105,7 @@ const dggridGrid = new DGGRIDGrid(map, {
     },
 });
 ```
-[DGGRID ISEA4H in MapLibre](https://gishub.vn/pages/dggs/dggrid/)
+[DGGRID ISEA4H in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/dggrid/)
 <img width="1918" height="1032" alt="image" src="https://github.com/user-attachments/assets/8df548c5-97d9-4296-bf46-aedce731fe59" />
 
 ### DGGAL 	
@@ -129,55 +129,55 @@ const dggalGrid = new DGGALGrid(
 );
 ```
 
-[DGGAL IVEA7H_Z7 in MapLibre](https://gishub.vn/pages/dggs/dggal/)
+[DGGAL IVEA7H_Z7 in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/dggal/)
 
 ![image](https://github.com/user-attachments/assets/e9fde5ba-b429-4f3c-acb9-ad26458b1317)
 
 ### QTM 	
-[QTM in MapLibre](https://gishub.vn/pages/dggs/qtm/)
+[QTM in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/qtm/)
 
 ![image](https://github.com/user-attachments/assets/4d773b02-d7a3-42ad-a090-7519e835f397)
 
 
 ### OLC (OpenLocationCode/ Google Pluscode) 	
-[OLC in MapLibre](https://gishub.vn/pages/dggs/olc/)
+[OLC in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/olc/)
 
 ![image](https://github.com/user-attachments/assets/99a55563-ef0d-4989-96f9-ce8a1a8cb95a)
 
 
 ### Geohash 
-[Geohash in MapLibre](https://gishub.vn/pages/dggs/geohash/)
+[Geohash in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/geohash/)
 
 ![image](https://github.com/user-attachments/assets/7d3b320b-e650-407d-9605-e162dae1a6ca)
 
 ### GEOREF 
-[GEOREF in MapLibre](https://gishub.vn/pages/dggs/georef/)
+[GEOREF in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/georef/)
 
 ![image](https://github.com/user-attachments/assets/d7225223-5a1e-4c2f-ac88-1609af0aa841)
 
 ### MGRS	
-[MGRS in MapLibre](https://gishub.vn/pages/dggs/mgrs/)
+[MGRS in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/mgrs/)
 
 ![image](https://github.com/user-attachments/assets/e9b9cd46-4690-4f33-8bff-7dc32d154f78)
 
 ### Vgrid Tilecode	
-[Vgrid Tilecode in MapLibre](https://gishub.vn/pages/dggs/tilecode/)
+[Vgrid Tilecode in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/tilecode/)
 
 ![image](https://github.com/user-attachments/assets/20cccd9f-e746-4f49-85e6-d22194e4993f)
 
 
 ### Maidenhead 	
-[Maidenhead in MapLibre](https://gishub.vn/pages/dggs/maidenhead/)
+[Maidenhead in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/maidenhead/)
 
 ![image](https://github.com/user-attachments/assets/0015c444-17ca-4a4f-81bf-bd67197506d5)
 
 ### GARS 
-[GARS in MapLibre](https://gishub.vn/pages/dggs/gars/)
+[GARS in MapLibre](https://opengeoshub.github.io/pages/vgridmaplibre/gars/)
 
 ![image](https://github.com/user-attachments/assets/cb9a43f6-52be-46c9-a670-509884903f68)
 
 ### India DIGIPIN 
-[India DIGIPIN Demo](https://gishub.vn/pages/dggs/digipin/)
+[India DIGIPIN Demo](https://opengeoshub.github.io/pages/vgridmaplibre/digipin/)
 
 ![image](https://github.com/user-attachments/assets/d418ac9e-7639-4a11-8f71-86118e5820bd)
 
@@ -193,7 +193,7 @@ Grid System Name | Authors/Origin | Primary Cell Shape | Hierarchical Structure/
 [Geohash](https://en.wikipedia.org/wiki/Geohash) | Gustavo Niemeyer (2008) | Rectangular | Hierarchical (precision by string length), Z-order curve, base 4 spatial index, truncation | Cells are non-equal area; physical size changes with latitude; lexicographical similarity does not guarantee spatial proximity | Unique identifier, representing point data in databases, quick-and-dirty proximity search
 [GEOREF (World Geographic Reference System)](https://en.wikipedia.org/wiki/World_Geographic_Reference_System) | US military/aeronautical (post-WWII) | Rectangular | Hierarchical (15°, 1°, 1-minute, 0.1-minute, 0.01-minute quadrangles) | Based on latitude/longitude, thus non-equal area; simpler notation for air navigation | Aeronautical charts, air navigation, military/inter-service applications (rarely seen today)
 [MGRS (Military Grid Reference System)](https://en.wikipedia.org/wiki/Military_Grid_Reference_System) | NATO militaries | Square | Hierarchical (Grid Zone Designator, 100,000-meter square ID, numerical location from 10km down to 1m) | Derived from UTM/UPS, thus non-equal area; defines square grid areas, truncation for precision changes | Geo-referencing, position reporting, situational awareness for land operations (US Armed Forces, NATO); area-centric counterpart to point-centric systems
-Tilecode | (Ambiguous - looks to be based on [`{Z, X, Y}` tiles](https://en.wikipedia.org/wiki/Tiled_web_map)) | Rectangular | Hierarchical (quad tree) | Based on latitude/longitude, thus non-equal area; small error in distance calculation assuming spherical Earth especially at higher latitudes, where areas appear stretched. The physical size of a pixel or a tile changes with latitude | Most commonly used in Mapbox and other web-based maps
+Tilecode | [XYZ tiles](https://en.wikipedia.org/wiki/Tiled_web_map) | Rectangular | Hierarchical (quad tree) | Based on latitude/longitude, thus non-equal area; small error in distance calculation assuming spherical Earth especially at higher latitudes, where areas appear stretched. The physical size of a pixel or a tile changes with latitude | Most commonly used in Mapbox and other web-based maps
 [Maidenhead Locator System](https://en.wikipedia.org/wiki/Maidenhead_Locator_System) | John Morris G4ANB (1980) | Rectangular | Hierarchical (fields, squares, subsquares, extended squares), alternating letters/digits, varying bases | Based on latitude/longitude, thus non-equal area; small error in distance calculation assuming spherical Earth | Amateur radio operators for succinct geographic coordinates, contests, communication over air (voice, Morse code)
 [GARS (Global Area Reference System)](https://en.wikipedia.org/wiki/Global_Area_Reference_System) | National Geospatial-Intelligence Agency (NGA) | Rectangular | Hierarchical (30-minute cells, 15-minute quadrants, 5-minute areas) | Based on latitude/longitude, thus non-equal area; cell size diminishes toward poles | US DoD and emergency services for joint force situational awareness, air-to-ground coordination, search and rescue (SAR), disaster relief, battle-space management
 

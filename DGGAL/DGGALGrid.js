@@ -1,4 +1,4 @@
-import { DGGAL } from './dggal.js';
+import { DGGAL } from 'https://unpkg.com/dggal@0.0.6/dist/dggal.js';
 let dggal;
 const initPromise = DGGAL.init();
 

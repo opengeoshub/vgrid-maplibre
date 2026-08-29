@@ -131,6 +131,17 @@ class GEOREFGrid {
     let maxLat = bounds.getNorth();
     let maxLon = bounds.getEast();
 
+    minLat = Math.max(-90, Math.min(90, minLat));
+    maxLat = Math.max(-90, Math.min(90, maxLat));
+    if (!Number.isFinite(minLat) || !Number.isFinite(maxLat) || minLat > maxLat) {
+      minLat = -90;
+      maxLat = 90;
+    }
+    if (!Number.isFinite(minLon) || !Number.isFinite(maxLon) || maxLon - minLon >= 360 || minLon > maxLon) {
+      minLon = -180;
+      maxLon = 180;
+    }
+
     let lonWidth, latWidth;
 
     if (resolution === 0) {
@@ -293,18 +304,18 @@ class GEOREFGrid {
 
   decode(georef, centerp = false) {
     if (!georef) {
-      throw new Error('Invalid Georef string: None');
+      throw new Error('Invalid GEOREF string: None');
     }
 
     georef = georef.toUpperCase();
     const leng = georef.length;
 
     if (leng >= 3 && georef.startsWith('INV')) {
-      throw new Error('Invalid Georef string');
+      throw new Error('Invalid GEOREF string');
     }
 
     if (leng < this.baselen_ - 2) {
-      throw new Error(`Georef must start with at least 2 letters: ${georef}`);
+      throw new Error(`GEOREF must start with at least 2 letters: ${georef}`);
     }
 
     const prec1 = Math.floor((2 + leng - this.baselen_) / 2 - 1);
@@ -349,11 +360,11 @@ class GEOREFGrid {
         }
 
         if (leng % 2 !== 0) {
-          throw new Error(`Georef must end with an even number of digits: ${trailing}`);
+          throw new Error(`GEOREF must end with an even number of digits: ${trailing}`);
         }
 
         if (prec1 === 1) {
-          throw new Error(`Georef needs at least 4 digits for minutes: ${trailing}`);
+          throw new Error(`GEOREF needs at least 4 digits for minutes: ${trailing}`);
         }
 
         if (prec1 > this.maxprec_) {
