@@ -14,7 +14,8 @@
 
 
 ### [vgrid-maplibre on NPM](https://www.npmjs.com/package/vgrid-maplibre)
-### [Vgrid Home](https://vgridhome.gishub.vn)
+### [vgrid-maplibre demo](https://gishub.vn/pages/vgridmaplibre)
+### [vgrid homepage](https://vgridhome.gishub.vn)
 
 #### vgrid-maplibre can be used with both MapLibre and Mapbox GL JS to interactively visualize a wide range of DGGS, including geodesic DGGS such as H3, S2, A5, DGGAL, and QTM, as well as graticule-based DGGS like OLC, Geohash, GEOREF, MGRS, Tilecode (by Vigrid), Maidenhead, GARS, and India DIGIPIN.
 
