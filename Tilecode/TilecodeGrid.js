@@ -1,5 +1,6 @@
 const d2r = Math.PI / 180;
 const r2d = 180 / Math.PI;
+const MAX_LAT = 85.0511287798066;
 
 class TilecodeGrid {
   constructor(map, options = {}) {
@@ -104,19 +105,32 @@ class TilecodeGrid {
     const bounds = this.map.getBounds();
     const resolution = Math.floor(this.map.getZoom())+1;
   
+    const z2 = Math.pow(2, resolution);
+  
     // Convert map bounds to tile coordinates
     const sw = this.latlonToTile(bounds.getSouth(), bounds.getWest(), resolution);
     const ne = this.latlonToTile(bounds.getNorth(), bounds.getEast(), resolution);
 
+    let xStart = sw[0];
+    let xEnd = ne[0];
+    if (bounds.getEast() - bounds.getWest() >= 360) {
+      xStart = 0;
+      xEnd = z2 - 1;
+    } else if (xEnd < xStart) {
+      xEnd += z2;
+    }
+
     const features = [];
+    const seen = new Set();
   
-    for (let x = sw[0]; x <= ne[0]; x++) {
+    for (let i = xStart; i <= xEnd; i++) {
+      const x = i % z2;
       for (let y = ne[1]; y <= sw[1]; y++) {
         const tile = [x, y, resolution];
         const tilecode_id =  this.tileToTilecode(tile);
+        if (seen.has(tilecode_id)) continue;
+        seen.add(tilecode_id);
         const quadkey_id =  this.tileToQuadkey(tile);
-        const exists = features.some(f => f.properties.tilecode_id === tilecode_id);
-        if (exists) continue;
 
         const bbox = this.tileToBBOX(tile); // {w, s, e, n}
         const coords = [[
@@ -168,17 +182,14 @@ class TilecodeGrid {
 
   latlonToTile(lat, lon, z) {
     const tile = this.latlonToTileFraction(lat, lon, z);
-    tile[0] = Math.floor(tile[0]);
-    tile[1] = Math.floor(tile[1]);
+    const max = Math.pow(2, z) - 1;
+    tile[0] = Math.min(Math.floor(tile[0]), max);
+    tile[1] = Math.min(Math.max(Math.floor(tile[1]), 0), max);
     return tile;
   }
 
   latlonToTileFraction(lat, lon, z) {
-    // if (lon > 180.0) lon = 180.0;
-    // else if (lon < -180.0) lon = -180.0;
-  
-    // if (lat > 90.0) lat = 90.0;
-    // else if (lat < -90.0) lat = -90.0;
+    lat = Math.max(-MAX_LAT, Math.min(MAX_LAT, lat));
     const sin = Math.sin(lat * d2r);
     const z2 = Math.pow(2, z);
     let x = z2 * (lon / 360 + 0.5);

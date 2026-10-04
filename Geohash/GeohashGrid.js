@@ -232,8 +232,9 @@ class GeohashGrid {
   }
 
   getResolution(zoom) {
-    const min_res = 0;
-    const max_res = 11;
+    // generateGrid only defines cell sizes for geohash lengths 1-10.
+    const min_res = 1;
+    const max_res = 10;
     const resolution = Math.min(max_res, Math.max(min_res, Math.floor(zoom*0.45)));
     return resolution;
   }

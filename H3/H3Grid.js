@@ -117,14 +117,14 @@ class H3Grid {
     var currentZoom = this.map.getZoom();
     var h3res = this.getResolution(currentZoom);
 
-    const iw = window.innerWidth;
-    const ih = window.innerHeight;
-    const cUL = this.map.unproject([0, 0]).toArray(); // Upper left
-    const cLR = this.map.unproject([iw, ih]).toArray(); // Lower right
-    const x1 = Math.min(cUL[0], cLR[0]);
-    const x2 = Math.max(cUL[0], cLR[0]);
-    const y1 = Math.min(cUL[1], cLR[1]);
-    const y2 = Math.max(cUL[1], cLR[1]);
+    const bounds = this.map.getBounds();
+    const x1 = bounds.getWest();
+    const x2 = bounds.getEast();
+    const y1 = bounds.getSouth();
+    const y2 = bounds.getNorth();
+    if (![x1, x2, y1, y2].every(Number.isFinite)) {
+      return { type: 'FeatureCollection', features: [] };
+    }
     const dh = x2 - x1;
     const dv = y2 - y1;
 
@@ -142,7 +142,7 @@ class H3Grid {
     const xIncrement = 180;
     let lowerX = x1withBuffer;
 
-    while (lowerX < this.longitudeMax && lowerX < x2withBuffer) {
+    while (lowerX < this.longitudeMax && lowerX < x2withBuffer && y1withBuffer < y2withBuffer) {
       let upperX = Math.min(lowerX + xIncrement, x2withBuffer, 180);
       coordinates.push([
         [y2withBuffer, lowerX],
@@ -153,13 +153,20 @@ class H3Grid {
       lowerX += xIncrement;
     }
 
-    var shapes = [].concat(...coordinates.map(e => h3.polygonToCells(e, h3res)));
+    var shapes = [].concat(...coordinates.map(e => {
+      try {
+        return h3.polygonToCells(e, h3res);
+      } catch (error) {
+        return [];
+      }
+    }));
     var features = [];
+    const seen = new Set();
 
     for (var i = 0; i < shapes.length; i++) {
       let h3_id = shapes[i];
-      const exists = features.some(f => f.properties.h3_id === h3_id);
-      if (exists) continue;
+      if (seen.has(h3_id)) continue;
+      seen.add(h3_id);
 
       let boundary = h3.cellToBoundary(h3_id, true);
 
